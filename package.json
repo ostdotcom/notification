@@ -1,0 +1,14 @@
+{
+  "name": "openst-notification-testing",
+  "version": "1.0.0",
+  "description": "managing queues and publish",
+  "main": "index.js",
+  "scripts": {
+    "start": "index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "amqplib": "^0.5.2"
+  }
+}
