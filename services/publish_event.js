@@ -6,17 +6,9 @@ const rootPrefix = '..'
   , rmqId = 'rmq1'
 ;
 
+const publishEvent = {
 
-const publishEvent = function(){
-  // Beware of multithreaded system calls, as singleton class object is returned.
-  // Instance variables gets overwritten.
-};
-
-publishEvent.prototype = {
-
-  constructor: publishEvent,
-
-  perform: async function (params) {
+  perform: async function(params) {
 
     var oThis = this;
 

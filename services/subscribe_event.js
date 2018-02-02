@@ -5,11 +5,7 @@ const root_prefix = '..'
   , rmqId = 'rmq1'
 ;
 
-const subscribeEvent = function(){};
-
-subscribeEvent.prototype = {
-
-  constructor: subscribeEvent,
+const subscribeEvent = {
 
   perform: async function (params) {
 
