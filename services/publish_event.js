@@ -3,6 +3,7 @@
 const rootPrefix = '..'
   , rabbitmqConnection = require(rootPrefix + '/services/rabbitmqConnection')
   , responseHelper = require(rootPrefix + '/lib/formatter/response')
+  , util = require(rootPrefix + '/lib/util')
   , rmqId = 'rmq1'
 ;
 
@@ -22,20 +23,21 @@ const publishEvent = {
       , ex = 'topic_events'
       , key = validatedParams['topic']
       , message = validatedParams['message']
+      , msgString = JSON.stringify(message)
       , conn = await rabbitmqConnection.get(rmqId);
 
     if(conn){
       conn.createChannel(function(err, ch) {
 
         ch.assertExchange(ex, 'topic', {durable: true});
-        ch.publish(ex, key, new Buffer(JSON.stringify(message)));
+        ch.publish(ex, key, new Buffer(msgString));
         console.log(" [x] Sent %s:'%s'", key, message);
 
         ch.close();
 
       });
     } else {
-      // write in file
+      util.saveUnpublishedMessages(msgString);
     }
 
   },
