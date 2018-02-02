@@ -9,6 +9,7 @@ const rootPrefix = "."
   , publish_event = require(rootPrefix + '/services/publish_event')
   , subscribe_event = require(rootPrefix + '/services/subscribe_event')
   , rabbitmqConnection = require(rootPrefix + '/services/rabbitmqConnection')
+  , rmqId = 'rmq1'
 ;
 
 const OpenSTQueueManagement = function () {
@@ -20,6 +21,9 @@ const OpenSTQueueManagement = function () {
   oThis.subscribe_event = subscribe_event;
   // oThis.validator = validator;
   // oThis.generic_event_emitter = generic_event_emitter;
+
+  oThis.connection.get(rmqId);
+
 };
 
 module.exports = new OpenSTQueueManagement();
