@@ -16,6 +16,11 @@ const subscribeEvent = {
 
     var conn = await rabbitmqConnection.get(rmqId);
 
+    if(!conn){
+      console.log(' Not able to establish rabbitmq connection for now. Please try after sometime.');
+      return false;
+    }
+
     conn.createChannel(function(err, ch) {
       var ex = 'topic_events';
 

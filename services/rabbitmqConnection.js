@@ -14,22 +14,18 @@ rabbitmqConnection.prototype = {
 
   constructor: rabbitmqConnection,
 
-  get: function (rmqId) {
+  get: async function (rmqId) {
 
     var oThis = this;
 
-    console.log("Getting connection..");
-    return new Promise(function(onResolve, onReject){
+    if(oThis.connections[rmqId]){
+      console.log("connection found => ", oThis.connections[rmqId]);
+    } else {
+      console.log("Setting connection..");
+      await oThis.set(rmqId);
+    }
 
-      if(oThis.connections[rmqId]){
-        console.log(oThis.connections[rmqId]);
-      } else {
-        oThis.set(rmqId);
-      }
-
-      return onResolve(oThis.connections[rmqId]);
-
-    });
+    return Promise.resolve(oThis.connections[rmqId]);
 
   },
 
@@ -42,47 +38,58 @@ rabbitmqConnection.prototype = {
 
     if(oThis.tryingConnection[rmqId]){
       console.log("Already trying to reconnect, please wait for sometime...");
-      return null;
+      return Promise.resolve(null);
     }
 
     var connectRmqInstance = function () {
 
-      oThis.tryingConnection[rmqId] = 1;
-      console.log("Trying connect after ", retryConnectionAfter);
+      return new Promise(function(onResolve, onReject){
+        oThis.tryingConnection[rmqId] = 1;
 
-      amqp.connect(rabbitmqConstants.connectionString(rmqId), function (err, conn) {
-        if (err || !conn) {
-          console.log("Error is : " + err);
-          if (connectionAttempts >= rabbitmqConstants.maxConnectionAttempts) {
-            delete oThis.tryingConnection[rmqId];
+        amqp.connect(rabbitmqConstants.connectionString(rmqId), function (err, conn) {
+          if (err || !conn) {
             oThis.connections[rmqId] = null;
-            return null;
+            console.log("Error is : " + err);
+            connectionAttempts++;
+            console.log("Trying connect after ", (retryConnectionAfter * connectionAttempts));
+            retryConnect();
+            return onResolve(null);
+          } else {
+
+            conn.on("error", function (err) {
+              if (err.message !== "Connection closing") {
+                console.error("[AMQP] conn error", err.message);
+              }
+            });
+            conn.on("close", function (c_msg) {
+              console.log("[AMQP] reconnecting", c_msg);
+              delete oThis.connections[rmqId];
+              delete oThis.tryingConnection[rmqId];
+              return setTimeout(connectRmqInstance(), retryConnectionAfter);
+            });
+
+            console.log("Establishing connection..");
+            oThis.connections[rmqId] = conn;
+            // read file and publish pending messages.
+            return onResolve(conn);
           }
-          setTimeout(
-            function () {
-              connectionAttempts++;
-              connectRmqInstance();
-            }, (retryConnectionAfter * connectionAttempts));
-        } else {
-
-          conn.on("error", function (err) {
-            if (err.message !== "Connection closing") {
-              console.error("[AMQP] conn error", err.message);
-            }
-          });
-          conn.on("close", function (c_msg) {
-            console.log("[AMQP] reconnecting", c_msg);
-            delete oThis.connections[rmqId];
-            return setTimeout(connectRmqInstance(), retryConnectionAfter);
-          });
-
-          console.log("Establishing connection..");
-          oThis.connections[rmqId] = conn;
-          // read file and publish pending messages.
-          return conn;
-        }
+        });
       });
 
+    };
+
+    var retryConnect = function(){
+      setTimeout(
+        function () {
+          if (connectionAttempts >= rabbitmqConstants.maxConnectionAttempts) {
+            delete oThis.tryingConnection[rmqId];
+            console.log("Maximum retry connects failed");
+            // Notify about multiple rabbitmq connections failure.
+            return false;
+          } else {
+            connectRmqInstance();
+          }
+        }, (retryConnectionAfter * connectionAttempts));
     };
 
     return connectRmqInstance();

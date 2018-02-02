@@ -38,6 +38,7 @@ const publishEvent = {
       });
     } else {
       util.saveUnpublishedMessages(msgString);
+
     }
 
   },
