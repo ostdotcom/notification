@@ -7,7 +7,7 @@ const root_prefix = '..'
 
 const subscribeEvent = {
 
-  perform: async function (params) {
+  perform: async function (params, callback) {
 
     if (params.length == 0) {
       console.log("invalid parameters.");
@@ -35,6 +35,7 @@ const subscribeEvent = {
 
         ch.consume(q.queue, function(msg) {
           console.log(" [x] consuming ", msg.fields.routingKey, " => " ,msg.content.toString());
+          callback(msg);
         }, {noAck: true});
       });
     });
