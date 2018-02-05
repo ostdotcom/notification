@@ -4,6 +4,8 @@ const rootPrefix = '..'
   , rabbitmqConnection = require(rootPrefix + '/services/rabbitmqConnection')
   , responseHelper = require(rootPrefix + '/lib/formatter/response')
   , util = require(rootPrefix + '/lib/util')
+  , localEmitter = require(rootPrefix + '/services/local_emitter')
+  , validator = require(rootPrefix + '/services/validator/init')
   , rmqId = 'rmq1'
 ;
 
@@ -13,7 +15,7 @@ const publishEvent = {
 
     var oThis = this;
 
-    var r = await oThis.validateParams(params);
+    var r = await validator.basicParams(params);
 
     if(r.isFailure()){
       Promise.resolve(r);
@@ -41,6 +43,8 @@ const publishEvent = {
 
     }
 
+    localEmitter.emitObj.emit(key, message)
+
   },
 
   validateParams: function (params) {
@@ -48,7 +52,7 @@ const publishEvent = {
     var validatedParams = {};
 
     if(!params['topic'] || !params['message']){
-      Promise.resolve(responseHelper.error('ost_q_m_s_pe_1', 'invalid parameters'));
+      return Promise.resolve(responseHelper.error('ost_q_m_s_pe_1', 'invalid parameters'));
     }
 
     validatedParams['topic'] = params['topic'];
@@ -58,7 +62,7 @@ const publishEvent = {
     var message = params['message'];
 
     if(!message['kind'] || !message['payload']){
-      Promise.resolve(responseHelper.error('ost_q_m_s_pe_2', 'invalid parameters'));
+      return Promise.resolve(responseHelper.error('ost_q_m_s_pe_2', 'invalid parameters'));
     }
 
     if(message['kind'] == 'event_received'){
@@ -67,7 +71,7 @@ const publishEvent = {
         !message['payload']['params'] ||
         !message['payload']['contract address']
       ){
-        Promise.resolve(responseHelper.error('ost_q_m_s_pe_3', 'invalid payload for kind event_received'));
+        return Promise.resolve(responseHelper.error('ost_q_m_s_pe_3', 'invalid payload for kind event_received'));
       }
 
     } else if(params['kind'] == 'transaction_initiated'){
@@ -79,17 +83,17 @@ const publishEvent = {
         !message['payload']['transaction_hash'] ||
         !message['payload']['uuid']
       ){
-        Promise.resolve(responseHelper.error('ost_q_m_s_pe_4', 'invalid payload for kind event_received'));
+        return Promise.resolve(responseHelper.error('ost_q_m_s_pe_4', 'invalid payload for kind event_received'));
       }
 
     } else if(params['kind'] == 'transaction_mined'){
 
       if(!message['payload']['transaction_hash']){
-        Promise.resolve(responseHelper.error('ost_q_m_s_pe_5', 'invalid payload for kind event_received'));
+        return Promise.resolve(responseHelper.error('ost_q_m_s_pe_5', 'invalid payload for kind event_received'));
       }
 
     } else {
-      Promise.resolve(responseHelper.error(
+      return Promise.resolve(responseHelper.error(
         'ost_q_m_s_pe_6',
         'unsupported kind transfered. supported are event_received,transaction_initiated,transaction_mined')
       );

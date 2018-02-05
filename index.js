@@ -20,7 +20,6 @@ const OpenSTQueueManagement = function () {
   oThis.publish_event = publish_event;
   oThis.subscribe_event = subscribe_event;
   // oThis.validator = validator;
-  // oThis.generic_event_emitter = generic_event_emitter;
 
   oThis.connection.get(rmqId);
 

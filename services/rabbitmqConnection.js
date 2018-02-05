@@ -19,7 +19,7 @@ rabbitmqConnection.prototype = {
     var oThis = this;
 
     if(oThis.connections[rmqId]){
-      console.log("connection found => ", oThis.connections[rmqId]);
+      console.log("connection found for => ", rmqId);
     } else {
       console.log("Setting connection..");
       await oThis.set(rmqId);
@@ -46,7 +46,7 @@ rabbitmqConnection.prototype = {
       return new Promise(function(onResolve, onReject){
         oThis.tryingConnection[rmqId] = 1;
 
-        amqp.connect(rabbitmqConstants.connectionString(rmqId), function (err, conn) {
+        amqp.connect(rabbitmqConstants.connectionString(), function (err, conn) {
           if (err || !conn) {
             oThis.connections[rmqId] = null;
             console.log("Error is : " + err);

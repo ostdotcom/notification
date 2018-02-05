@@ -1,15 +1,16 @@
 "use strict";
 
-const root_prefix = '..'
-  , rabbitmqConnection = require(root_prefix + '/services/rabbitmqConnection')
+const rootPrefix = '..'
+  , rabbitmqConnection = require(rootPrefix + '/services/rabbitmqConnection')
+  , localEmitter = require(rootPrefix + '/services/local_emitter')
   , rmqId = 'rmq1'
 ;
 
 const subscribeEvent = {
 
-  perform: async function (params, callback) {
+  rabbit: async function (topics, callback) {
 
-    if (params.length == 0) {
+    if (topics.length == 0) {
       console.log("invalid parameters.");
       process.exit(1);
     }
@@ -29,15 +30,30 @@ const subscribeEvent = {
       ch.assertQueue('', {exclusive: true}, function(err, q) {
         console.log(' [*] Waiting for logs. To exit press CTRL+C', q.queue);
 
-        params.forEach(function(key) {
+        topics.forEach(function(key) {
           ch.bindQueue(q.queue, ex, key);
         });
 
         ch.consume(q.queue, function(msg) {
-          console.log(" [x] consuming ", msg.fields.routingKey, " => " ,msg.content.toString());
-          callback(msg);
+          var msgContent = msg.content.toString();
+          console.log(" [x] consuming ", msg.fields.routingKey, " => " , msgContent);
+          callback(msgContent);
+
         }, {noAck: true});
       });
+    });
+
+  },
+
+  local: function(topics, callback) {
+
+    if (topics.length == 0) {
+      console.log("invalid parameters.");
+      process.exit(1);
+    }
+
+    topics.forEach(function(key) {
+      localEmitter.emitObj.on(key, callback);
     });
 
   }
