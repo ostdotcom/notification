@@ -25,6 +25,8 @@ rabbitmqConnection.prototype = {
       await oThis.set(rmqId);
     }
 
+    console.log("connection is ready ");
+
     return Promise.resolve(oThis.connections[rmqId]);
 
   },
@@ -36,9 +38,94 @@ rabbitmqConnection.prototype = {
       , retryConnectionAfter = 1000
     ;
 
+      var connectRmqInstance = function () {
+        return new Promise(function(onResolve, onReject){
+          if(oThis.connections[rmqId]){
+            return onResolve(oThis.connections[rmqId]);
+          } else if(oThis.tryingConnection[rmqId]) {
+            console.log("Re Trying connect after 2000");
+            setTimeout( function(){
+              if(oThis.connections[rmqId]){
+                return onResolve(oThis.connections[rmqId]);
+              } else {
+                connectRmqInstance()
+              }
+            }, 2000);
+          } else {
+
+            oThis.tryingConnection[rmqId] = 1;
+
+            amqp.connect(rabbitmqConstants.connectionString(), function (err, conn) {
+
+              delete oThis.tryingConnection[rmqId];
+
+              if (err || !conn) {
+                oThis.connections[rmqId] = null;
+                console.log("Error is : " + err);
+                connectionAttempts++;
+                console.log("Trying connect after ", (retryConnectionAfter * connectionAttempts));
+                //retryConnect(retryConnectionAfter * connectionAttempts);
+                setTimeout(
+                  function () {
+                    if (connectionAttempts >= rabbitmqConstants.maxConnectionAttempts) {
+                      delete oThis.tryingConnection[rmqId];
+                      console.log("Maximum retry connects failed");
+                      // Notify about multiple rabbitmq connections failure.
+                      return onResolve(null);
+                    } else {
+                      connectRmqInstance();
+                    }
+                  }, (retryConnectionAfter * connectionAttempts));
+              } else {
+                conn.on("error", function (err) {
+                  if (err.message !== "Connection closing") {
+                    console.error("[AMQP] conn error", err.message);
+                  }
+                });
+                conn.on("close", function (c_msg) {
+                  console.log("[AMQP] reconnecting", c_msg);
+                  delete oThis.connections[rmqId];
+                  delete oThis.tryingConnection[rmqId];
+                  return setTimeout(connectRmqInstance(), retryConnectionAfter);
+                });
+
+                console.log("RMQ Connection Established..");
+                oThis.connections[rmqId] = conn;
+                // read file and publish pending messages.
+                return onResolve(conn);
+              }
+            });
+          }
+        });
+      };
+
+      var retryConnect = function(afterTime){
+        setTimeout(
+          function () {
+            if (connectionAttempts >= rabbitmqConstants.maxConnectionAttempts) {
+              delete oThis.tryingConnection[rmqId];
+              console.log("Maximum retry connects failed");
+              // Notify about multiple rabbitmq connections failure.
+            } else {
+              connectRmqInstance();
+            }
+          }, afterTime);
+      };
+
+      return connectRmqInstance();
+
+  },
+
+  bset: function (rmqId) {
+
+    var oThis = this
+      , connectionAttempts = 0
+      , retryConnectionAfter = 1000
+    ;
+
     if(oThis.tryingConnection[rmqId]){
       console.log("Already trying to reconnect, please wait for sometime...");
-      return Promise.resolve(null);
+      retryConnect();
     }
 
     var connectRmqInstance = function () {
@@ -87,7 +174,7 @@ rabbitmqConnection.prototype = {
             // Notify about multiple rabbitmq connections failure.
             return false;
           } else {
-            connectRmqInstance();
+            return connectRmqInstance();
           }
         }, (retryConnectionAfter * connectionAttempts));
     };
@@ -95,6 +182,8 @@ rabbitmqConnection.prototype = {
     return connectRmqInstance();
 
   }
+
+
 
 };
 
