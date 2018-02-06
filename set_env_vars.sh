@@ -1,4 +1,4 @@
-export RMQ_HOST='localhost'
+export RMQ_HOST='172.16.0.106'
 export RMQ_PORT='5672'
 export RMQ_MONITOR_PORT='15672'
 export RMQ_USERNAME='alpesh'

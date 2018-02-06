@@ -29,8 +29,8 @@ const baseValidator = {
 
     var validatedParams = {};
 
-    if(!params['topic'] || !params['message']){
-      Promise.resolve(responseHelper.error('ost_q_m_s_v_i_1', 'invalid parameters'));
+    if(!params || !params['topic'] || !params['message']){
+      return Promise.resolve(responseHelper.error('ost_q_m_s_v_i_1', 'invalid parameters'));
     }
 
     validatedParams['topic'] = params['topic'];
@@ -39,39 +39,39 @@ const baseValidator = {
 
     var message = params['message'];
 
-    if(!message['kind'] || !message['payload']){
-      Promise.resolve(responseHelper.error('ost_q_m_s_v_i_2', 'invalid parameters'));
+    if(!message || !message['kind'] || !message['payload']){
+      return Promise.resolve(responseHelper.error('ost_q_m_s_v_i_2', 'invalid parameters'));
     }
 
     if(message['kind'] == 'event_received'){
 
       if(!message['payload']['event_name'] ||
         !message['payload']['params'] ||
-        !message['payload']['contract address']
+        !message['payload']['contract_address']
       ){
-        Promise.resolve(responseHelper.error('ost_q_m_s_v_i_3', 'invalid payload for kind event_received'));
+        return Promise.resolve(responseHelper.error('ost_q_m_s_v_i_3', 'invalid payload for kind event_received'));
       }
 
     } else if(params['kind'] == 'transaction_initiated'){
 
       if(!message['payload']['contract_name'] ||
-        !message['payload']['contract address'] ||
+        !message['payload']['contract_address'] ||
         !message['payload']['method'] ||
         !message['payload']['params'] ||
         !message['payload']['transaction_hash'] ||
         !message['payload']['uuid']
       ){
-        Promise.resolve(responseHelper.error('ost_q_m_s_v_i_4', 'invalid payload for kind event_received'));
+        return Promise.resolve(responseHelper.error('ost_q_m_s_v_i_4', 'invalid payload for kind transaction_initiated'));
       }
 
     } else if(params['kind'] == 'transaction_mined'){
 
       if(!message['payload']['transaction_hash']){
-        Promise.resolve(responseHelper.error('ost_q_m_s_v_i_5', 'invalid payload for kind event_received'));
+        return Promise.resolve(responseHelper.error('ost_q_m_s_v_i_5', 'invalid payload for kind transaction_mined'));
       }
 
     } else {
-      Promise.resolve(responseHelper.error(
+      return Promise.resolve(responseHelper.error(
         'ost_q_m_s_v_i_6',
         'unsupported kind transfered. supported are event_received,transaction_initiated,transaction_mined')
       );

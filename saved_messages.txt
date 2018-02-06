@@ -1,0 +1,2 @@
+"{\"kind\":\"event_received\",\"payload\":{\"event_name\":\"one event of st m\",\"params\":{\"id\":\"hello...\"},\"contract_address\":\"address\"}}"
+"{\"kind\":\"event_received\",\"payload\":{\"event_name\":\"one event of st m\",\"params\":{\"id\":\"hello...\"},\"contract_address\":\"address\"}}"
