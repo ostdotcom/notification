@@ -52,7 +52,7 @@ const baseValidator = {
         return Promise.resolve(responseHelper.error('ost_q_m_s_v_i_3', 'invalid payload for kind event_received'));
       }
 
-    } else if(params['kind'] == 'transaction_initiated'){
+    } else if(message['kind'] == 'transaction_initiated'){
 
       if(!message['payload']['contract_name'] ||
         !message['payload']['contract_address'] ||
@@ -64,7 +64,7 @@ const baseValidator = {
         return Promise.resolve(responseHelper.error('ost_q_m_s_v_i_4', 'invalid payload for kind transaction_initiated'));
       }
 
-    } else if(params['kind'] == 'transaction_mined'){
+    } else if(message['kind'] == 'transaction_mined'){
 
       if(!message['payload']['transaction_hash']){
         return Promise.resolve(responseHelper.error('ost_q_m_s_v_i_5', 'invalid payload for kind transaction_mined'));
@@ -73,7 +73,7 @@ const baseValidator = {
     } else {
       return Promise.resolve(responseHelper.error(
         'ost_q_m_s_v_i_6',
-        'unsupported kind ('+params['kind']+') transfered. supported are event_received,transaction_initiated,transaction_mined')
+        'unsupported kind ('+message['kind']+') transfered. supported are event_received,transaction_initiated,transaction_mined')
       );
     }
 
