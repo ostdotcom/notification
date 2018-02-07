@@ -78,9 +78,13 @@ rabbitmqConnection.prototype = {
                   }, (retryConnectionAfter * connectionAttempts));
               } else {
                 conn.on("error", function (err) {
+                  console.error("[AMQP] conn error", err.message);
+
                   if (err.message !== "Connection closing") {
-                    console.error("[AMQP] conn error", err.message);
+                    console.error("[AMQP] conn error in closing");
                   }
+
+                  return setTimeout(connectRmqInstance, retryConnectionAfter);
                 });
                 conn.on("close", function (c_msg) {
                   console.log("[AMQP] reconnecting", c_msg);
