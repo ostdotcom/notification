@@ -71,12 +71,13 @@ const baseValidator = {
         return Promise.resolve(responseHelper.error('ost_q_m_s_v_i_5', 'invalid payload for kind transaction_mined'));
       }
 
-    } else if(message['kind'] != 'error'){
+    } else if(message['kind'] != 'error' || message['kind'] != 'info'){
 
       return Promise.resolve(responseHelper.error(
         'ost_q_m_s_v_i_6',
         'unsupported kind ('+message['kind']+') transfered. supported are event_received,transaction_initiated,transaction_mined')
       );
+
     }
 
     validatedParams['message']['kind'] = message['kind'];
