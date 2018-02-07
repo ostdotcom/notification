@@ -71,7 +71,7 @@ const baseValidator = {
         return Promise.resolve(responseHelper.error('ost_q_m_s_v_i_5', 'invalid payload for kind transaction_mined'));
       }
 
-    } else if(message['kind'] != 'error' || message['kind'] != 'info'){
+    } else if(message['kind'] != 'error' && message['kind'] != 'info'){
 
       return Promise.resolve(responseHelper.error(
         'ost_q_m_s_v_i_6',
