@@ -25,7 +25,7 @@ const publishEvent = {
       , ex = 'topic_events'
       , key = validatedParams['topic']
       , message = validatedParams['message']
-      , msgString = JSON.stringify(message)
+      , msgString = JSON.stringify(validatedParams)
       , conn = await rabbitmqConnection.get(rmqId);
 
     if(conn){
