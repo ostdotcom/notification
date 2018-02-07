@@ -1,6 +1,6 @@
 {
-  "name": "openst-notification-testing",
-  "version": "1.0.0",
+  "name": "@openstfoundation/openst-notification",
+  "version": "1.0.0-beta.1",
   "description": "managing queues and publish",
   "main": "index.js",
   "scripts": {
