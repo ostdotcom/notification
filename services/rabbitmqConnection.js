@@ -86,7 +86,7 @@ rabbitmqConnection.prototype = {
                   console.log("[AMQP] reconnecting", c_msg);
                   delete oThis.connections[rmqId];
                   delete oThis.tryingConnection[rmqId];
-                  return setTimeout(connectRmqInstance(), retryConnectionAfter);
+                  return setTimeout(connectRmqInstance, retryConnectionAfter);
                 });
 
                 console.log("RMQ Connection Established..");

@@ -21,7 +21,7 @@ const getParams = function () {
   };
 };
 
-describe('publish to rabbitmq', function() {
+describe('publish to rabbitmq', async function() {
 
   it('should return promiseeeeeeeeeeeeeeeeeeee..........', function() {
     var params = getParams()
