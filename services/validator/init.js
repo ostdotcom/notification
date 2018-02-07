@@ -2,7 +2,8 @@
 
 const rootPrefix = '../..'
   , responseHelper = require(rootPrefix + '/lib/formatter/response')
-  , eventParams = require(rootPrefix + '/services/validator/event_params');
+  , eventParams = require(rootPrefix + '/services/validator/event_params')
+  , util = require(rootPrefix + '/lib/util')
 ;
 
 const baseValidator = {
@@ -29,7 +30,7 @@ const baseValidator = {
 
     var validatedParams = {};
 
-    if(!params || !params['topic'] || !params['message']){
+    if(!util.valPresent(params) || !util.valPresent(params['topic']) || !util.valPresent(params['message'])){
       return Promise.resolve(responseHelper.error('ost_q_m_s_v_i_1', 'invalid parameters'));
     }
 
@@ -39,34 +40,34 @@ const baseValidator = {
 
     var message = params['message'];
 
-    if(!message || !message['kind'] || !message['payload']){
+    if(!util.valPresent(message) || !util.valPresent(message['kind']) || !util.valPresent(message['payload'])){
       return Promise.resolve(responseHelper.error('ost_q_m_s_v_i_2', 'invalid parameters'));
     }
 
     if(message['kind'] == 'event_received'){
 
-      if(!message['payload']['event_name'] ||
-        !message['payload']['params'] ||
-        !message['payload']['contract_address']
+      if(!util.valPresent(message['payload']['event_name']) ||
+        !util.valPresent(message['payload']['params']) ||
+        !util.valPresent(message['payload']['contract_address'])
       ){
         return Promise.resolve(responseHelper.error('ost_q_m_s_v_i_3', 'invalid payload for kind event_received'));
       }
 
     } else if(message['kind'] == 'transaction_initiated'){
 
-      if(!message['payload']['contract_name'] ||
-        !message['payload']['contract_address'] ||
-        !message['payload']['method'] ||
-        !message['payload']['params'] ||
-        !message['payload']['transaction_hash'] ||
-        !message['payload']['uuid']
+      if(!util.valPresent(message['payload']['contract_name']) ||
+        !util.valPresent(message['payload']['contract_address']) ||
+        !util.valPresent(message['payload']['method']) ||
+        !util.valPresent(message['payload']['params']) ||
+        !util.valPresent(message['payload']['transaction_hash']) ||
+        !util.valPresent(message['payload']['uuid'])
       ){
         return Promise.resolve(responseHelper.error('ost_q_m_s_v_i_4', 'invalid payload for kind transaction_initiated'));
       }
 
     } else if(message['kind'] == 'transaction_mined'){
 
-      if(!message['payload']['transaction_hash']){
+      if(!util.valPresent(message['payload']['transaction_hash'])){
         return Promise.resolve(responseHelper.error('ost_q_m_s_v_i_5', 'invalid payload for kind transaction_mined'));
       }
 
