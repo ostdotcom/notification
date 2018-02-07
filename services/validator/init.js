@@ -73,7 +73,7 @@ const baseValidator = {
     } else {
       return Promise.resolve(responseHelper.error(
         'ost_q_m_s_v_i_6',
-        'unsupported kind transfered. supported are event_received,transaction_initiated,transaction_mined')
+        'unsupported kind ('+params['kind']+') transfered. supported are event_received,transaction_initiated,transaction_mined')
       );
     }
 
