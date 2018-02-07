@@ -36,7 +36,6 @@ const subscribeEvent = {
 
         ch.consume(q.queue, function(msg) {
           var msgContent = msg.content.toString();
-          console.log(" [x] consuming ", msg.fields.routingKey, " => " , msgContent);
           callback(msgContent);
 
         }, {noAck: true});
