@@ -81,7 +81,7 @@ rabbitmqConnection.prototype = {
                   if (err.message !== "Connection closing") {
                     console.error("[AMQP] conn error in closing");
                   }
-
+                  delete oThis.connections[rmqId];
                   return setTimeout(connectRmqInstance, retryConnectionAfter);
                 });
                 conn.on("close", function (c_msg) {
