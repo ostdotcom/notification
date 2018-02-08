@@ -4,6 +4,8 @@ const coreConstant = function () {};
 
 coreConstant.prototype = {
 
+  RMQ_SUPPORT: process.env.RMQ_SUPPORT,
+
   RMQ_HOST: process.env.RMQ_HOST,
 
   RMQ_PORT: process.env.RMQ_PORT,

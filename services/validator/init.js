@@ -30,11 +30,13 @@ const baseValidator = {
 
     var validatedParams = {};
 
-    if(!util.valPresent(params) || !util.valPresent(params['topic']) || !util.valPresent(params['message'])){
+    if(!util.valPresent(params) || !util.valPresent(params['message']) ||
+      !util.valPresent(params['topics']) || params['topics'].length == 0
+    ){
       return Promise.resolve(responseHelper.error('ost_q_m_s_v_i_1', 'invalid parameters'));
     }
 
-    validatedParams['topic'] = params['topic'];
+    validatedParams['topics'] = params['topics'];
 
     validatedParams['message'] = {};
 

@@ -3,6 +3,7 @@
 const rootPrefix = '..'
   , rabbitmqConnection = require(rootPrefix + '/services/rabbitmqConnection')
   , localEmitter = require(rootPrefix + '/services/local_emitter')
+  , coreConstants = require(rootPrefix + '/config/core_constants')
   , rmqId = 'rmq1'
 ;
 
@@ -10,12 +11,17 @@ const subscribeEvent = {
 
   rabbit: async function (topics, callback) {
 
+    if(!coreConstants.RMQ_SUPPORT){
+      console.log("No RMQ support");
+      process.exit(1);
+    }
+
     if (topics.length == 0) {
       console.log("invalid parameters.");
       process.exit(1);
     }
 
-    var conn = await rabbitmqConnection.get(rmqId);
+    const conn = await rabbitmqConnection.get(rmqId);
 
     if(!conn){
       console.log(' Not able to establish rabbitmq connection for now. Please try after sometime.');
@@ -23,7 +29,7 @@ const subscribeEvent = {
     }
 
     conn.createChannel(function(err, ch) {
-      var ex = 'topic_events';
+      const ex = 'topic_events';
 
       ch.assertExchange(ex, 'topic', {durable: true});
 
@@ -35,7 +41,7 @@ const subscribeEvent = {
         });
 
         ch.consume(q.queue, function(msg) {
-          var msgContent = msg.content.toString();
+          const msgContent = msg.content.toString();
           callback(msgContent);
 
         }, {noAck: true});

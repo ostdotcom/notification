@@ -6,6 +6,7 @@ const rootPrefix = '..'
   , util = require(rootPrefix + '/lib/util')
   , localEmitter = require(rootPrefix + '/services/local_emitter')
   , validator = require(rootPrefix + '/services/validator/init')
+  , coreConstants = require(rootPrefix + '/config/core_constants')
   , rmqId = 'rmq1'
 ;
 
@@ -13,37 +14,44 @@ const publishEvent = {
 
   perform: async function(params) {
 
-    var oThis = this;
-
-    var r = await validator.basicParams(params);
+    const r = await validator.basicParams(params);
 
     if(r.isFailure()){
       return Promise.resolve(r);
     }
 
-    var validatedParams = r.data
+    const validatedParams = r.data
       , ex = 'topic_events'
-      , key = validatedParams['topic']
-      , message = validatedParams['message']
+      , topics = validatedParams['topics']
       , msgString = JSON.stringify(validatedParams)
-      , conn = await rabbitmqConnection.get(rmqId);
+    ;
 
-    if(conn){
-      conn.createChannel(function(err, ch) {
+    if(coreConstants.RMQ_SUPPORT){
 
-        ch.assertExchange(ex, 'topic', {durable: true});
-        ch.publish(ex, key, new Buffer(msgString));
-        console.log(" [x] Sent %s:'%s'", key, message);
+      const conn = await rabbitmqConnection.get(rmqId, true);
 
-        ch.close();
+      if(conn){
+        conn.createChannel(function(err, ch) {
 
-      });
-    } else {
-      util.saveUnpublishedMessages(msgString);
+          ch.assertExchange(ex, 'topic', {durable: true});
+          topics.forEach(function(key) {
+            ch.publish(ex, key, new Buffer(msgString));
+            console.log(" [x] Sent %s:'%s'", key, msgString);
+          });
+
+          ch.close();
+
+        });
+      } else {
+        console.log("Connection not found writing to tmp.");
+        util.saveUnpublishedMessages(msgString);
+      }
 
     }
 
-    localEmitter.emitObj.emit(key, message);
+    topics.forEach(function(key) {
+      localEmitter.emitObj.emit(key, msgString);
+    });
 
     return Promise.resolve(responseHelper.successWithData({}));
   }
