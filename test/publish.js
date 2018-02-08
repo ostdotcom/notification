@@ -5,6 +5,7 @@ const chai = require('chai')
 // Load cache service
 const rootPrefix = ".."
   , publishEvent = require(rootPrefix + '/services/publish_event')
+  , rabbitmqConnection = require(rootPrefix + '/services/rabbitmqConnection')
 ;
 
 const getParams = function () {
@@ -23,7 +24,10 @@ const getParams = function () {
 
 describe('publish to rabbitmq', async function() {
 
-  it('should return promise', function() {
+  it('should return promise', async function() {
+
+    await rabbitmqConnection.get('rmq1');
+
     var params = getParams()
       , response = publishEvent.perform(params);
 
