@@ -4,21 +4,19 @@ const coreConstant = function () {};
 
 coreConstant.prototype = {
 
-  RMQ_SUPPORT: process.env.RMQ_SUPPORT,
+  OST_RMQ_SUPPORT: process.env.OST_RMQ_SUPPORT,
 
-  RMQ_HOST: process.env.RMQ_HOST,
+  OST_RMQ_HOST: process.env.OST_RMQ_HOST,
 
-  RMQ_PORT: process.env.RMQ_PORT,
+  OST_RMQ_PORT: process.env.OST_RMQ_PORT,
 
-  RMQ_MONITOR_PORT: process.env.RMQ_MONITOR_PORT,
+  OST_RMQ_USERNAME: process.env.OST_RMQ_USERNAME,
 
-  RMQ_USERNAME: process.env.RMQ_USERNAME,
+  OST_RMQ_PASSWORD: process.env.OST_RMQ_PASSWORD,
 
-  RMQ_PASSWORD: process.env.RMQ_PASSWORD,
+  OST_RMQ_HEARTBEATS: process.env.OST_RMQ_HEARTBEATS,
 
-  RMQ_HEARTBEATS: process.env.RMQ_HEARTBEATS,
-
-  RMQ_PRIMARY_EXCHANGE: process.env.RMQ_PRIMARY_EXCHANGE
+  OST_RMQ_PRIMARY_EXCHANGE: process.env.OST_RMQ_PRIMARY_EXCHANGE
 
 };
 

@@ -26,7 +26,7 @@ const subscribeEvent = {
    */
   rabbit: async function (topics, callback) {
 
-    if(!coreConstants.RMQ_SUPPORT){
+    if(coreConstants.OST_RMQ_SUPPORT != 1){
       console.log("No RMQ support");
       process.exit(1);
     }

@@ -40,7 +40,7 @@ rabbitmqConnection.prototype = {
 
     var oThis = this;
 
-    if(!coreConstants.RMQ_SUPPORT){
+    if(coreConstants.OST_RMQ_SUPPORT != 1){
       return Promise.resolve(null);
     } else if(oThis.connections[rmqId]){
       console.log("connection found for => ", rmqId);
@@ -76,7 +76,7 @@ rabbitmqConnection.prototype = {
       , retryConnectionAfter = 1000
     ;
 
-    if(!coreConstants.RMQ_SUPPORT){
+    if(coreConstants.OST_RMQ_SUPPORT != 1){
       return Promise.resolve(null);
     }
 

@@ -40,7 +40,7 @@ const publishEvent = {
       , msgString = JSON.stringify(validatedParams)
     ;
 
-    if(coreConstants.RMQ_SUPPORT){
+    if(coreConstants.OST_RMQ_SUPPORT == '1'){
 
       const conn = await rabbitmqConnection.get(rmqId, true);
 
