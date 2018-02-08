@@ -41,6 +41,8 @@ const subscribeEvent = {
     if(!conn){
       console.log(' Not able to establish rabbitmq connection for now. Please try after sometime.');
       return false;
+    } else {
+      console.log('Retrieved connection..........');
     }
 
     conn.createChannel(function(err, ch) {

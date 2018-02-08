@@ -10,6 +10,7 @@ const rootPrefix = '..'
   , amqp = require('amqplib/callback_api')
   , rabbitmqConstants = require(rootPrefix + '/lib/rabbitmq')
   , coreConstants = require(rootPrefix + '/config/core_constants')
+  , localEvents = require(rootPrefix + '/services/local_emitter')
 ;
 
 /**
@@ -79,69 +80,78 @@ rabbitmqConnection.prototype = {
       return Promise.resolve(null);
     }
 
-    var connectRmqInstance = function () {
-      return new Promise(function(onResolve, onReject){
-        if(oThis.connections[rmqId]){
-          return onResolve(oThis.connections[rmqId]);
-        } else if(oThis.tryingConnection[rmqId]) {
-          console.log("Re Trying connect after 2000");
-          setTimeout( function(){
-            if(oThis.connections[rmqId]){
-              return onResolve(oThis.connections[rmqId]);
-            } else {
-              connectRmqInstance()
-            }
-          }, 2000);
-        } else {
+    return new Promise(function(onResolve, onReject){
 
-          oThis.tryingConnection[rmqId] = 1;
+      var connectRmqInstance = function () {
 
-          amqp.connect(rabbitmqConstants.connectionString(), function (err, conn) {
+        oThis.tryingConnection[rmqId] = 1;
 
-            delete oThis.tryingConnection[rmqId];
+        amqp.connect(rabbitmqConstants.connectionString(), function (err, conn) {
 
-            if (err || !conn) {
-              oThis.connections[rmqId] = null;
-              console.log("Error is : " + err);
-              connectionAttempts++;
-              console.log("Trying connect after ", (retryConnectionAfter * connectionAttempts));
-              setTimeout(
-                function () {
-                  if (connectionAttempts >= rabbitmqConstants.maxConnectionAttempts) {
-                    console.log("Maximum retry connects failed");
-                    // Notify about multiple rabbitmq connections failure.
-                    return onResolve(null);
-                  } else {
-                    connectRmqInstance();
-                  }
-                }, (retryConnectionAfter * connectionAttempts));
-            } else {
-              conn.on("error", function (err) {
-                console.error("[AMQP] conn error", err.message);
+          delete oThis.tryingConnection[rmqId];
 
-                if (err.message !== "Connection closing") {
-                  console.error("[AMQP] conn error in closing");
+          if (err || !conn) {
+            oThis.connections[rmqId] = null;
+            console.log("Error is : " + err);
+            connectionAttempts++;
+            console.log("Trying connect after ", (retryConnectionAfter * connectionAttempts));
+            setTimeout(
+              function () {
+                if (connectionAttempts >= rabbitmqConstants.maxConnectionAttempts) {
+                  console.log("Maximum retry connects failed");
+                  // Notify about multiple rabbitmq connections failure.
+                  return onResolve(null);
+                } else {
+                  connectRmqInstance();
                 }
-                delete oThis.connections[rmqId];
-                return setTimeout(connectRmqInstance, retryConnectionAfter);
-              });
-              conn.on("close", function (c_msg) {
-                console.log("[AMQP] reconnecting", c_msg);
-                delete oThis.connections[rmqId];
-                return setTimeout(connectRmqInstance, retryConnectionAfter);
-              });
+              }, (retryConnectionAfter * connectionAttempts));
+          } else {
+            conn.on("error", function (err) {
+              console.error("[AMQP] conn error", err.message);
 
-              console.log("RMQ Connection Established..");
-              oThis.connections[rmqId] = conn;
-              // read file and publish pending messages.
-              return onResolve(conn);
-            }
-          });
-        }
-      });
-    };
+              if (err.message !== "Connection closing") {
+                console.error("[AMQP] conn error in closing");
+              }
+              delete oThis.connections[rmqId];
+              localEvents.emitObj.emit('rmq_fail', c_msg);
+              connectRmqInstance();
+            });
+            conn.on("close", function (c_msg) {
 
-    return connectRmqInstance();
+              console.log("[AMQP] reconnecting", c_msg);
+              delete oThis.connections[rmqId];
+              localEvents.emitObj.emit('rmq_fail', c_msg);
+              connectRmqInstance();
+            });
+
+            console.log("RMQ Connection Established..");
+            oThis.connections[rmqId] = conn;
+            // read file and publish pending messages.
+            return onResolve(conn);
+          }
+        });
+      };
+
+      if(oThis.connections[rmqId]){
+        return onResolve(oThis.connections[rmqId]);
+      } else if(oThis.tryingConnection[rmqId]) {
+        console.log("Re Trying connect after 2000");
+        setTimeout( function(){
+          if(oThis.connections[rmqId]){
+            console.log("Connection found.....");
+            return onResolve(oThis.connections[rmqId]);
+          } else {
+            connectRmqInstance();
+          }
+        }, 2000);
+      } else if (connectionAttempts >= rabbitmqConstants.maxConnectionAttempts) {
+        console.log("Maximum retry connects failed");
+        // Notify about multiple rabbitmq connections failure.
+        return onResolve(null);
+      } else {
+        connectRmqInstance();
+      }
+    });
 
   }
 
