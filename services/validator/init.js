@@ -5,28 +5,37 @@
  *
  * @module services/validator/init
  */
+
 const rootPrefix = '../..'
   , responseHelper = require(rootPrefix + '/lib/formatter/response')
   , eventParams = require(rootPrefix + '/services/validator/event_params')
   , util = require(rootPrefix + '/lib/util')
 ;
 
-const baseValidator = {
+/**
+ * Validate event parameters constructor
+ *
+ * @constructor
+ */
+const InitKlass = function() {};
 
+InitKlass.prototype = {
   /**
-   * performer
+   * Perform detailed validation for specific event params
    *
-   * @param {object} params - topics {Array} - on which topic messages
-   *                          message {object} - kind {string} - kind of the message
-   *                                           - payload {object} - Payload to identify message and extra info.
+   * @param {object} params - event parameters
+   *  * {array} topics - on which topic messages
+   *  * {object} message -
+   *    ** {string} kind - kind of the message
+   *    ** {object} payload - Payload to identify message and extra info.
    *
-   * @return {Promise<Result>}
+   * @return {promise<result>}
    */
-  perform: async function (params) {
+  detailed: async function (params) {
 
     var oThis = this;
 
-    var r = oThis.basicParams(params);
+    var r = oThis.light(params);
 
     if( r.isFailure() ) { return Promise.resolve(r); }
 
@@ -43,22 +52,24 @@ const baseValidator = {
   },
 
   /**
-   * Validate outer(basic) parameters.
+   * Perform basic validation for specific event params
    *
-   * @param {object} params - topics {Array} - on which topic messages
-   *                          message {object} - kind {string} - kind of the message
-   *                                           - payload {object} - Payload to identify message and extra info.
+   * @param {object} params - event parameters
+   *  * {array} topics - on which topic messages
+   *  * {object} message -
+   *    ** {string} kind - kind of the message
+   *    ** {object} payload - Payload to identify message and extra info.
    *
-   * @return {Promise<Result>}
+   * @return {promise<result>}
    */
-  basicParams: function (params) {
+  light: function (params) {
 
     var validatedParams = {};
 
     if(!util.valPresent(params) || !util.valPresent(params['message']) ||
       !util.valPresent(params['topics']) || params['topics'].length == 0
     ){
-      return Promise.resolve(responseHelper.error('ost_q_m_s_v_i_1', 'invalid parameters'));
+      return Promise.resolve(responseHelper.error('s_v_i_1', 'invalid parameters'));
     }
 
     validatedParams['topics'] = params['topics'];
@@ -68,7 +79,7 @@ const baseValidator = {
     const message = params['message'];
 
     if(!util.valPresent(message) || !util.valPresent(message['kind']) || !util.valPresent(message['payload'])){
-      return Promise.resolve(responseHelper.error('ost_q_m_s_v_i_2', 'invalid parameters'));
+      return Promise.resolve(responseHelper.error('s_v_i_2', 'invalid parameters'));
     }
 
     if(message['kind'] == 'event_received'){
@@ -77,7 +88,7 @@ const baseValidator = {
         !util.valPresent(message['payload']['params']) ||
         !util.valPresent(message['payload']['contract_address'])
       ){
-        return Promise.resolve(responseHelper.error('ost_q_m_s_v_i_3', 'invalid payload for kind event_received'));
+        return Promise.resolve(responseHelper.error('s_v_i_3', 'invalid payload for kind event_received'));
       }
 
     } else if(message['kind'] == 'transaction_initiated'){
@@ -89,19 +100,19 @@ const baseValidator = {
         !util.valPresent(message['payload']['transaction_hash']) ||
         !util.valPresent(message['payload']['uuid'])
       ){
-        return Promise.resolve(responseHelper.error('ost_q_m_s_v_i_4', 'invalid payload for kind transaction_initiated'));
+        return Promise.resolve(responseHelper.error('s_v_i_4', 'invalid payload for kind transaction_initiated'));
       }
 
     } else if(message['kind'] == 'transaction_mined'){
 
       if(!util.valPresent(message['payload']['transaction_hash'])){
-        return Promise.resolve(responseHelper.error('ost_q_m_s_v_i_5', 'invalid payload for kind transaction_mined'));
+        return Promise.resolve(responseHelper.error('s_v_i_5', 'invalid payload for kind transaction_mined'));
       }
 
     } else if(message['kind'] != 'error' && message['kind'] != 'info'){
 
       return Promise.resolve(responseHelper.error(
-        'ost_q_m_s_v_i_6',
+        's_v_i_6',
         'unsupported kind ('+message['kind']+') transfered. supported are event_received,transaction_initiated,transaction_mined')
       );
 
@@ -115,4 +126,4 @@ const baseValidator = {
 
 };
 
-module.exports = baseValidator;
+module.exports = new InitKlass();

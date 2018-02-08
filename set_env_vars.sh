@@ -1,8 +1,0 @@
-export OST_RMQ_SUPPORT='1'
-export OST_RMQ_HOST='172.16.0.106'
-export OST_RMQ_PORT='5672'
-export OST_RMQ_MONITOR_PORT='15672'
-export OST_RMQ_USERNAME='alpesh'
-export OST_RMQ_PASSWORD='alpesh123'
-export OST_RMQ_HEARTBEATS='30'
-export OST_RMQ_PRIMARY_EXCHANGE='primaryExchange'

@@ -8,22 +8,22 @@
 
 const rootPrefix = '..'
   , amqp = require('amqplib/callback_api')
-  , rabbitmqConstants = require(rootPrefix + '/lib/rabbitmq')
+  , rabbitmqConstants = require(rootPrefix + '/lib/helper/rabbitmq')
   , coreConstants = require(rootPrefix + '/config/core_constants')
   , localEvents = require(rootPrefix + '/services/local_emitter')
 ;
 
 /**
- * constructor of the rabbitmqConnection
+ * constructor of the RabbitmqConnectionKlass
  *
  * @constructor
  */
-const rabbitmqConnection = function () {
+const RabbitmqConnectionKlass = function () {
   this.connections = {};
   this.tryingConnection = {};
 };
 
-rabbitmqConnection.prototype = {
+RabbitmqConnectionKlass.prototype = {
 
   /**
    *
@@ -33,7 +33,7 @@ rabbitmqConnection.prototype = {
    * @param {string} rmqid - id of rabbitmq to get connection
    * @param {boolean} asyncCall - set connection mode in case connection is not available
    *
-   * @return {Promise<connection object>}
+   * @return {promise<connectionObject>}
    *
    */
   get: async function (rmqId, asyncCall) {
@@ -66,7 +66,7 @@ rabbitmqConnection.prototype = {
    *
    * @param {string} rmqId - name of the rabbitmq for which connection is to be established.
    *
-   * @returns {Promise<>}
+   * @returns {promise<connectionObject>}
    *
    */
   set: function (rmqId) {
@@ -157,4 +157,4 @@ rabbitmqConnection.prototype = {
 
 };
 
-module.exports = new rabbitmqConnection;
+module.exports = new RabbitmqConnectionKlass();

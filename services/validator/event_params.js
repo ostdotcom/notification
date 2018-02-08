@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * Validate events parameter
+ * Validate event parameters
  *
  * @module services/validator/event_params
  */
@@ -10,12 +10,21 @@ const rootPrefix = '../..'
   , util = require(rootPrefix + '/lib/util')
 ;
 
-const eventParams = {
+/**
+ * Validate event parameters constructor
+ *
+ * @constructor
+ */
+const EventParamsKlass = function() {};
+
+EventParamsKlass.prototype = {
 
   /**
+   * Validate confirm staking intent event
    *
-   * @param params
-   * @return {Promise<result>}
+   * @param {object} params - event parameters
+   *
+   * @return {promise<result>}
    */
   validateStakingIntent: function (params) {
 
@@ -24,7 +33,7 @@ const eventParams = {
       !util.valPresent(params['_amountST']) || !util.valPresent(params['_amountUT']) ||
       !util.valPresent(params['expirationHeight']))
     {
-      return Promise.resolve(responseHelper.error('ost_q_m_s_v_ep_1', 'invalid parameters'));
+      return Promise.resolve(responseHelper.error('s_v_ep_1', 'invalid parameters'));
     }
 
     return Promise.resolve(responseHelper.successWithData({}))
@@ -33,4 +42,4 @@ const eventParams = {
 
 };
 
-module.exports = eventParams;
+module.exports = new EventParamsKlass();

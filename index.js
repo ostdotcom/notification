@@ -1,18 +1,18 @@
-/**
- * Index File for openst-cache
- */
-
 "use strict";
+
+/**
+ * Load OpenST Notification module
+ */
 
 const rootPrefix = "."
   , version = require(rootPrefix + '/package.json').version
   , publish_event = require(rootPrefix + '/services/publish_event')
   , subscribe_event = require(rootPrefix + '/services/subscribe_event')
   , rabbitmqConnection = require(rootPrefix + '/services/rabbitmqConnection')
-  , rmqId = 'rmq1'
+  , rmqId = 'rmq1' // To support horizontal scaling in future
 ;
 
-const OpenSTQueueManagement = function () {
+const OpenSTNotification = function () {
   const oThis = this;
 
   oThis.connection = rabbitmqConnection;
@@ -25,5 +25,5 @@ const OpenSTQueueManagement = function () {
 
 };
 
-module.exports = new OpenSTQueueManagement();
+module.exports = new OpenSTNotification();
 

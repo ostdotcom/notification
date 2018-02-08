@@ -1,6 +1,6 @@
 "use strict";
 /**
- * Publish event to Rabbitmq.
+ * Publish event to RabbitMQ.
  *
  * @module services/publish_event
  *
@@ -13,22 +13,33 @@ const rootPrefix = '..'
   , localEmitter = require(rootPrefix + '/services/local_emitter')
   , validator = require(rootPrefix + '/services/validator/init')
   , coreConstants = require(rootPrefix + '/config/core_constants')
-  , rmqId = 'rmq1'
+  , rmqId = 'rmq1' // To support horizontal scaling in future
 ;
 
-const publishEvent = {
+/**
+ * Constructor to publish RMQ event
+ *
+ * @constructor
+ */
+const PublishEventKlass = function () {
+};
+
+PublishEventKlass.prototype = {
 
   /**
    * Publish to rabbitmq and local emitter also.
    *
-   * @param {object} params - topics {Array} - on which topic messages
-   *                          message {object} - kind {string} - kind of the message
-   *                                           - payload {object} - Payload to identify message and extra info.
+   * @param {object} params - event parameters
+   *  * {array} topics - on which topic messages
+   *  * {object} message -
+   *    ** {string} kind - kind of the message
+   *    ** {object} payload - Payload to identify message and extra info.
    *
+   * @return {promise<result>}
    */
   perform: async function(params) {
 
-    const r = await validator.basicParams(params);
+    const r = await validator.light(params);
 
     if(r.isFailure()){
       return Promise.resolve(r);
@@ -72,4 +83,4 @@ const publishEvent = {
 
 };
 
-module.exports = publishEvent;
+module.exports = new PublishEventKlass();

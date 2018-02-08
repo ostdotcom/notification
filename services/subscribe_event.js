@@ -4,7 +4,7 @@
  * Listening to Rabbitmq channels to receive published message.
  * Note: published messages are not preserved, they will be published and discarded immediately.
  *
- * @module services/publish_event
+ * @module services/subscribe_event
  *
  */
 
@@ -12,11 +12,18 @@ const rootPrefix = '..'
   , rabbitmqConnection = require(rootPrefix + '/services/rabbitmqConnection')
   , localEmitter = require(rootPrefix + '/services/local_emitter')
   , coreConstants = require(rootPrefix + '/config/core_constants')
-  , rmqId = 'rmq1'
+  , rmqId = 'rmq1' // To support horizontal scaling in future
 ;
 
-const subscribeEvent = {
+/**
+ * Constructor to subscribe RMQ event
+ *
+ * @constructor
+ */
+const SubscribeEventKlass = function () {
+};
 
+SubscribeEventKlass.prototype = {
   /**
    * Subscribe rabbitmq topics to receive messages.
    *
@@ -39,7 +46,7 @@ const subscribeEvent = {
     const conn = await rabbitmqConnection.get(rmqId);
 
     if(!conn){
-      console.log(' Not able to establish rabbitmq connection for now. Please try after sometime.');
+      console.log('Not able to establish rabbitmq connection for now. Please try after sometime.');
       return false;
     } else {
       console.log('Retrieved connection..........');
@@ -90,4 +97,4 @@ const subscribeEvent = {
 
 };
 
-module.exports = subscribeEvent;
+module.exports = new SubscribeEventKlass();
