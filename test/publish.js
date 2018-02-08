@@ -43,9 +43,9 @@ describe('publish to rabbitmq', async function() {
     assert.equal(response.isSuccess(), false);
   });
 
-  it('should fail when params dont have topic', async function() {
+  it('should fail when params dont have topics', async function() {
     var params = getParams();
-    delete params['topic'];
+    delete params['topics'];
 
     var response = await publishEvent.perform(params);
 
