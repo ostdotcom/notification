@@ -5,6 +5,7 @@ branches:
   only:
   - master
   - develop
+  - release-0.9
 notifications:
   email:
     recipients:
@@ -15,12 +16,17 @@ node_js:
   - "9"
   - "8"
   - "7"
+services:
+  - rabbitmq
 before_install:
   - sudo apt-get update
   - sudo apt-get install nodejs
   - sudo apt-get install npm
 install:
   - npm install
+  - npm install -g mocha
 before_script:
 script:
+  - source test/env_vars.sh
+  - mocha test --exit
 after_script:
