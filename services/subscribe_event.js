@@ -1,5 +1,13 @@
 "use strict";
 
+/**
+ * Listening to Rabbitmq channels to receive published message.
+ * Note: published messages are not preserved, they will be published and discarded immediately.
+ *
+ * @module services/publish_event
+ *
+ */
+
 const rootPrefix = '..'
   , rabbitmqConnection = require(rootPrefix + '/services/rabbitmqConnection')
   , localEmitter = require(rootPrefix + '/services/local_emitter')
@@ -9,6 +17,13 @@ const rootPrefix = '..'
 
 const subscribeEvent = {
 
+  /**
+   * Subscribe rabbitmq topics to receive messages.
+   *
+   * @param {array} topics - list of topics to receive messages.
+   * @param {function} callback - function to run on message arrived on the channel.
+   *
+   */
   rabbit: async function (topics, callback) {
 
     if(!coreConstants.RMQ_SUPPORT){
@@ -50,6 +65,14 @@ const subscribeEvent = {
 
   },
 
+  /**
+   * Subscribe local emitters by topics to receive messages.
+   * Note: messages could be received only on the same object(thus, same process) where the message was emitted.
+   *
+   * @param {array} topics - list of topics to receive messages.
+   * @param {function} callback - function to run on message arrived on the channel.
+   *
+   */
   local: function(topics, callback) {
 
     if (topics.length == 0) {

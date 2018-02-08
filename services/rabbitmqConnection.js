@@ -1,11 +1,22 @@
 "use strict";
 
+/**
+ * Singleton class to manage and establish rabbitmq connection
+ *
+ * @module services/rabbitmqConnection
+ */
+
 const rootPrefix = '..'
   , amqp = require('amqplib/callback_api')
   , rabbitmqConstants = require(rootPrefix + '/lib/rabbitmq')
   , coreConstants = require(rootPrefix + '/config/core_constants')
 ;
 
+/**
+ * constructor of the rabbitmqConnection
+ *
+ * @constructor
+ */
 const rabbitmqConnection = function () {
   this.connections = {};
   this.tryingConnection = {};
@@ -13,8 +24,17 @@ const rabbitmqConnection = function () {
 
 rabbitmqConnection.prototype = {
 
-  constructor: rabbitmqConnection,
-
+  /**
+   *
+   * Get the established connection and return. If connection is not present set new connection in required mode.
+   * Note: For publish set connection async and return, otherwise wait for the connection.
+   *
+   * @param {string} rmqid - id of rabbitmq to get connection
+   * @param {boolean} asyncCall - set connection mode in case connection is not available
+   *
+   * @return {Promise<connection object>}
+   *
+   */
   get: async function (rmqId, asyncCall) {
 
     var oThis = this;
@@ -39,6 +59,15 @@ rabbitmqConnection.prototype = {
 
   },
 
+  /**
+   * Establishing new connection to rabbitmq.
+   * Making sure that multiple instances are not trying to make multiple connections at a time
+   *
+   * @param {string} rmqId - name of the rabbitmq for which connection is to be established.
+   *
+   * @returns {Promise<>}
+   *
+   */
   set: function (rmqId) {
 
     var oThis = this
@@ -47,7 +76,7 @@ rabbitmqConnection.prototype = {
     ;
 
     if(!coreConstants.RMQ_SUPPORT){
-      return onResolve(null);
+      return Promise.resolve(null);
     }
 
     var connectRmqInstance = function () {

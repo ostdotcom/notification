@@ -1,5 +1,10 @@
 "use strict";
 
+/**
+ * Validator service to be called to validate received message to subscriber.
+ *
+ * @module services/validator/init
+ */
 const rootPrefix = '../..'
   , responseHelper = require(rootPrefix + '/lib/formatter/response')
   , eventParams = require(rootPrefix + '/services/validator/event_params')
@@ -8,7 +13,16 @@ const rootPrefix = '../..'
 
 const baseValidator = {
 
-  perform: function (params) {
+  /**
+   * performer
+   *
+   * @param {object} params - topics {Array} - on which topic messages
+   *                          message {object} - kind {string} - kind of the message
+   *                                           - payload {object} - Payload to identify message and extra info.
+   *
+   * @return {Promise<Result>}
+   */
+  perform: async function (params) {
 
     var oThis = this;
 
@@ -20,12 +34,23 @@ const baseValidator = {
 
     if(message['kind'] == 'event_received') {
       if (message['payload']['event_name'] == 'StakingIntentConfirmed') {
-        r = eventParams.validateStakingIntent(message['payload']['params']);
+        r = await eventParams.validateStakingIntent(message['payload']['params']);
         if( r.isFailure() ) { return Promise.resolve(r); }
       }
     }
+
+    return Promise.resolve(responseHelper.successWithData({}))
   },
 
+  /**
+   * Validate outer(basic) parameters.
+   *
+   * @param {object} params - topics {Array} - on which topic messages
+   *                          message {object} - kind {string} - kind of the message
+   *                                           - payload {object} - Payload to identify message and extra info.
+   *
+   * @return {Promise<Result>}
+   */
   basicParams: function (params) {
 
     var validatedParams = {};
@@ -40,7 +65,7 @@ const baseValidator = {
 
     validatedParams['message'] = {};
 
-    var message = params['message'];
+    const message = params['message'];
 
     if(!util.valPresent(message) || !util.valPresent(message['kind']) || !util.valPresent(message['payload'])){
       return Promise.resolve(responseHelper.error('ost_q_m_s_v_i_2', 'invalid parameters'));

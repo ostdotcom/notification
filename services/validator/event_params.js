@@ -1,5 +1,10 @@
 "use strict";
 
+/**
+ * Validate events parameter
+ *
+ * @module services/validator/event_params
+ */
 const rootPrefix = '../..'
   , responseHelper = require(rootPrefix + '/lib/formatter/response')
   , util = require(rootPrefix + '/lib/util')
@@ -7,6 +12,11 @@ const rootPrefix = '../..'
 
 const eventParams = {
 
+  /**
+   *
+   * @param params
+   * @return {Promise<result>}
+   */
   validateStakingIntent: function (params) {
 
     if(!util.valPresent(params['_uuid']) || !util.valPresent(params['stakingIntentHash']) ||
@@ -16,6 +26,8 @@ const eventParams = {
     {
       return Promise.resolve(responseHelper.error('ost_q_m_s_v_ep_1', 'invalid parameters'));
     }
+
+    return Promise.resolve(responseHelper.successWithData({}))
 
   }
 

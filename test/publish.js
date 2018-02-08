@@ -9,7 +9,7 @@ const rootPrefix = ".."
 
 const getParams = function () {
   return {
-    topic:"events.transfer",
+    topics:["events.transfer"],
     message: {
       kind: "event_received",
       payload: {

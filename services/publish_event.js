@@ -1,4 +1,10 @@
 "use strict";
+/**
+ * Publish event to Rabbitmq.
+ *
+ * @module services/publish_event
+ *
+ */
 
 const rootPrefix = '..'
   , rabbitmqConnection = require(rootPrefix + '/services/rabbitmqConnection')
@@ -12,6 +18,14 @@ const rootPrefix = '..'
 
 const publishEvent = {
 
+  /**
+   * Publish to rabbitmq and local emitter also.
+   *
+   * @param {object} params - topics {Array} - on which topic messages
+   *                          message {object} - kind {string} - kind of the message
+   *                                           - payload {object} - Payload to identify message and extra info.
+   *
+   */
   perform: async function(params) {
 
     const r = await validator.basicParams(params);
