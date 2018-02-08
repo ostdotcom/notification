@@ -23,13 +23,6 @@ const getParams = function () {
 
 describe('publish to rabbitmq', async function() {
 
-  it('should return promiseeeeeeeeeeeeeeeeeeee..........', function() {
-    var params = getParams()
-      , response = await publishEvent.perform(params);
-
-    assert.typeOf(response, 'Promise');
-  });
-
   it('should return promise', function() {
     var params = getParams()
       , response = publishEvent.perform(params);

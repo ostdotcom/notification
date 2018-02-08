@@ -12,5 +12,9 @@
     "amqplib": "^0.5.2",
     "chai": "^4.1.2",
     "mocha": "^5.0.0"
+  },
+  "devDependencies": {
+    "eslint": "4.8.0",
+    "jsdoc": "~3.5.5"
   }
 }
