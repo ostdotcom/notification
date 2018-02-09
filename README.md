@@ -29,6 +29,14 @@ export OST_RMQ_HEARTBEATS='30'
 
 # Examples:
 
+
+#### Subscribe to OpenST Notifications:
+```js
+const openSTNotification = require('@openstfoundation/openst-notification');
+```
+
+
+
 For further implementation details, please refer [API documentation][api-docs].
 
 [gitter]: https://gitter.im/OpenSTFoundation/SimpleToken

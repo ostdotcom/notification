@@ -43,17 +43,11 @@ RabbitmqConnectionKlass.prototype = {
     if(coreConstants.OST_RMQ_SUPPORT != 1){
       return Promise.resolve(null);
     } else if(oThis.connections[rmqId]){
-      console.log("connection found for => ", rmqId);
+      //console.log("connection found for => ", rmqId);
     } else if(asyncCall) {
-      console.log("Setting connection async..");
       oThis.set(rmqId);
     } else {
-      console.log("Setting connection..");
       await oThis.set(rmqId);
-    }
-
-    if(oThis.connections[rmqId]){
-      console.log("connection is ready ");
     }
 
     return Promise.resolve(oThis.connections[rmqId]);
@@ -94,7 +88,7 @@ RabbitmqConnectionKlass.prototype = {
             oThis.connections[rmqId] = null;
             console.log("Error is : " + err);
             connectionAttempts++;
-            console.log("Trying connect after ", (retryConnectionAfter * connectionAttempts));
+            //console.log("Trying connect after ", (retryConnectionAfter * connectionAttempts));
             setTimeout(
               function () {
                 if (connectionAttempts >= rabbitmqConstants.maxConnectionAttempts) {
@@ -113,7 +107,7 @@ RabbitmqConnectionKlass.prototype = {
                 console.error("[AMQP] conn error in closing");
               }
               delete oThis.connections[rmqId];
-              localEvents.emitObj.emit('rmq_fail', c_msg);
+              localEvents.emitObj.emit('rmq_fail', err);
               connectRmqInstance();
             });
             conn.on("close", function (c_msg) {

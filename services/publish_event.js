@@ -42,6 +42,7 @@ PublishEventKlass.prototype = {
     const r = await validator.light(params);
 
     if(r.isFailure()){
+      console.log(r);
       return Promise.resolve(r);
     }
 
@@ -61,7 +62,6 @@ PublishEventKlass.prototype = {
           ch.assertExchange(ex, 'topic', {durable: true});
           topics.forEach(function(key) {
             ch.publish(ex, key, new Buffer(msgString));
-            console.log(" [x] Sent %s:'%s'", key, msgString);
           });
 
           ch.close();

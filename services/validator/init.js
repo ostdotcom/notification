@@ -86,7 +86,8 @@ InitKlass.prototype = {
 
       if(!util.valPresent(message['payload']['event_name']) ||
         !util.valPresent(message['payload']['params']) ||
-        !util.valPresent(message['payload']['contract_address'])
+        !util.valPresent(message['payload']['contract_address']) ||
+        !util.valPresent(message['payload']['chain_id'])
       ){
         return Promise.resolve(responseHelper.error('s_v_i_3', 'invalid payload for kind event_received'));
       }
@@ -98,18 +99,30 @@ InitKlass.prototype = {
         !util.valPresent(message['payload']['method']) ||
         !util.valPresent(message['payload']['params']) ||
         !util.valPresent(message['payload']['transaction_hash']) ||
-        !util.valPresent(message['payload']['uuid'])
+        !util.valPresent(message['payload']['uuid']) ||
+        !util.valPresent(message['payload']['chain_id'])
       ){
         return Promise.resolve(responseHelper.error('s_v_i_4', 'invalid payload for kind transaction_initiated'));
       }
 
     } else if(message['kind'] == 'transaction_mined'){
 
-      if(!util.valPresent(message['payload']['transaction_hash'])){
+      if(
+        !util.valPresent(message['payload']['transaction_hash']) ||
+        !util.valPresent(message['payload']['chain_id'])
+      ){
         return Promise.resolve(responseHelper.error('s_v_i_5', 'invalid payload for kind transaction_mined'));
       }
 
-    } else if(message['kind'] != 'error' && message['kind'] != 'info'){
+    } else if(message['kind'] == 'error' || message['kind'] == 'info') {
+
+      if(
+        !util.valPresent(message['payload']['chain_id'])
+      ){
+        return Promise.resolve(responseHelper.error('s_v_i_7', 'invalid payload for kind error or info'));
+      }
+
+    } else {
 
       return Promise.resolve(responseHelper.error(
         's_v_i_6',

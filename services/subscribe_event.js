@@ -12,6 +12,7 @@ const rootPrefix = '..'
   , rabbitmqConnection = require(rootPrefix + '/services/rabbitmqConnection')
   , localEmitter = require(rootPrefix + '/services/local_emitter')
   , coreConstants = require(rootPrefix + '/config/core_constants')
+  , rabbitmqHelper = require(rootPrefix + '/lib/helper/rabbitmq')
   , rmqId = 'rmq1' // To support horizontal scaling in future
 ;
 
@@ -31,7 +32,7 @@ SubscribeEventKlass.prototype = {
    * @param {function} callback - function to run on message arrived on the channel.
    *
    */
-  rabbit: async function (topics, callback) {
+  rabbit: async function (queueIdentifier, topics, readCallback) {
 
     if(coreConstants.OST_RMQ_SUPPORT != 1){
       console.log("No RMQ support");
@@ -57,7 +58,7 @@ SubscribeEventKlass.prototype = {
 
       ch.assertExchange(ex, 'topic', {durable: true});
 
-      ch.assertQueue('', {exclusive: true}, function(err, q) {
+      const assertQueueCallback = function(err, q) {
         console.log(' [*] Waiting for logs. To exit press CTRL+C', q.queue);
 
         topics.forEach(function(key) {
@@ -66,10 +67,28 @@ SubscribeEventKlass.prototype = {
 
         ch.consume(q.queue, function(msg) {
           const msgContent = msg.content.toString();
-          callback(msgContent);
+          readCallback(msgContent);
 
         }, {noAck: true});
-      });
+      };
+
+      if(queueIdentifier){
+        ch.assertQueue(queueIdentifier+'_testQ',
+          {
+            autoDelete:false,
+            durable:false,
+            arguments:
+              {
+                "x-expires":rabbitmqHelper.dedicatedQueueTtl,
+                "x-message-ttl":rabbitmqConnection.dedicatedQueueMsgTtl
+              }
+          },
+          assertQueueCallback);
+
+      } else {
+        ch.assertQueue('', {exclusive: true}, assertQueueCallback);
+      }
+
     });
 
   },
@@ -82,7 +101,7 @@ SubscribeEventKlass.prototype = {
    * @param {function} callback - function to run on message arrived on the channel.
    *
    */
-  local: function(topics, callback) {
+  local: function(topics, readCallback) {
 
     if (topics.length == 0) {
       console.log("invalid parameters.");
@@ -90,7 +109,7 @@ SubscribeEventKlass.prototype = {
     }
 
     topics.forEach(function(key) {
-      localEmitter.emitObj.on(key, callback);
+      localEmitter.emitObj.on(key, readCallback);
     });
 
   }
