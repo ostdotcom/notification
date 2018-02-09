@@ -37,20 +37,13 @@ export OST_RMQ_HEARTBEATS='30'
 - Last parameter is a callback function, that will receive published message content, use it your way. 
 ```js
 const openSTNotification = require('@openstfoundation/openst-notification');
+openSTNotification.subscribeEvent.rabbit('muQueue', ["event.ProposedBrandedToken"], function(msgContent){console.log('Consumed message -> ', msgContent)})
 
-function subscribe(){
-	openSTNotification.subscribeEvent.rabbit('muQueue', ["event.ProposedBrandedToken"], function(msgContent){console.log('Consumed message -> ', msgContent)})
-}
-subscribe();
 ```
 In case, if you want to listen multiple channels at a time, the second parameter will take array of those.
 ```js
 const openSTNotification = require('@openstfoundation/openst-notification');
-
-function subscribe(){
-	openSTNotification.subscribeEvent.rabbit('muQueue', ["event.ProposedBrandedToken", "obBoarding.registerBrandedToken"], function(msgContent){console.log('Consumed message -> ', msgContent)})
-}
-subscribe();
+openSTNotification.subscribeEvent.rabbit('muQueue', ["event.ProposedBrandedToken", "obBoarding.registerBrandedToken"], function(msgContent){console.log('Consumed message -> ', msgContent)})
 ```
 
 In case, of rabbitmq connection server failure the event 'rmq_fail' is emitted, you can resubscribe, as the subscription channels are broken on connection failure.  
