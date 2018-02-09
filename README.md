@@ -31,7 +31,7 @@ export OST_RMQ_HEARTBEATS='30'
 
 
 #### Subscribe to OpenST Notifications:
-- Basic example how to connect to openst notifications and start listening specific event. The first parameter is the name of Queue that will pass messages to the subscriber. 
+- Below is the basic example how to connect openst notifications and start listening specific event. The first parameter is the name of Queue that will pass messages to the subscriber. 
 - Its recommended to pass uniq queuename that doesn't conflict with someone else's queue name.
 - If you don't pass queue name, the message would be published and discarded immediately, regardless of any subscriber listening. In case of connection failure, its possible to loss messages. 
 - Last parameter is a callback function, that will receive published message content, use it your way. 
