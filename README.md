@@ -31,11 +31,63 @@ export OST_RMQ_HEARTBEATS='30'
 
 
 #### Subscribe to OpenST Notifications:
+- Basic example how to connect to openst notifications and start listening specific event. The first parameter is the name of Queue that will pass messages to the subscriber. 
+- Its recommended to pass uniq queuename that doesn't conflict with someone else's queue name.
+- If you don't pass queue name, the message would be published and discarded immediately, regardless of any subscriber listening. In case of connection failure, its possible to loss messages. 
+- Last parameter is a callback function, that will receive published message content, use it your way. 
 ```js
 const openSTNotification = require('@openstfoundation/openst-notification');
+
+function subscribe(){
+	openSTNotification.subscribeEvent.rabbit('muQueue', ["event.ProposedBrandedToken"], function(msgContent){console.log('Consumed message -> ', msgContent)})
+}
+subscribe();
+```
+In case, if you want to listen multiple channels at a time, the second parameter will take array of those.
+```js
+const openSTNotification = require('@openstfoundation/openst-notification');
+
+function subscribe(){
+	openSTNotification.subscribeEvent.rabbit('muQueue', ["event.ProposedBrandedToken", "obBoarding.registerBrandedToken"], function(msgContent){console.log('Consumed message -> ', msgContent)})
+}
+subscribe();
 ```
 
+In case, of rabbitmq connection server failure the event 'rmq_fail' is emitted, you can resubscribe, as the subscription channels are broken on connection failure.  
+```js
+const openSTNotification = require('@openstfoundation/openst-notification');
 
+function subscribe(){
+	openSTNotification.subscribeEvent.rabbit('muQueue', ["event.ProposedBrandedToken", "obBoarding.registerBrandedToken"], function(msgContent){console.log('Consumed message -> ', msgContent)})
+}
+subscribe();
+ind.subscribeEvent.local(['rmq_fail'], function(err){
+	console.log('RMQ Failed event received.');
+	setTimeout(subscribe, 2000);
+})
+```
+
+#### Publish to OpenST Notifications:
+
+```js
+const openSTNotification = require('@openstfoundation/openst-notification');
+openSTNotification.publishEvent.perform(
+  {
+    topics:["event.ProposedBrandedToken"], 
+    message: {
+	  kind: "event_received",
+	  payload: {
+		event_name: 'ProposedBrandedToken',
+		params: {
+		  //params of the event
+		},
+        contract_address: 'contract address',
+        chain_id: 'Chain id',
+        chain_kind: 'kind of the chain'
+	  }
+	}
+  })	
+```
 
 For further implementation details, please refer [API documentation][api-docs].
 
