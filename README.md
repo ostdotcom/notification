@@ -38,8 +38,8 @@ export OST_RMQ_HEARTBEATS='30'
 ```js
 const openSTNotification = require('@openstfoundation/openst-notification');
 openSTNotification.subscribeEvent.rabbit('muQueue', ["event.ProposedBrandedToken"], function(msgContent){console.log('Consumed message -> ', msgContent)})
-
 ```
+
 In case, if you want to listen multiple channels at a time, the second parameter will take array of those.
 ```js
 const openSTNotification = require('@openstfoundation/openst-notification');
@@ -60,7 +60,18 @@ ind.subscribeEvent.local(['rmq_fail'], function(err){
 })
 ```
 
+
+#### Subscribe to OpenST local events:
+If you don't wan't to listen to rabbitmq, you can also opt to listen local events.
+Note: you could receive local events only in same process.
+```js
+const openSTNotification = require('@openstfoundation/openst-notification');
+openSTNotification.subscribeEvent.local(["event.ProposedBrandedToken"], function(msgContent){console.log('Consumed message -> ', msgContent)})
+```
+
+
 #### Publish to OpenST Notifications:
+- While publish to rabbitmq openst notification would also emit same event on local channel.
 
 ```js
 const openSTNotification = require('@openstfoundation/openst-notification');
