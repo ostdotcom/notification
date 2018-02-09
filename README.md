@@ -40,13 +40,13 @@ const openSTNotification = require('@openstfoundation/openst-notification');
 openSTNotification.subscribeEvent.rabbit('muQueue', ["event.ProposedBrandedToken"], function(msgContent){console.log('Consumed message -> ', msgContent)})
 ```
 
-In case, if you want to listen multiple channels at a time, the second parameter will take array of those.
+- In case, if you want to listen multiple channels at a time, the second parameter will take array of those.
 ```js
 const openSTNotification = require('@openstfoundation/openst-notification');
 openSTNotification.subscribeEvent.rabbit('muQueue', ["event.ProposedBrandedToken", "obBoarding.registerBrandedToken"], function(msgContent){console.log('Consumed message -> ', msgContent)})
 ```
 
-In case, of rabbitmq connection server failure the event 'rmq_fail' is emitted, you can resubscribe, as the subscription channels are broken on connection failure.  
+- In case, of rabbitmq connection server failure the event 'rmq_fail' is emitted, you can resubscribe, as the subscription channels are broken on connection failure.  
 ```js
 const openSTNotification = require('@openstfoundation/openst-notification');
 
@@ -62,8 +62,8 @@ ind.subscribeEvent.local(['rmq_fail'], function(err){
 
 
 #### Subscribe to OpenST local events:
-If you don't wan't to listen to rabbitmq, you can also opt to listen local events.
-Note: you could receive local events only in same process.
+- If you don't wan't to listen to rabbitmq, you can also opt to listen local events.
+- Note: you could receive local events only in same process.
 ```js
 const openSTNotification = require('@openstfoundation/openst-notification');
 openSTNotification.subscribeEvent.local(["event.ProposedBrandedToken"], function(msgContent){console.log('Consumed message -> ', msgContent)})
