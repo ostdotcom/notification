@@ -7,7 +7,7 @@
  */
 
 const rootPrefix = '..'
-  , rabbitmqConnection = require(rootPrefix + '/services/rabbitmqConnection')
+  , rabbitmqConnection = require(rootPrefix + '/lib/rabbitmq/connect')
   , responseHelper = require(rootPrefix + '/lib/formatter/response')
   , util = require(rootPrefix + '/lib/util')
   , localEmitter = require(rootPrefix + '/services/local_emitter')

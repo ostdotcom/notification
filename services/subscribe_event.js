@@ -8,10 +8,10 @@
  */
 
 const rootPrefix = '..'
-  , rabbitmqConnection = require(rootPrefix + '/services/rabbitmqConnection')
+  , rabbitmqConnection = require(rootPrefix + '/lib/rabbitmq/connect')
   , localEmitter = require(rootPrefix + '/services/local_emitter')
   , coreConstants = require(rootPrefix + '/config/core_constants')
-  , rabbitmqHelper = require(rootPrefix + '/lib/helper/rabbitmq')
+  , rabbitmqHelper = require(rootPrefix + '/lib/rabbitmq/helper')
   , rmqId = 'rmq1' // To support horizontal scaling in future
 ;
 
@@ -38,7 +38,7 @@ SubscribeEventKlass.prototype = {
    */
   rabbit: async function (topics, options, readCallback) {
 
-    if(coreConstants.OST_RMQ_SUPPORT != 1){
+    if(coreConstants.OST_RMQ_SUPPORT != '1'){
       throw 'No RMQ support';
     }
 
@@ -47,6 +47,8 @@ SubscribeEventKlass.prototype = {
     }
 
     const conn = await rabbitmqConnection.get(rmqId);
+
+    const oThis = this;
 
     if(!conn){
       throw 'Not able to establish rabbitmq connection for now. Please try after sometime';
@@ -98,6 +100,14 @@ SubscribeEventKlass.prototype = {
       }
 
     });
+
+    localEmitter.emitObj.once('rmq_fail', function(err){
+      console.log('RMQ Failed event received.');
+      setTimeout(function(){
+        console.log("trying consume again......");
+        oThis.rabbit(topics, options, readCallback);
+      }, 2000);
+    })
 
   },
 

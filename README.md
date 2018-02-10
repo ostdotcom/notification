@@ -19,7 +19,7 @@ npm install @openstfoundation/openst-notification --save
 # Set EVN Variables
 
 ```bash
-export OST_RMQ_SUPPORT=0 # Possible values are - '0' (disable), '1' (enable)
+export OST_RMQ_SUPPORT='1' # Possible values are - '0' (disable), '1' (enable)
 export OST_RMQ_HOST='127.0.0.1'
 export OST_RMQ_PORT='5672'
 export OST_RMQ_USERNAME=''
@@ -48,22 +48,6 @@ openSTNotification.subscribeEvent.rabbit(["event.ProposedBrandedToken"], {queue:
 const openSTNotification = require('@openstfoundation/openst-notification');
 openSTNotification.subscribeEvent.rabbit(["event.ProposedBrandedToken", "obBoarding.registerBrandedToken"], {}, function(msgContent){console.log('Consumed message -> ', msgContent)})
 ```
-
-- If RabbitMQ connection fail unexpectedly, 'rmq_fail' gets emitted as local event.  
-
-```js
-const openSTNotification = require('@openstfoundation/openst-notification');
-
-function subscribe(){
-	openSTNotification.subscribeEvent.rabbit(["event.ProposedBrandedToken", "obBoarding.registerBrandedToken"], {queue: 'myQueue'}, function(msgContent){console.log('Consumed message -> ', msgContent)})
-}
-subscribe();
-ind.subscribeEvent.local(['rmq_fail'], function(err){
-	console.log('RMQ Failed event received.');
-	setTimeout(subscribe, 2000);
-})
-```
-
 
 #### Subscribe to OpenST local events published through EventEmitter:
 
