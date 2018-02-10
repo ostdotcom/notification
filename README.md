@@ -46,7 +46,7 @@ openSTNotification.subscribeEvent.rabbit(["event.ProposedBrandedToken"], {queue:
 
 ```js
 const openSTNotification = require('@openstfoundation/openst-notification');
-openSTNotification.subscribeEvent.rabbit(["event.ProposedBrandedToken", "obBoarding.registerBrandedToken"], {} function(msgContent){console.log('Consumed message -> ', msgContent)})
+openSTNotification.subscribeEvent.rabbit(["event.ProposedBrandedToken", "obBoarding.registerBrandedToken"], {}, function(msgContent){console.log('Consumed message -> ', msgContent)})
 ```
 
 - If RabbitMQ connection fail unexpectedly, 'rmq_fail' gets emitted as local event.  
@@ -55,7 +55,7 @@ openSTNotification.subscribeEvent.rabbit(["event.ProposedBrandedToken", "obBoard
 const openSTNotification = require('@openstfoundation/openst-notification');
 
 function subscribe(){
-	openSTNotification.subscribeEvent.rabbit('muQueue', ["event.ProposedBrandedToken", "obBoarding.registerBrandedToken"], function(msgContent){console.log('Consumed message -> ', msgContent)})
+	openSTNotification.subscribeEvent.rabbit(["event.ProposedBrandedToken", "obBoarding.registerBrandedToken"], {queue: 'myQueue'}, function(msgContent){console.log('Consumed message -> ', msgContent)})
 }
 subscribe();
 ind.subscribeEvent.local(['rmq_fail'], function(err){

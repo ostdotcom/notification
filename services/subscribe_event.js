@@ -29,10 +29,11 @@ SubscribeEventKlass.prototype = {
    * Subscribe rabbitmq topics to receive messages.
    *
    * @param {array} topics - list of topics to receive messages.
+   * @param {object} options - options about queue
    * @param {function} callback - function to run on message arrived on the channel.
    *
    */
-  rabbit: async function (queueIdentifier, topics, readCallback) {
+  rabbit: async function (topics, options, readCallback) {
 
     if(coreConstants.OST_RMQ_SUPPORT != 1){
       console.log("No RMQ support");
@@ -72,8 +73,8 @@ SubscribeEventKlass.prototype = {
         }, {noAck: true});
       };
 
-      if(queueIdentifier){
-        ch.assertQueue(queueIdentifier+'_testQ',
+      if(options['queue']){
+        ch.assertQueue(options['queue']+'_testQ',
           {
             autoDelete:false,
             durable:false,
