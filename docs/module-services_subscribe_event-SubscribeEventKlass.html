@@ -342,7 +342,7 @@ Note: messages could be received only on the same object(thus, same process) whe
             
 <hr>
 <dt>
-    <h4 class="name" id="rabbit"><span class="type-signature"></span>rabbit(topics, callback)</h4>
+    <h4 class="name" id="rabbit"><span class="type-signature"></span>rabbit(topics, options, callback)</h4>
     
     
 </dt>
@@ -403,6 +403,95 @@ Note: messages could be received only on the same object(thus, same process) whe
             
 
             <td class="description last">list of topics to receive messages.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">-
+                <h6 class="method-params-label method-subparams-label">Properties</h6>
+                
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>queue</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">RMQ queue name.
+   - Name of the queue on which you want to receive all your subscribed events.
+   These queues and events, published in them, have TTL of 6 days.
+   If queue name is not passed, a queue with unique name is created and is deleted when subscriber gets disconnected.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     

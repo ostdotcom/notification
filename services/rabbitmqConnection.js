@@ -86,13 +86,13 @@ RabbitmqConnectionKlass.prototype = {
 
           if (err || !conn) {
             oThis.connections[rmqId] = null;
-            console.log("Error is : " + err);
+            console.error("Error is : " + err);
             connectionAttempts++;
             //console.log("Trying connect after ", (retryConnectionAfter * connectionAttempts));
             setTimeout(
               function () {
                 if (connectionAttempts >= rabbitmqConstants.maxConnectionAttempts) {
-                  console.log("Maximum retry connects failed");
+                  console.error("Maximum retry connects failed");
                   // Notify about multiple rabbitmq connections failure.
                   return onResolve(null);
                 } else {
@@ -139,7 +139,7 @@ RabbitmqConnectionKlass.prototype = {
           }
         }, 2000);
       } else if (connectionAttempts >= rabbitmqConstants.maxConnectionAttempts) {
-        console.log("Maximum retry connects failed");
+        console.error("Maximum retry connects failed");
         // Notify about multiple rabbitmq connections failure.
         return onResolve(null);
       } else {

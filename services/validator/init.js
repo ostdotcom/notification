@@ -24,10 +24,10 @@ InitKlass.prototype = {
    * Perform detailed validation for specific event params
    *
    * @param {object} params - event parameters
-   *  * {array} topics - on which topic messages
-   *  * {object} message -
-   *    ** {string} kind - kind of the message
-   *    ** {object} payload - Payload to identify message and extra info.
+   * @param {array} params.topics - on which topic messages
+   * @param {object} params.message -
+   * @param {string} params.message.kind - kind of the message
+   * @param {object} params.message.payload - Payload to identify message and extra info.
    *
    * @return {promise<result>}
    */

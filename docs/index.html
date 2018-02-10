@@ -97,15 +97,70 @@
 <a href="https://travis-ci.org/OpenSTFoundation/openst-notification"><img src="https://img.shields.io/travis/OpenSTFoundation/openst-notification.svg?maxAge=600" alt="Travis"></a>
 <a href="https://www.npmjs.com/package/@openstfoundation/openst-notification"><img src="https://img.shields.io/npm/dm/@openstfoundation/openst-notification.svg?maxAge=3600" alt="Downloads per month"></a>
 <a href="https://gitter.im/OpenSTFoundation/SimpleToken"><img src="https://img.shields.io/gitter/room/OpenSTFoundation/github.js.svg?maxAge=3600" alt="Gitter"></a></p>
-<p>OpenST Notification helps publish critical events from OpenST platform and sister packages. 
-By default events are published using node EventEmitter and optionally events can also be 
-published over RabbitMQ, using topic based exchange.</p>
+<p>OpenST Notification helps publish critical events from OpenST platform and other related packages. 
+All events get published using node EventEmitter and if configured, events are also published through 
+RabbitMQ, using topic based exchange.</p>
 <h1>Install OpenST Notification</h1><pre class="prettyprint source lang-bash"><code>npm install @openstfoundation/openst-notification --save</code></pre><h1>Set EVN Variables</h1><pre class="prettyprint source lang-bash"><code>export OST_RMQ_SUPPORT=0 # Possible values are - '0' (disable), '1' (enable)
 export OST_RMQ_HOST='127.0.0.1'
 export OST_RMQ_PORT='5672'
 export OST_RMQ_USERNAME=''
 export OST_RMQ_PASSWORD=''
-export OST_RMQ_HEARTBEATS='30'</code></pre><h1>Examples:</h1><p>For further implementation details, please refer <a href="https://openstfoundation.github.io/openst-notification/">API documentation</a>.</p></article>
+export OST_RMQ_HEARTBEATS='30'</code></pre><h1>Examples:</h1><h4>Subscribe to OpenST events published through RabbitMQ:</h4><ul>
+<li>Basic example on how to listen a specific event. Arguments passed are:<ul>
+<li><b>Events</b> (mandatory) - List of events to subscribe to</li>
+<li><b>Options</b> (mandatory) - <ul>
+<li><b>Queue Name</b> (optional) - Name of the queue on which you want to receive all your subscribed events. These queues and events, published in them, have TTL of 6 days. If queue name is not passed, a queue with unique name is created and is deleted when subscriber gets disconnected.</li>
+</ul>
+</li>
+<li><b>Callback</b> (mandatory) - Callback method will be invoked whenever there is a new notification</li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-js"><code>const openSTNotification = require('@openstfoundation/openst-notification');
+openSTNotification.subscribeEvent.rabbit([&quot;event.ProposedBrandedToken&quot;], {queue: 'myQueue'}, function(msgContent){console.log('Consumed message -> ', msgContent)})</code></pre><ul>
+<li>Example on how to listen multiple events with one subscriber.</li>
+</ul>
+<pre class="prettyprint source lang-js"><code>const openSTNotification = require('@openstfoundation/openst-notification');
+openSTNotification.subscribeEvent.rabbit([&quot;event.ProposedBrandedToken&quot;, &quot;obBoarding.registerBrandedToken&quot;], {}, function(msgContent){console.log('Consumed message -> ', msgContent)})</code></pre><ul>
+<li>If RabbitMQ connection fail unexpectedly, 'rmq_fail' gets emitted as local event.  </li>
+</ul>
+<pre class="prettyprint source lang-js"><code>const openSTNotification = require('@openstfoundation/openst-notification');
+
+function subscribe(){
+    openSTNotification.subscribeEvent.rabbit([&quot;event.ProposedBrandedToken&quot;, &quot;obBoarding.registerBrandedToken&quot;], {queue: 'myQueue'}, function(msgContent){console.log('Consumed message -> ', msgContent)})
+}
+subscribe();
+ind.subscribeEvent.local(['rmq_fail'], function(err){
+    console.log('RMQ Failed event received.');
+    setTimeout(subscribe, 2000);
+})</code></pre><h4>Subscribe to OpenST local events published through EventEmitter:</h4><ul>
+<li>Basic example on how to listen a specific event. Arguments passed are:<ul>
+<li><b>Events</b> (mandatory) - List of events to subscribe to</li>
+<li><b>Callback</b> (mandatory) - Callback method will be invoked whenever there is a new notification</li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-js"><code>const openSTNotification = require('@openstfoundation/openst-notification');
+openSTNotification.subscribeEvent.local([&quot;event.ProposedBrandedToken&quot;], function(msgContent){console.log('Consumed message -> ', msgContent)})</code></pre><h4>Publish to OpenST Notifications:</h4><ul>
+<li>All events are by default published using EventEmitter and if configured, through RabbmitMQ as well.</li>
+</ul>
+<pre class="prettyprint source lang-js"><code>const openSTNotification = require('@openstfoundation/openst-notification');
+openSTNotification.publishEvent.perform(
+  {
+    topics:[&quot;event.ProposedBrandedToken&quot;], 
+    message: {
+      kind: &quot;event_received&quot;,
+      payload: {
+        event_name: 'ProposedBrandedToken',
+        params: {
+          //params of the event
+        },
+        contract_address: 'contract address',
+        chain_id: 'Chain id',
+        chain_kind: 'kind of the chain'
+      }
+    }
+  })</code></pre><p>For further implementation details, please refer <a href="https://openstfoundation.github.io/openst-notification/">API documentation</a>.</p></article>
     </section>
 
 

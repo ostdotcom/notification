@@ -2,7 +2,6 @@
 
 /**
  * Listening to Rabbitmq channels to receive published message.
- * Note: published messages are not preserved, they will be published and discarded immediately.
  *
  * @module services/subscribe_event
  *
@@ -29,37 +28,46 @@ SubscribeEventKlass.prototype = {
    * Subscribe rabbitmq topics to receive messages.
    *
    * @param {array} topics - list of topics to receive messages.
-   * @param {object} options - options about queue
+   * @param {object} options -
+   * @param {string} [options.queue] - RMQ queue name.
+   *    - Name of the queue on which you want to receive all your subscribed events.
+   *    These queues and events, published in them, have TTL of 6 days.
+   *    If queue name is not passed, a queue with unique name is created and is deleted when subscriber gets disconnected.
    * @param {function} callback - function to run on message arrived on the channel.
    *
    */
   rabbit: async function (topics, options, readCallback) {
 
     if(coreConstants.OST_RMQ_SUPPORT != 1){
-      console.log("No RMQ support");
-      process.exit(1);
+      throw 'No RMQ support';
     }
 
     if (topics.length == 0) {
-      console.log("invalid parameters.");
-      process.exit(1);
+      throw 'invalid parameters';
     }
 
     const conn = await rabbitmqConnection.get(rmqId);
 
     if(!conn){
-      console.log('Not able to establish rabbitmq connection for now. Please try after sometime.');
-      return false;
-    } else {
-      console.log('Retrieved connection..........');
+      throw 'Not able to establish rabbitmq connection for now. Please try after sometime';
     }
 
     conn.createChannel(function(err, ch) {
+
+      if(err){
+        throw 'channel could  be not created: '+err ;
+      }
+
       const ex = 'topic_events';
 
+      //TODO - assertExchange, bindQueue and consume, promise is not handled
       ch.assertExchange(ex, 'topic', {durable: true});
 
       const assertQueueCallback = function(err, q) {
+        if(err){
+          throw 'subscriber could assert queue: '+err ;
+        }
+
         console.log(' [*] Waiting for logs. To exit press CTRL+C', q.queue);
 
         topics.forEach(function(key) {
@@ -69,12 +77,11 @@ SubscribeEventKlass.prototype = {
         ch.consume(q.queue, function(msg) {
           const msgContent = msg.content.toString();
           readCallback(msgContent);
-
         }, {noAck: true});
       };
 
       if(options['queue']){
-        ch.assertQueue(options['queue']+'_testQ',
+        ch.assertQueue(options['queue'],
           {
             autoDelete:false,
             durable:false,
@@ -105,8 +112,7 @@ SubscribeEventKlass.prototype = {
   local: function(topics, readCallback) {
 
     if (topics.length == 0) {
-      console.log("invalid parameters.");
-      process.exit(1);
+      throw 'invalid parameters';
     }
 
     topics.forEach(function(key) {
