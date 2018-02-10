@@ -7,11 +7,11 @@
  */
 
 const rootPrefix = '..'
-  , rabbitmqConnection = require(rootPrefix + '/services/rabbitmqConnection')
+  , rabbitmqConnection = require(rootPrefix + '/lib/rabbitmq/connect')
   , responseHelper = require(rootPrefix + '/lib/formatter/response')
   , util = require(rootPrefix + '/lib/util')
   , localEmitter = require(rootPrefix + '/services/local_emitter')
-  , validator = require(rootPrefix + '/services/validator/init')
+  , validator = require(rootPrefix + '/lib/validator/init')
   , coreConstants = require(rootPrefix + '/config/core_constants')
   , rmqId = 'rmq1' // To support horizontal scaling in future
 ;
@@ -30,18 +30,19 @@ PublishEventKlass.prototype = {
    * Publish to rabbitmq and local emitter also.
    *
    * @param {object} params - event parameters
-   *  * {array} topics - on which topic messages
-   *  * {object} message -
-   *    ** {string} kind - kind of the message
-   *    ** {object} payload - Payload to identify message and extra info.
+   * @param {array} params.topics - on which topic messages
+   * @param {object} params.message -
+   * @param {string} params.message.kind - kind of the message
+   * @param {object} params.message.payload - Payload to identify message and extra info.
    *
    * @return {promise<result>}
    */
   perform: async function(params) {
 
+    // Validations
     const r = await validator.light(params);
-
     if(r.isFailure()){
+      console.error(r);
       return Promise.resolve(r);
     }
 
@@ -51,6 +52,13 @@ PublishEventKlass.prototype = {
       , msgString = JSON.stringify(validatedParams)
     ;
 
+    // Publish local events
+    topics.forEach(function(key) {
+      localEmitter.emitObj.emit(key, msgString);
+    });
+
+
+    // publish RMQ events if required
     if(coreConstants.OST_RMQ_SUPPORT == '1'){
 
       const conn = await rabbitmqConnection.get(rmqId, true);
@@ -58,25 +66,26 @@ PublishEventKlass.prototype = {
       if(conn){
         conn.createChannel(function(err, ch) {
 
+          if (err) {
+            return Promise.resolve(responseHelper.error('s_pe_2', 'Channel could not be created on queue: ' + err));
+          }
+
+          //TODO: assertExchange and publish, promise is not handled
           ch.assertExchange(ex, 'topic', {durable: true});
           topics.forEach(function(key) {
             ch.publish(ex, key, new Buffer(msgString));
-            console.log(" [x] Sent %s:'%s'", key, msgString);
           });
 
           ch.close();
 
         });
       } else {
-        console.log("Connection not found writing to tmp.");
+        console.error("Connection not found writing to tmp.");
         util.saveUnpublishedMessages(msgString);
+        return Promise.resolve(responseHelper.error('s_pe_1', 'Rabbitmq connection not found.'));
       }
 
     }
-
-    topics.forEach(function(key) {
-      localEmitter.emitObj.emit(key, msgString);
-    });
 
     return Promise.resolve(responseHelper.successWithData({}));
   }

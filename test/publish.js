@@ -5,7 +5,7 @@ const chai = require('chai')
 // Load cache service
 const rootPrefix = ".."
   , publishEvent = require(rootPrefix + '/services/publish_event')
-  , rabbitmqConnection = require(rootPrefix + '/services/rabbitmqConnection')
+  , rabbitmqConnection = require(rootPrefix + '/lib/rabbitmq/connect')
 ;
 
 const getParams = function () {
