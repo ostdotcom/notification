@@ -11,7 +11,7 @@ const rootPrefix = '..'
   , responseHelper = require(rootPrefix + '/lib/formatter/response')
   , util = require(rootPrefix + '/lib/util')
   , localEmitter = require(rootPrefix + '/services/local_emitter')
-  , validator = require(rootPrefix + '/services/validator/init')
+  , validator = require(rootPrefix + '/lib/validator/init')
   , coreConstants = require(rootPrefix + '/config/core_constants')
   , rmqId = 'rmq1' // To support horizontal scaling in future
 ;

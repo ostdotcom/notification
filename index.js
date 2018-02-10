@@ -19,7 +19,6 @@ const OpenSTNotification = function () {
   oThis.version = version;
   oThis.publishEvent = publishEvent;
   oThis.subscribeEvent = subscribeEvent;
-  // oThis.validator = validator;
 
   oThis.connection.get(rmqId);
 
