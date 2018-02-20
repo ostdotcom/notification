@@ -69,6 +69,7 @@ const openSTNotification = require('@openstfoundation/openst-notification');
 openSTNotification.publishEvent.perform(
   {
     topics:["event.ProposedBrandedToken"], 
+    publisher: 'MyPublisher',
     message: {
 	  kind: "event_received",
 	  payload: {
