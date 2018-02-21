@@ -136,6 +136,7 @@ openSTNotification.subscribeEvent.local([&quot;event.ProposedBrandedToken&quot;]
 openSTNotification.publishEvent.perform(
   {
     topics:[&quot;event.ProposedBrandedToken&quot;], 
+    publisher: 'MyPublisher',
     message: {
       kind: &quot;event_received&quot;,
       payload: {
@@ -148,7 +149,7 @@ openSTNotification.publishEvent.perform(
         chain_kind: 'kind of the chain'
       }
     }
-  })</code></pre><p>For further implementation details, please refer <a href="https://openstfoundation.github.io/openst-notification/">API documentation</a>.</p></article>
+  })    </code></pre><p>For further implementation details, please refer <a href="https://openstfoundation.github.io/openst-notification/">API documentation</a>.</p></article>
     </section>
 
 
