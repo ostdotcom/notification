@@ -32,10 +32,12 @@ export OST_RMQ_HEARTBEATS='30'
 #### Subscribe to OpenST events published through RabbitMQ:
 
 - Basic example on how to listen a specific event. Arguments passed are:
-  - <b>Events</b> (mandatory) - List of events to subscribe to
-  - <b>Options</b> (mandatory) - 
-    - <b>Queue Name</b> (optional) - Name of the queue on which you want to receive all your subscribed events. These queues and events, published in them, have TTL of 6 days. If queue name is not passed, a queue with unique name is created and is deleted when subscriber gets disconnected.
-  - <b>Callback</b> (mandatory) - Callback method will be invoked whenever there is a new notification
+  - <b>Events</b> [Array] (mandatory) - List of events to subscribe to
+  - <b>Options</b> [object] (mandatory) - 
+    - <b>queue</b> [string] (optional) - Name of the queue on which you want to receive all your subscribed events. These queues and events, published in them, have TTL of 6 days. If queue name is not passed, a queue with unique name is created and is deleted when subscriber gets disconnected.
+    - <b>ackRequired</b> [number] - (optional) - The message deliver needs ack if passed 1 ( default 0 ). if 1 passed and ack not done, message will redeliver.
+    - <b>prefetch</b> [number] (optional) - The number of messages released from queue in parallel. In case of ackRequired=1, queue will pause unless delivered messages are acknowledged.
+  - <b>Callback</b> [function] (mandatory) - Callback method will be invoked whenever there is a new notification
   
 ```js
 const openSTNotification = require('@openstfoundation/openst-notification');

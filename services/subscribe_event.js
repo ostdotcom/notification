@@ -46,6 +46,9 @@ SubscribeEventKlass.prototype = {
       throw 'invalid parameters';
     }
 
+    options.prefetch = options.prefetch || 1;
+    options.noAck = (options.ackRequired == 1) ? false : true;
+
     const conn = await rabbitmqConnection.get(rmqId);
 
     const oThis = this;
@@ -76,10 +79,16 @@ SubscribeEventKlass.prototype = {
           ch.bindQueue(q.queue, ex, key);
         });
 
+        ch.prefetch(options.prefetch);
+
         ch.consume(q.queue, function(msg) {
           const msgContent = msg.content.toString();
-          readCallback(msgContent);
-        }, {noAck: true});
+          if(options.noAck){
+            readCallback(msgContent);
+          } else {
+            readCallback(msgContent).then(function () { console.log("done with ackkkkkkkk"); ch.ack(msg); });
+          }
+        }, {noAck: options.noAck});
       };
 
       if(options['queue']){
