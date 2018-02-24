@@ -49,6 +49,7 @@ openSTNotification.subscribeEvent.rabbit(
     prefetch:10
   }, 
   function(msgContent){
+    // Please make sure to return promise in callback function. On promise resolve the message will get acknowledge.
     return new Promise(async function(onResolve, onReject) {
       console.log('Consumed message -> ', msgContent);
       await processMessage(msgContent);
