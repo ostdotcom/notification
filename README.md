@@ -35,20 +35,42 @@ export OST_RMQ_HEARTBEATS='30'
   - <b>Events</b> [Array] (mandatory) - List of events to subscribe to
   - <b>Options</b> [object] (mandatory) - 
     - <b>queue</b> [string] (optional) - Name of the queue on which you want to receive all your subscribed events. These queues and events, published in them, have TTL of 6 days. If queue name is not passed, a queue with unique name is created and is deleted when subscriber gets disconnected.
-    - <b>ackRequired</b> [number] - (optional) - The message deliver needs ack if passed 1 ( default 0 ). if 1 passed and ack not done, message will redeliver.
+    - <b>ackRequired</b> [number] - (optional) - The delivered message needs ack if passed 1 ( default 0 ). if 1 passed and ack not done, message will redeliver.
     - <b>prefetch</b> [number] (optional) - The number of messages released from queue in parallel. In case of ackRequired=1, queue will pause unless delivered messages are acknowledged.
   - <b>Callback</b> [function] (mandatory) - Callback method will be invoked whenever there is a new notification
   
 ```js
 const openSTNotification = require('@openstfoundation/openst-notification');
-openSTNotification.subscribeEvent.rabbit(["event.ProposedBrandedToken"], {queue: 'myQueue'}, function(msgContent){console.log('Consumed message -> ', msgContent)})
+openSTNotification.subscribeEvent.rabbit(
+  ["event.ProposedBrandedToken"], 
+  {
+    queue: 'myQueue',
+    ackRequired: 1, // means all delivered messages should get acknowledge. 
+    prefetch:10
+  }, 
+  function(msgContent){
+    return new Promise(async function(onResolve, onReject) {
+      console.log('Consumed message -> ', msgContent);
+      await processMessage(msgContent);
+      
+      // Complete the task and in the end of all tasks done
+      //The message will be acknowledged here. For that write onResolve();
+      onResolve();
+    })
+  
+  })
 ```
 
 - Example on how to listen multiple events with one subscriber.
 
 ```js
 const openSTNotification = require('@openstfoundation/openst-notification');
-openSTNotification.subscribeEvent.rabbit(["event.ProposedBrandedToken", "obBoarding.registerBrandedToken"], {}, function(msgContent){console.log('Consumed message -> ', msgContent)})
+openSTNotification.subscribeEvent.rabbit(
+  ["event.ProposedBrandedToken", "obBoarding.registerBrandedToken"], 
+  {}, 
+  function(msgContent){
+    console.log('Consumed message -> ', msgContent)
+  })
 ```
 
 #### Subscribe to OpenST local events published through EventEmitter:
