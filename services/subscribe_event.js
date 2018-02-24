@@ -86,7 +86,16 @@ SubscribeEventKlass.prototype = {
           if(options.noAck){
             readCallback(msgContent);
           } else {
-            readCallback(msgContent).then(function () { console.log("done with ackkkkkkkk"); ch.ack(msg); });
+            var successCallback = function () {
+              console.log("done with ack");
+              ch.ack(msg);
+            };
+            var rejectCallback = function () {
+              console.log("requeue message");
+              ch.nack(msg);
+            };
+
+            readCallback(msgContent).then(successCallback, rejectCallback);
           }
         }, {noAck: options.noAck});
       };

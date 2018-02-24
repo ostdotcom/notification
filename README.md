@@ -52,11 +52,17 @@ openSTNotification.subscribeEvent.rabbit(
     // Please make sure to return promise in callback function. On promise resolve the message will get acknowledge.
     return new Promise(async function(onResolve, onReject) {
       console.log('Consumed message -> ', msgContent);
-      await processMessage(msgContent);
+      response = await processMessage(msgContent);
       
       // Complete the task and in the end of all tasks done
-      //The message will be acknowledged here. For that write onResolve();
-      onResolve();
+      if(response == success){
+        //The message will be acknowledged here. For that write onResolve();
+        onResolve();   
+      } else {
+        //in case of failure to requeue same message.
+        onReject();
+      }
+     
     })
   
   })
