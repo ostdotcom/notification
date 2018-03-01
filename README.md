@@ -41,6 +41,9 @@ export OST_RMQ_HEARTBEATS='30'
   
 ```js
 const openSTNotification = require('@openstfoundation/openst-notification');
+
+var unAckCount = 0;
+
 openSTNotification.subscribeEvent.rabbit(
   ["event.ProposedBrandedToken"], 
   {
@@ -51,12 +54,16 @@ openSTNotification.subscribeEvent.rabbit(
   function(msgContent){
     // Please make sure to return promise in callback function. On promise resolve the message will get acknowledge.
     return new Promise(async function(onResolve, onReject) {
+      // Incrementing unacknowledged message count.
+      unAckCount++;
       console.log('Consumed message -> ', msgContent);
       response = await processMessage(msgContent);
       
       // Complete the task and in the end of all tasks done
       if(response == success){
         //The message will be acknowledged here. For that write onResolve();
+        // Decrementing unacknowledged message count.
+        unAckCount--;
         onResolve();   
       } else {
         //in case of failure to requeue same message.
@@ -65,7 +72,24 @@ openSTNotification.subscribeEvent.rabbit(
      
     })
   
-  })
+  });
+  
+  // handling gracefull process exit on getting SIGINT, SIGTERM.
+  // Once signel found programme will stop consuming new messages. But need to clear running messages.
+  process.on('SIGINT', function () {
+    console.log('Received SIGINT, checking unAckCount.');
+    var f = function(){
+      if (unAckCount === 0) {
+        process.exit(1);
+      } else {
+        console.log('waiting for open tasks to be done.');
+        setTimeout(f, 1000);
+      }
+    };
+  
+    setTimeout(f, 1000);
+  });
+
 ```
 
 - Example on how to listen multiple events with one subscriber.

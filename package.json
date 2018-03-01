@@ -1,6 +1,6 @@
 {
   "name": "@openstfoundation/openst-notification",
-  "version": "1.0.0-beta.8",
+  "version": "1.0.0-beta.9",
   "description": "OpenST Notification helps publish critical events using EventEmitter and optionally RabbmitMQ from OpenST platform",
   "keywords": [
     "openST",
