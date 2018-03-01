@@ -13,6 +13,7 @@ const rootPrefix = '..'
   , coreConstants = require(rootPrefix + '/config/core_constants')
   , rabbitmqHelper = require(rootPrefix + '/lib/rabbitmq/helper')
   , rmqId = 'rmq1' // To support horizontal scaling in future
+  , uuid = require('uuid')
 ;
 
 /**
@@ -59,6 +60,8 @@ SubscribeEventKlass.prototype = {
 
     conn.createChannel(function(err, ch) {
 
+      const consumerTag = uuid.v4();
+
       if(err){
         throw 'channel could  be not created: '+err ;
       }
@@ -94,10 +97,19 @@ SubscribeEventKlass.prototype = {
               console.log("requeue message");
               ch.nack(msg);
             };
-
             readCallback(msgContent).then(successCallback, rejectCallback);
           }
-        }, {noAck: options.noAck});
+        }, {noAck: options.noAck, consumerTag: consumerTag});
+
+        process.on('SIGINT', function() {
+          console.log("Received SIGINT, cancelling consumption");
+          ch.cancel(consumerTag);
+        });
+        process.on('SIGTERM', function() {
+          console.log("Received SIGTERM, cancelling consumption");
+          ch.cancel(consumerTag);
+        });
+
       };
 
       if(options['queue']){
