@@ -51,6 +51,7 @@ PublishEventKlass.prototype = {
       , topics = validatedParams['topics']
       , msgString = JSON.stringify(validatedParams)
     ;
+    var publishedInRmq = 0;
 
     // Publish local events
     topics.forEach(function(key) {
@@ -64,6 +65,8 @@ PublishEventKlass.prototype = {
       const conn = await rabbitmqConnection.get(rmqId, true);
 
       if(conn){
+
+        publishedInRmq = 1;
         conn.createChannel(function(err, ch) {
 
           if (err) {
@@ -87,7 +90,7 @@ PublishEventKlass.prototype = {
 
     }
 
-    return Promise.resolve(responseHelper.successWithData({}));
+    return Promise.resolve(responseHelper.successWithData({publishedToRmq: publishedInRmq}));
   }
 
 };
