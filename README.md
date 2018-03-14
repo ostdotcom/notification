@@ -5,10 +5,7 @@
 [![Downloads per month](https://img.shields.io/npm/dm/@openstfoundation/openst-notification.svg?maxAge=3600)][npm]
 [![Gitter](https://img.shields.io/gitter/room/OpenSTFoundation/github.js.svg?maxAge=3600)][gitter]
 
-OpenST Notification helps publish critical events from OpenST platform and other related packages. 
-All events get published using node EventEmitter and if configured, events are also published through 
-RabbitMQ, using topic based exchange.
-
+OpenST Notification helps publish critical events from OpenST Platform and other related packages. All events get published using node EventEmitter and, if configured, events are also published through RabbitMQ, using topic-based exchange.
 
 # Install OpenST Notification
 
@@ -16,14 +13,16 @@ RabbitMQ, using topic based exchange.
 npm install @openstfoundation/openst-notification --save
 ```
 
-# Set EVN Variables
+# Set ENV Variables
+
+To configure OpenST Notification for use with RabbitMQ, set the following environment variables:
 
 ```bash
 export OST_RMQ_SUPPORT='1' # Possible values are - '0' (disable), '1' (enable)
 export OST_RMQ_HOST='127.0.0.1'
 export OST_RMQ_PORT='5672'
-export OST_RMQ_USERNAME=''
-export OST_RMQ_PASSWORD=''
+export OST_RMQ_USERNAME='guest' # Default RabbitMQ user name
+export OST_RMQ_PASSWORD='guest' # Default RabbitMQ password
 export OST_RMQ_HEARTBEATS='30'
 ```
 
@@ -34,7 +33,7 @@ export OST_RMQ_HEARTBEATS='30'
 - Basic example on how to listen a specific event. Arguments passed are:
   - <b>Events</b> [Array] (mandatory) - List of events to subscribe to
   - <b>Options</b> [object] (mandatory) - 
-    - <b>queue</b> [string] (optional) - Name of the queue on which you want to receive all your subscribed events. These queues and events, published in them, have TTL of 6 days. If queue name is not passed, a queue with unique name is created and is deleted when subscriber gets disconnected.
+    - <b>queue</b> [string] (optional) - Name of the queue on which you want to receive all your subscribed events. These queues and events, published in them, have TTL of 6 days. If a queue name is not passed, a queue with a unique name is created and is deleted when the subscriber gets disconnected.
     - <b>ackRequired</b> [number] - (optional) - The delivered message needs ack if passed 1 ( default 0 ). if 1 passed and ack not done, message will redeliver.
     - <b>prefetch</b> [number] (optional) - The number of messages released from queue in parallel. In case of ackRequired=1, queue will pause unless delivered messages are acknowledged.
   - <b>Callback</b> [function] (mandatory) - Callback method will be invoked whenever there is a new notification
@@ -45,7 +44,7 @@ const openSTNotification = require('@openstfoundation/openst-notification');
 var unAckCount = 0;
 
 openSTNotification.subscribeEvent.rabbit(
-  ["event.ProposedBrandedToken"], 
+  ["event.ProposedBrandedToken"],
   {
     queue: 'myQueue',
     ackRequired: 1, // means all delivered messages should get acknowledge. 
@@ -74,34 +73,34 @@ openSTNotification.subscribeEvent.rabbit(
   
   });
   
-  // handling gracefull process exit on getting SIGINT, SIGTERM.
-  // Once signel found programme will stop consuming new messages. But need to clear running messages.
-  process.on('SIGINT', function () {
-    console.log('Received SIGINT, checking unAckCount.');
-    var f = function(){
-      if (unAckCount === 0) {
-        process.exit(1);
-      } else {
-        console.log('waiting for open tasks to be done.');
-        setTimeout(f, 1000);
-      }
-    };
-  
-    setTimeout(f, 1000);
-  });
+// Gracefully handle process exit on getting SIGINT, SIGTERM.
+// Once signal found, programme will stop consuming new messages. But need to clear running messages.
+process.on('SIGINT', function () {
+  console.log('Received SIGINT, checking unAckCount.');
+  var f = function(){
+    if (unAckCount === 0) {
+      process.exit(1);
+    } else {
+      console.log('waiting for open tasks to be done.');
+      setTimeout(f, 1000);
+    }
+  };
+
+  setTimeout(f, 1000);
+});
 
 ```
 
-- Example on how to listen multiple events with one subscriber.
+- Example on how to listen to multiple events with one subscriber.
 
 ```js
 const openSTNotification = require('@openstfoundation/openst-notification');
 openSTNotification.subscribeEvent.rabbit(
-  ["event.ProposedBrandedToken", "obBoarding.registerBrandedToken"], 
+  ["event.ProposedBrandedToken", "obBoarding.registerBrandedToken"],
   {}, 
   function(msgContent){
     console.log('Consumed message -> ', msgContent)
-  })
+  });
 ```
 
 #### Subscribe to OpenST local events published through EventEmitter:
@@ -112,7 +111,7 @@ openSTNotification.subscribeEvent.rabbit(
   
 ```js
 const openSTNotification = require('@openstfoundation/openst-notification');
-openSTNotification.subscribeEvent.local(["event.ProposedBrandedToken"], function(msgContent){console.log('Consumed message -> ', msgContent)})
+openSTNotification.subscribeEvent.local(["event.ProposedBrandedToken"], function(msgContent){console.log('Consumed message -> ', msgContent)});
 ```
 
 #### Publish to OpenST Notifications:
@@ -137,10 +136,10 @@ openSTNotification.publishEvent.perform(
         chain_kind: 'kind of the chain'
 	  }
 	}
-  })	
+  });
 ```
 
-For further implementation details, please refer [API documentation][api-docs].
+For further implementation details, please refer to the [API documentation][api-docs].
 
 [gitter]: https://gitter.im/OpenSTFoundation/SimpleToken
 [npm]: https://www.npmjs.com/package/@openstfoundation/openst-notification
