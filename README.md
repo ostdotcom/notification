@@ -41,17 +41,19 @@ export OST_RMQ_HEARTBEATS='30'
 ```js
 const openSTNotification = require('@openstfoundation/openst-notification');
 
-var unAckCount = 0;
+var unAckCount = 0; //Number of unacknowledged messages.
 
 openSTNotification.subscribeEvent.rabbit(
   ["event.ProposedBrandedToken"],
   {
     queue: 'myQueue',
-    ackRequired: 1, // means all delivered messages should get acknowledge. 
+    ackRequired: 1, // When set to 1, all delivered messages MUST get acknowledge. 
     prefetch:10
   }, 
   function(msgContent){
-    // Please make sure to return promise in callback function. On promise resolve the message will get acknowledge.
+    // Please make sure to return promise in callback function. 
+    // On resolving the promise, the message will get acknowledged.
+    // On rejecting the promise, the message will be re-queued (noAck)
     return new Promise(async function(onResolve, onReject) {
       // Incrementing unacknowledged message count.
       unAckCount++;
@@ -59,8 +61,12 @@ openSTNotification.subscribeEvent.rabbit(
       response = await processMessage(msgContent);
       
       // Complete the task and in the end of all tasks done
+
+
+
       if(response == success){
-        //The message will be acknowledged here. For that write onResolve();
+        // The message MUST be acknowledged here.
+        // To acknowledge the message, call onResolve
         // Decrementing unacknowledged message count.
         unAckCount--;
         onResolve();   
@@ -73,8 +79,9 @@ openSTNotification.subscribeEvent.rabbit(
   
   });
   
-// Gracefully handle process exit on getting SIGINT, SIGTERM.
-// Once signal found, programme will stop consuming new messages. But need to clear running messages.
+// Gracefully handle SIGINT, SIGTERM signals.
+// Once SIGINT/SIGTERM signal is received, programme will stop consuming new messages. 
+// But, the current process MUST handle unacknowledged queued messages.
 process.on('SIGINT', function () {
   console.log('Received SIGINT, checking unAckCount.');
   var f = function(){
