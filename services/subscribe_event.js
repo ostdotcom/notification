@@ -13,6 +13,7 @@ const rootPrefix = '..'
   , coreConstants = require(rootPrefix + '/config/core_constants')
   , rabbitmqHelper = require(rootPrefix + '/lib/rabbitmq/helper')
   , rmqId = 'rmq1' // To support horizontal scaling in future
+  , uuid = require('uuid')
 ;
 
 /**
@@ -46,6 +47,9 @@ SubscribeEventKlass.prototype = {
       throw 'invalid parameters';
     }
 
+    options.prefetch = options.prefetch || 1;
+    options.noAck = (options.ackRequired == 1) ? false : true;
+
     const conn = await rabbitmqConnection.get(rmqId);
 
     const oThis = this;
@@ -55,6 +59,8 @@ SubscribeEventKlass.prototype = {
     }
 
     conn.createChannel(function(err, ch) {
+
+      const consumerTag = uuid.v4();
 
       if(err){
         throw 'channel could  be not created: '+err ;
@@ -76,10 +82,34 @@ SubscribeEventKlass.prototype = {
           ch.bindQueue(q.queue, ex, key);
         });
 
+        ch.prefetch(options.prefetch);
+
         ch.consume(q.queue, function(msg) {
           const msgContent = msg.content.toString();
-          readCallback(msgContent);
-        }, {noAck: true});
+          if(options.noAck){
+            readCallback(msgContent);
+          } else {
+            var successCallback = function () {
+              console.log("done with ack");
+              ch.ack(msg);
+            };
+            var rejectCallback = function () {
+              console.log("requeue message");
+              ch.nack(msg);
+            };
+            readCallback(msgContent).then(successCallback, rejectCallback);
+          }
+        }, {noAck: options.noAck, consumerTag: consumerTag});
+
+        process.on('SIGINT', function() {
+          console.log("Received SIGINT, cancelling consumption");
+          ch.cancel(consumerTag);
+        });
+        process.on('SIGTERM', function() {
+          console.log("Received SIGTERM, cancelling consumption");
+          ch.cancel(consumerTag);
+        });
+
       };
 
       if(options['queue']){
