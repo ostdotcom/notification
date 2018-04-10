@@ -13,6 +13,7 @@ const rootPrefix = '..'
   , localEmitter = require(rootPrefix + '/services/local_emitter')
   , validator = require(rootPrefix + '/lib/validator/init')
   , coreConstants = require(rootPrefix + '/config/core_constants')
+  , logger = require(rootPrefix + 'lib/logger/custom_console_logger')
   , rmqId = 'rmq1' // To support horizontal scaling in future
 ;
 
@@ -42,7 +43,7 @@ PublishEventKlass.prototype = {
     // Validations
     const r = await validator.light(params);
     if(r.isFailure()){
-      console.error(r);
+      logger.error(r);
       return Promise.resolve(r);
     }
 
@@ -83,7 +84,7 @@ PublishEventKlass.prototype = {
 
         });
       } else {
-        console.error("Connection not found writing to tmp.");
+        logger.error("Connection not found writing to tmp.");
         util.saveUnpublishedMessages(msgString);
         return Promise.resolve(responseHelper.error('s_pe_1', 'Rabbitmq connection not found.'));
       }

@@ -12,6 +12,7 @@ const rootPrefix = '..'
   , localEmitter = require(rootPrefix + '/services/local_emitter')
   , coreConstants = require(rootPrefix + '/config/core_constants')
   , rabbitmqHelper = require(rootPrefix + '/lib/rabbitmq/helper')
+  , logger = require(rootPrefix + 'lib/logger/custom_console_logger')
   , rmqId = 'rmq1' // To support horizontal scaling in future
   , uuid = require('uuid')
 ;
@@ -76,7 +77,7 @@ SubscribeEventKlass.prototype = {
           throw 'subscriber could assert queue: '+err ;
         }
 
-        console.log(' [*] Waiting for logs. To exit press CTRL+C', q.queue);
+        logger.info(' [*] Waiting for logs. To exit press CTRL+C', q.queue);
 
         topics.forEach(function(key) {
           ch.bindQueue(q.queue, ex, key);
@@ -90,11 +91,11 @@ SubscribeEventKlass.prototype = {
             readCallback(msgContent);
           } else {
             var successCallback = function () {
-              console.log("done with ack");
+              logger.debug("done with ack");
               ch.ack(msg);
             };
             var rejectCallback = function () {
-              console.log("requeue message");
+              logger.debug("requeue message");
               ch.nack(msg);
             };
             readCallback(msgContent).then(successCallback, rejectCallback);
@@ -102,11 +103,11 @@ SubscribeEventKlass.prototype = {
         }, {noAck: options.noAck, consumerTag: consumerTag});
 
         process.on('SIGINT', function() {
-          console.log("Received SIGINT, cancelling consumption");
+          logger.info("Received SIGINT, cancelling consumption");
           ch.cancel(consumerTag);
         });
         process.on('SIGTERM', function() {
-          console.log("Received SIGTERM, cancelling consumption");
+          logger.info("Received SIGTERM, cancelling consumption");
           ch.cancel(consumerTag);
         });
 
@@ -132,9 +133,9 @@ SubscribeEventKlass.prototype = {
     });
 
     localEmitter.emitObj.once('rmq_fail', function(err){
-      console.log('RMQ Failed event received.');
+      logger.error('RMQ Failed event received.');
       setTimeout(function(){
-        console.log("trying consume again......");
+        logger.info("trying consume again......");
         oThis.rabbit(topics, options, readCallback);
       }, 2000);
     })
