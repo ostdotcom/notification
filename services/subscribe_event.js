@@ -12,7 +12,7 @@ const rootPrefix = '..'
   , localEmitter = require(rootPrefix + '/services/local_emitter')
   , coreConstants = require(rootPrefix + '/config/core_constants')
   , rabbitmqHelper = require(rootPrefix + '/lib/rabbitmq/helper')
-  , logger = require(rootPrefix + 'lib/logger/custom_console_logger')
+  , logger = require(rootPrefix + '/lib/logger/custom_console_logger')
   , rmqId = 'rmq1' // To support horizontal scaling in future
   , uuid = require('uuid')
 ;

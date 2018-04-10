@@ -3,7 +3,7 @@
 const openSTNotification = require('./index');
 
 const rootPrefix = ''
-  , logger = require(rootPrefix + 'lib/logger/custom_console_logger')
+  , logger = require(rootPrefix + '/lib/logger/custom_console_logger')
 ;
 
 var unAckCount = 0;
