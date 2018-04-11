@@ -56,8 +56,14 @@ CoreConstant.prototype = {
    *
    * @constant {number}
    */
-  OST_RMQ_HEARTBEATS: process.env.OST_RMQ_HEARTBEATS
+  OST_RMQ_HEARTBEATS: process.env.OST_RMQ_HEARTBEATS,
 
+  /**
+   * debug level<br><br>
+   *
+   * @constant {number}
+   */
+  DEBUG_ENABLED: process.env.OST_DEBUG_ENABLED
 };
 
 module.exports = new CoreConstant();
