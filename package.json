@@ -26,7 +26,8 @@
   },
   "dependencies": {
     "amqplib": "0.5.2",
-    "uuid": "3.2.1"
+    "uuid": "3.2.1",
+    "@openstfoundation/openst-base": "0.9.0-beta.15"
   },
   "devDependencies": {
     "chai": "4.1.2",
