@@ -15,7 +15,14 @@ const rootPrefix = '..'
   , coreConstants = require(rootPrefix + '/config/core_constants')
   , logger = require(rootPrefix + '/lib/logger/custom_console_logger')
   , rmqId = 'rmq1' // To support horizontal scaling in future
+  , paramErrorConfig = require(rootPrefix + '/config/param_error_config')
+  , apiErrorConfig = require(rootPrefix + '/config/api_error_config')
 ;
+
+const errorConfig = {
+  param_error_config: paramErrorConfig,
+  api_error_config: apiErrorConfig
+};
 
 /**
  * Constructor to publish RMQ event
@@ -71,7 +78,14 @@ PublishEventKlass.prototype = {
         conn.createChannel(function(err, ch) {
 
           if (err) {
-            return Promise.resolve(responseHelper.error('s_pe_2', 'Channel could not be created on queue: ' + err));
+            let errorParams = {
+              internal_error_identifier: 's_pe_2',
+              api_error_identifier: 'cannot_create_channel',
+              error_config: errorConfig,
+              debug_options: {}
+            };
+            logger.error(err.message);
+            return Promise.resolve(responseHelper.error(errorParams));
           }
 
           //TODO: assertExchange and publish, promise is not handled
@@ -86,7 +100,13 @@ PublishEventKlass.prototype = {
       } else {
         logger.error("Connection not found writing to tmp.");
         util.saveUnpublishedMessages(msgString);
-        return Promise.resolve(responseHelper.error('s_pe_1', 'Rabbitmq connection not found.'));
+        let errorParams = {
+          internal_error_identifier: 's_pe_1',
+          api_error_identifier: 'no_rmq_connection',
+          error_config: errorConfig,
+          debug_options: {}
+        };
+        return Promise.resolve(responseHelper.error(errorParams));
       }
 
     }
