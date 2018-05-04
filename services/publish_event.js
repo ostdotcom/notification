@@ -82,7 +82,7 @@ PublishEventKlass.prototype = {
               internal_error_identifier: 's_pe_2',
               api_error_identifier: 'cannot_create_channel',
               error_config: errorConfig,
-              debug_options: {}
+              debug_options: { err: err }
             };
             logger.error(err.message);
             return Promise.resolve(responseHelper.error(errorParams));
