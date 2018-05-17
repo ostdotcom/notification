@@ -13,8 +13,16 @@ const rootPrefix = '..'
   , localEmitter = require(rootPrefix + '/services/local_emitter')
   , validator = require(rootPrefix + '/lib/validator/init')
   , coreConstants = require(rootPrefix + '/config/core_constants')
+  , logger = require(rootPrefix + '/lib/logger/custom_console_logger')
   , rmqId = 'rmq1' // To support horizontal scaling in future
+  , paramErrorConfig = require(rootPrefix + '/config/param_error_config')
+  , apiErrorConfig = require(rootPrefix + '/config/api_error_config')
 ;
+
+const errorConfig = {
+  param_error_config: paramErrorConfig,
+  api_error_config: apiErrorConfig
+};
 
 /**
  * Constructor to publish RMQ event
@@ -37,12 +45,12 @@ PublishEventKlass.prototype = {
    *
    * @return {promise<result>}
    */
-  perform: async function(params) {
+  perform: async function (params) {
 
     // Validations
     const r = await validator.light(params);
-    if(r.isFailure()){
-      console.error(r);
+    if (r.isFailure()) {
+      logger.error(r);
       return Promise.resolve(r);
     }
 
@@ -54,28 +62,35 @@ PublishEventKlass.prototype = {
     var publishedInRmq = 0;
 
     // Publish local events
-    topics.forEach(function(key) {
+    topics.forEach(function (key) {
       localEmitter.emitObj.emit(key, msgString);
     });
 
 
     // publish RMQ events if required
-    if(coreConstants.OST_RMQ_SUPPORT == '1'){
+    if (coreConstants.OST_RMQ_SUPPORT == '1') {
 
       const conn = await rabbitmqConnection.get(rmqId, true);
 
-      if(conn){
+      if (conn) {
 
         publishedInRmq = 1;
-        conn.createChannel(function(err, ch) {
+        conn.createChannel(function (err, ch) {
 
           if (err) {
-            return Promise.resolve(responseHelper.error('s_pe_2', 'Channel could not be created on queue: ' + err));
+            let errorParams = {
+              internal_error_identifier: 's_pe_2',
+              api_error_identifier: 'cannot_create_channel',
+              error_config: errorConfig,
+              debug_options: {err: err}
+            };
+            logger.error(err.message);
+            return Promise.resolve(responseHelper.error(errorParams));
           }
 
           //TODO: assertExchange and publish, promise is not handled
           ch.assertExchange(ex, 'topic', {durable: true});
-          topics.forEach(function(key) {
+          topics.forEach(function (key) {
             ch.publish(ex, key, new Buffer(msgString));
           });
 
@@ -83,9 +98,15 @@ PublishEventKlass.prototype = {
 
         });
       } else {
-        console.error("Connection not found writing to tmp.");
+        logger.error("Connection not found writing to tmp.");
         util.saveUnpublishedMessages(msgString);
-        return Promise.resolve(responseHelper.error('s_pe_1', 'Rabbitmq connection not found.'));
+        let errorParams = {
+          internal_error_identifier: 's_pe_1',
+          api_error_identifier: 'no_rmq_connection',
+          error_config: errorConfig,
+          debug_options: {}
+        };
+        return Promise.resolve(responseHelper.error(errorParams));
       }
 
     }
