@@ -12,7 +12,8 @@ const rootPrefix = "..";
  *
  * @constructor
  */
-const CoreConstant = function () {};
+const CoreConstant = function () {
+};
 
 CoreConstant.prototype = {
 

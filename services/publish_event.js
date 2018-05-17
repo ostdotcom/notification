@@ -45,11 +45,11 @@ PublishEventKlass.prototype = {
    *
    * @return {promise<result>}
    */
-  perform: async function(params) {
+  perform: async function (params) {
 
     // Validations
     const r = await validator.light(params);
-    if(r.isFailure()){
+    if (r.isFailure()) {
       logger.error(r);
       return Promise.resolve(r);
     }
@@ -62,27 +62,27 @@ PublishEventKlass.prototype = {
     var publishedInRmq = 0;
 
     // Publish local events
-    topics.forEach(function(key) {
+    topics.forEach(function (key) {
       localEmitter.emitObj.emit(key, msgString);
     });
 
 
     // publish RMQ events if required
-    if(coreConstants.OST_RMQ_SUPPORT == '1'){
+    if (coreConstants.OST_RMQ_SUPPORT == '1') {
 
       const conn = await rabbitmqConnection.get(rmqId, true);
 
-      if(conn){
+      if (conn) {
 
         publishedInRmq = 1;
-        conn.createChannel(function(err, ch) {
+        conn.createChannel(function (err, ch) {
 
           if (err) {
             let errorParams = {
               internal_error_identifier: 's_pe_2',
               api_error_identifier: 'cannot_create_channel',
               error_config: errorConfig,
-              debug_options: { err: err }
+              debug_options: {err: err}
             };
             logger.error(err.message);
             return Promise.resolve(responseHelper.error(errorParams));
@@ -90,7 +90,7 @@ PublishEventKlass.prototype = {
 
           //TODO: assertExchange and publish, promise is not handled
           ch.assertExchange(ex, 'topic', {durable: true});
-          topics.forEach(function(key) {
+          topics.forEach(function (key) {
             ch.publish(ex, key, new Buffer(msgString));
           });
 

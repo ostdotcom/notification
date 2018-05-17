@@ -19,9 +19,7 @@ const LocalEmitterKlass = function () {
   this.emitObj = emitObj;
 };
 
-LocalEmitterKlass.prototype = {
-
-};
+LocalEmitterKlass.prototype = {};
 
 
 module.exports = new LocalEmitterKlass();

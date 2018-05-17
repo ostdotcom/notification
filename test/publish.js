@@ -10,7 +10,7 @@ const rootPrefix = ".."
 
 const getParams = function () {
   return {
-    topics:["events.transfer"],
+    topics: ["events.transfer"],
     message: {
       kind: "event_received",
       payload: {
@@ -22,9 +22,9 @@ const getParams = function () {
   };
 };
 
-describe('publish to rabbitmq', async function() {
+describe('publish to rabbitmq', async function () {
 
-  it('should return promise', async function() {
+  it('should return promise', async function () {
 
     await rabbitmqConnection.get('rmq1');
 
@@ -34,20 +34,20 @@ describe('publish to rabbitmq', async function() {
     assert.typeOf(response, 'Promise');
   });
 
-  it('should fail when empty params are passed', async function() {
+  it('should fail when empty params are passed', async function () {
     var params = {}
       , response = await publishEvent.perform(params);
 
     assert.equal(response.isSuccess(), false);
   });
 
-  it('should fail when no params are passed', async function() {
+  it('should fail when no params are passed', async function () {
     var response = await publishEvent.perform();
 
     assert.equal(response.isSuccess(), false);
   });
 
-  it('should fail when params dont have topics', async function() {
+  it('should fail when params dont have topics', async function () {
     var params = getParams();
     delete params['topics'];
 
@@ -56,7 +56,7 @@ describe('publish to rabbitmq', async function() {
     assert.equal(response.isSuccess(), false);
   });
 
-  it('should fail when params dont have message', async function() {
+  it('should fail when params dont have message', async function () {
     var params = getParams();
     delete params['message'];
 
@@ -64,7 +64,7 @@ describe('publish to rabbitmq', async function() {
     assert.equal(response.isSuccess(), false);
   });
 
-  it('should fail when params message dont have kind', async function() {
+  it('should fail when params message dont have kind', async function () {
     var params = getParams();
     delete params['message']['kind'];
 
@@ -72,7 +72,7 @@ describe('publish to rabbitmq', async function() {
     assert.equal(response.isSuccess(), false);
   });
 
-  it('should fail when params message dont have payload', async function() {
+  it('should fail when params message dont have payload', async function () {
     var params = getParams();
     delete params['message']['payload'];
 
@@ -80,7 +80,7 @@ describe('publish to rabbitmq', async function() {
     assert.equal(response.isSuccess(), false);
   });
 
-  it('should fail when params message payload dont have event_name', async function() {
+  it('should fail when params message payload dont have event_name', async function () {
     var params = getParams();
     delete params['message']['payload']['event_name'];
 
@@ -88,7 +88,7 @@ describe('publish to rabbitmq', async function() {
     assert.equal(response.isSuccess(), false);
   });
 
-  it('should fail when params message payload dont have params', async function() {
+  it('should fail when params message payload dont have params', async function () {
     var params = getParams();
     delete params['message']['payload']['params'];
 
@@ -96,7 +96,7 @@ describe('publish to rabbitmq', async function() {
     assert.equal(response.isSuccess(), false);
   });
 
-  it('should fail when params message payload dont have contract_address', async function() {
+  it('should fail when params message payload dont have contract_address', async function () {
     var params = getParams();
     delete params['message']['payload']['contract_address'];
 
@@ -104,7 +104,7 @@ describe('publish to rabbitmq', async function() {
     assert.equal(response.isSuccess(), false);
   });
 
-  it('should fail when unsupported kind is passed', async function() {
+  it('should fail when unsupported kind is passed', async function () {
     var params = getParams();
     params['message']['kind'] = 'abcd';
 
