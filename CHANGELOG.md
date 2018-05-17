@@ -1,7 +1,6 @@
-## Openst-notfication v1.0.2
+## Openst-notfication v1.0.1
+Logger, response helper and web3 from OpenST Base is now used in OpenST notification. OpenST Base repository was created and all the common functionality which different openst modules need were moved to it.
 
-In this release OpenST notification is published as a [node module](https://www.npmjs.com/package/@openstfoundation/openst-notification), now independent development is supported using notification layer.
-Several services are exposed for publishing, subscribing, emitting events.
+Log level support was introduced and non-important logs were moved to debug log level.
 
-Standardized errors are returned from notification if there are failures.
-
+Standardized error codes are now being used in OpenST notification.
