@@ -1,6 +1,6 @@
 {
   "name": "@openstfoundation/openst-notification",
-  "version": "1.0.2-beta.1",
+  "version": "1.0.2-beta.2",
   "description": "OpenST Notification helps publish critical events using EventEmitter and optionally RabbmitMQ from OpenST platform",
   "keywords": [
     "openST",
@@ -27,7 +27,7 @@
   "dependencies": {
     "amqplib": "0.5.2",
     "uuid": "3.2.1",
-    "@openstfoundation/openst-base": "0.9.0-beta.16"
+    "@openstfoundation/openst-base": "0.9.1-beta.3"
   },
   "devDependencies": {
     "chai": "4.1.2",
