@@ -1,3 +1,6 @@
+## Openst-notfication v1.0.2
+Validation changes for execute transaction
+
 ## Openst-notfication v1.0.1
 Logger, response helper and web3 from OpenST Base is now used in OpenST notification. OpenST Base repository was created and all the common functionality which different openst modules need were moved to it.
 
