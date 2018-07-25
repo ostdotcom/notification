@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * Listening to Rabbitmq channels to receive published message.
@@ -7,23 +7,21 @@
  *
  */
 
-const rootPrefix = '..'
-  , rabbitmqConnection = require(rootPrefix + '/lib/rabbitmq/connect')
-  , localEmitter = require(rootPrefix + '/services/local_emitter')
-  , coreConstants = require(rootPrefix + '/config/core_constants')
-  , rabbitmqHelper = require(rootPrefix + '/lib/rabbitmq/helper')
-  , logger = require(rootPrefix + '/lib/logger/custom_console_logger')
-  , rmqId = 'rmq1' // To support horizontal scaling in future
-  , uuid = require('uuid')
-;
+const rootPrefix = '..',
+  rabbitmqConnection = require(rootPrefix + '/lib/rabbitmq/connect'),
+  localEmitter = require(rootPrefix + '/services/local_emitter'),
+  coreConstants = require(rootPrefix + '/config/core_constants'),
+  rabbitmqHelper = require(rootPrefix + '/lib/rabbitmq/helper'),
+  logger = require(rootPrefix + '/lib/logger/custom_console_logger'),
+  rmqId = 'rmq1', // To support horizontal scaling in future
+  uuid = require('uuid');
 
 /**
  * Constructor to subscribe RMQ event
  *
  * @constructor
  */
-const SubscribeEventKlass = function () {
-};
+const SubscribeEventKlass = function() {};
 
 SubscribeEventKlass.prototype = {
   /**
@@ -38,8 +36,7 @@ SubscribeEventKlass.prototype = {
    * @param {function} callback - function to run on message arrived on the channel.
    *
    */
-  rabbit: async function (topics, options, readCallback) {
-
+  rabbit: async function(topics, options, readCallback) {
     if (coreConstants.OST_RMQ_SUPPORT != '1') {
       throw 'No RMQ support';
     }
@@ -49,7 +46,7 @@ SubscribeEventKlass.prototype = {
     }
 
     options.prefetch = options.prefetch || 1;
-    options.noAck = (options.ackRequired == 1) ? false : true;
+    options.noAck = options.ackRequired == 1 ? false : true;
 
     const conn = await rabbitmqConnection.get(rmqId);
 
@@ -59,8 +56,7 @@ SubscribeEventKlass.prototype = {
       throw 'Not able to establish rabbitmq connection for now. Please try after sometime';
     }
 
-    conn.createChannel(function (err, ch) {
-
+    conn.createChannel(function(err, ch) {
       const consumerTag = uuid.v4();
 
       if (err) {
@@ -70,76 +66,77 @@ SubscribeEventKlass.prototype = {
       const ex = 'topic_events';
 
       //TODO - assertExchange, bindQueue and consume, promise is not handled
-      ch.assertExchange(ex, 'topic', {durable: true});
+      ch.assertExchange(ex, 'topic', { durable: true });
 
-      const assertQueueCallback = function (err, q) {
+      const assertQueueCallback = function(err, q) {
         if (err) {
           throw 'subscriber could assert queue: ' + err;
         }
 
         logger.info(' [*] Waiting for logs. To exit press CTRL+C', q.queue);
 
-        topics.forEach(function (key) {
+        topics.forEach(function(key) {
           ch.bindQueue(q.queue, ex, key);
         });
 
         ch.prefetch(options.prefetch);
 
-        ch.consume(q.queue, function (msg) {
-          const msgContent = msg.content.toString();
-          if (options.noAck) {
-            readCallback(msgContent);
-          } else {
-            var successCallback = function () {
-              logger.debug("done with ack");
-              ch.ack(msg);
-            };
-            var rejectCallback = function () {
-              logger.debug("requeue message");
-              ch.nack(msg);
-            };
-            readCallback(msgContent).then(successCallback, rejectCallback);
-          }
-        }, {noAck: options.noAck, consumerTag: consumerTag});
+        ch.consume(
+          q.queue,
+          function(msg) {
+            const msgContent = msg.content.toString();
+            if (options.noAck) {
+              readCallback(msgContent);
+            } else {
+              var successCallback = function() {
+                logger.debug('done with ack');
+                ch.ack(msg);
+              };
+              var rejectCallback = function() {
+                logger.debug('requeue message');
+                ch.nack(msg);
+              };
+              readCallback(msgContent).then(successCallback, rejectCallback);
+            }
+          },
+          { noAck: options.noAck, consumerTag: consumerTag }
+        );
 
-        process.on('SIGINT', function () {
-          logger.info("Received SIGINT, cancelling consumption");
+        process.on('SIGINT', function() {
+          logger.info('Received SIGINT, cancelling consumption');
           ch.cancel(consumerTag);
         });
-        process.on('SIGTERM', function () {
-          logger.info("Received SIGTERM, cancelling consumption");
+        process.on('SIGTERM', function() {
+          logger.info('Received SIGTERM, cancelling consumption');
           ch.cancel(consumerTag);
         });
-
       };
 
       if (options['queue']) {
-        ch.assertQueue(options['queue'],
+        ch.assertQueue(
+          options['queue'],
           {
             autoDelete: false,
             durable: false,
-            arguments:
-              {
-                "x-expires": rabbitmqHelper.dedicatedQueueTtl,
-                "x-message-ttl": rabbitmqConnection.dedicatedQueueMsgTtl
-              }
+            arguments: {
+              'x-expires': rabbitmqHelper.dedicatedQueueTtl,
+              'x-message-ttl': rabbitmqConnection.dedicatedQueueMsgTtl
+            }
           },
-          assertQueueCallback);
-
+          assertQueueCallback
+        );
       } else {
-        ch.assertQueue('', {exclusive: true}, assertQueueCallback);
+        ch.assertQueue('', { exclusive: true }, assertQueueCallback);
       }
-
     });
 
-    localEmitter.emitObj.once('rmq_fail', function (err) {
+    localEmitter.emitObj.once('rmq_fail', function(err) {
       logger.error('RMQ Failed event received.');
-      setTimeout(function () {
-        logger.info("trying consume again......");
+      setTimeout(function() {
+        logger.info('trying consume again......');
         oThis.rabbit(topics, options, readCallback);
       }, 2000);
-    })
-
+    });
   },
 
   /**
@@ -150,18 +147,15 @@ SubscribeEventKlass.prototype = {
    * @param {function} callback - function to run on message arrived on the channel.
    *
    */
-  local: function (topics, readCallback) {
-
+  local: function(topics, readCallback) {
     if (topics.length == 0) {
       throw 'invalid parameters';
     }
 
-    topics.forEach(function (key) {
+    topics.forEach(function(key) {
       localEmitter.emitObj.on(key, readCallback);
     });
-
   }
-
 };
 
 module.exports = new SubscribeEventKlass();
