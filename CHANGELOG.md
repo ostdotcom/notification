@@ -1,3 +1,6 @@
+## Openst-notfication v1.0.3
+Common style guide followed across all openst repos using prettier ([openst-notification#30](https://github.com/OpenSTFoundation/openst-notification/issues/18))
+
 ## Openst-notfication v1.0.2
 Validation changes for execute transaction
 
