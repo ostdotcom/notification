@@ -1,4 +1,4 @@
-## Openst-notfication v1.0.3
+## Openst-notfication v1.0.4
 Common style guide followed across all openst repos using prettier ([openst-notification#18](https://github.com/OpenSTFoundation/openst-notification/issues/18))
 
 ## Openst-notfication v1.0.2
