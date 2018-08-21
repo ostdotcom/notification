@@ -1,22 +1,20 @@
-"use strict";
+'use strict';
 /**
  * Load all the core constants from the environment variables OR define them as literals here and export them.
  *
  * @module config/core_constants
  *
  */
-const rootPrefix = "..";
+const rootPrefix = '..';
 
 /**
  * Constructor for core constants
  *
  * @constructor
  */
-const CoreConstant = function () {
-};
+const CoreConstant = function() {};
 
 CoreConstant.prototype = {
-
   /**
    * Is RMQ support required. 0 to disable and 1 to enable.<br><br>
    *
