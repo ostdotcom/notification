@@ -54,7 +54,7 @@ PublishEventKlass.prototype = {
       ex = 'topic_events',
       topics = validatedParams['topics'],
       msgString = JSON.stringify(validatedParams);
-    var publishedInRmq = 0;
+    let publishedInRmq = 0;
 
     // Publish local events
     topics.forEach(function(key) {

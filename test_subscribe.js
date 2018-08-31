@@ -5,7 +5,7 @@ const openSTNotification = require('./index');
 const rootPrefix = '',
   logger = require(rootPrefix + '/lib/logger/custom_console_logger');
 
-var unAckCount = 0;
+let unAckCount = 0;
 
 openSTNotification.subscribeEvent.rabbit(
   ['ackqueue.test'],
@@ -24,7 +24,7 @@ openSTNotification.subscribeEvent.rabbit(
 
 process.on('SIGINT', function() {
   logger.debug('Received SIGINT, checking unAckCount.');
-  var f = function() {
+  let f = function() {
     if (unAckCount === 0) {
       process.exit(1);
     } else {
