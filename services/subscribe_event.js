@@ -41,7 +41,7 @@ SubscribeEventKlass.prototype = {
       throw 'No RMQ support';
     }
 
-    if (topics.length == 0) {
+    if (topics.length === 0) {
       throw 'invalid parameters';
     }
 
@@ -88,11 +88,11 @@ SubscribeEventKlass.prototype = {
             if (options.noAck) {
               readCallback(msgContent);
             } else {
-              var successCallback = function() {
+              let successCallback = function() {
                 logger.debug('done with ack');
                 ch.ack(msg);
               };
-              var rejectCallback = function() {
+              let rejectCallback = function() {
                 logger.debug('requeue message');
                 ch.nack(msg);
               };
@@ -144,11 +144,11 @@ SubscribeEventKlass.prototype = {
    * Note: messages could be received only on the same object(thus, same process) where the message was emitted.
    *
    * @param {array} topics - list of topics to receive messages.
-   * @param {function} callback - function to run on message arrived on the channel.
+   * @param {function} readCallback - function to run on message arrived on the channel.
    *
    */
   local: function(topics, readCallback) {
-    if (topics.length == 0) {
+    if (topics.length === 0) {
       throw 'invalid parameters';
     }
 
