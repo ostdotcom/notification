@@ -46,7 +46,7 @@ SubscribeEventKlass.prototype = {
     }
 
     options.prefetch = options.prefetch || 1;
-    options.noAck = options.ackRequired == 1 ? false : true;
+    options.noAck = options.ackRequired !== 1;
 
     const conn = await rabbitmqConnection.get(rmqId);
 
@@ -57,7 +57,13 @@ SubscribeEventKlass.prototype = {
     }
 
     conn.createChannel(function(err, ch) {
-      const consumerTag = uuid.v4();
+      let consumerTag = null;
+
+      if (options.consumerTag) {
+        consumerTag = options.consumerTag;
+      } else {
+        consumerTag = uuid.v4();
+      }
 
       if (err) {
         throw 'channel could  be not created: ' + err;
