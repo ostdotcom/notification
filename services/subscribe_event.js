@@ -33,11 +33,11 @@ SubscribeEventKlass.prototype = {
    *    - Name of the queue on which you want to receive all your subscribed events.
    *    These queues and events, published in them, have TTL of 6 days.
    *    If queue name is not passed, a queue with unique name is created and is deleted when subscriber gets disconnected.
-   * @param {function} callback - function to run on message arrived on the channel.
+   * @param {function} readCallback - function to run on message arrived on the channel.
    *
    */
   rabbit: async function(topics, options, readCallback) {
-    if (coreConstants.OST_RMQ_SUPPORT != '1') {
+    if (coreConstants.OST_RMQ_SUPPORT !== '1') {
       throw 'No RMQ support';
     }
 
@@ -57,13 +57,7 @@ SubscribeEventKlass.prototype = {
     }
 
     conn.createChannel(function(err, ch) {
-      let consumerTag = null;
-
-      if (options.consumerTag) {
-        consumerTag = options.consumerTag;
-      } else {
-        consumerTag = uuid.v4();
-      }
+      const consumerTag = uuid.v4();
 
       if (err) {
         throw 'channel could  be not created: ' + err;
@@ -87,26 +81,34 @@ SubscribeEventKlass.prototype = {
 
         ch.prefetch(options.prefetch);
 
-        ch.consume(
-          q.queue,
-          function(msg) {
-            const msgContent = msg.content.toString();
-            if (options.noAck) {
-              readCallback(msgContent);
-            } else {
-              let successCallback = function() {
-                logger.debug('done with ack');
-                ch.ack(msg);
-              };
-              let rejectCallback = function() {
-                logger.debug('requeue message');
-                ch.nack(msg);
-              };
-              readCallback(msgContent).then(successCallback, rejectCallback);
-            }
-          },
-          { noAck: options.noAck, consumerTag: consumerTag }
-        );
+        // If queue should start consuming as well.
+        if (!options.onlyAssert) {
+          ch.consume(
+            q.queue,
+            function(msg) {
+              const msgContent = msg.content.toString();
+              if (options.noAck) {
+                readCallback(msgContent);
+              } else {
+                let successCallback = function() {
+                  logger.debug('done with ack');
+                  ch.ack(msg);
+                };
+                let rejectCallback = function() {
+                  logger.debug('requeue message');
+                  ch.nack(msg);
+                };
+                readCallback(msgContent).then(successCallback, rejectCallback);
+              }
+            },
+            { noAck: options.noAck, consumerTag: consumerTag }
+          );
+        }
+
+        process.on('CANCEL_CONSUME', function() {
+          logger.info('Received CANCEL_CONSUME, cancelling consumption');
+          ch.cancel(consumerTag);
+        });
 
         process.on('SIGINT', function() {
           logger.info('Received SIGINT, cancelling consumption');
@@ -142,6 +144,24 @@ SubscribeEventKlass.prototype = {
         logger.info('trying consume again......');
         oThis.rabbit(topics, options, readCallback);
       }, 2000);
+    });
+  },
+
+  cancelChannel: async function(options) {
+    const conn = await rabbitmqConnection.get(rmqId);
+
+    if (!conn) {
+      throw 'Not able to establish rabbitmq connection for now. Please try after sometime';
+    }
+
+    conn.createChannel(function(err, ch) {
+      let consumerTag = options.consumerTag;
+
+      if (err) {
+        throw 'channel could  be not created: ' + err;
+      }
+
+      ch.cancel(consumerTag);
     });
   },
 
