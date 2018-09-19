@@ -105,7 +105,7 @@ SubscribeEventKlass.prototype = {
           );
         } else {
           logger.info('Closing the channel as only assert queue was required.');
-          ch.cancel(consumerTag);
+          ch.close();
         }
 
         process.on('CANCEL_CONSUME', function() {
