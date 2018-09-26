@@ -62,7 +62,7 @@ PublishEventKlass.prototype = {
     });
 
     // publish RMQ events if required
-    if (coreConstants.OST_RMQ_SUPPORT == '1') {
+    if (coreConstants.OST_RMQ_SUPPORT === '1') {
       const conn = await rabbitmqConnection.get(rmqId, true);
 
       if (conn) {

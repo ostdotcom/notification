@@ -103,24 +103,23 @@ SubscribeEventKlass.prototype = {
             },
             { noAck: options.noAck, consumerTag: consumerTag }
           );
+          process.once('CANCEL_CONSUME', function() {
+            logger.info('Received CANCEL_CONSUME, cancelling consumption');
+            ch.cancel(consumerTag);
+          });
+
+          process.on('SIGINT', function() {
+            logger.info('Received SIGINT, cancelling consumption');
+            ch.cancel(consumerTag);
+          });
+          process.on('SIGTERM', function() {
+            logger.info('Received SIGTERM, cancelling consumption');
+            ch.cancel(consumerTag);
+          });
         } else {
           logger.info('Closing the channel as only assert queue was required.');
           ch.close();
         }
-
-        process.on('CANCEL_CONSUME', function() {
-          logger.info('Received CANCEL_CONSUME, cancelling consumption');
-          ch.cancel(consumerTag);
-        });
-
-        process.on('SIGINT', function() {
-          logger.info('Received SIGINT, cancelling consumption');
-          ch.cancel(consumerTag);
-        });
-        process.on('SIGTERM', function() {
-          logger.info('Received SIGTERM, cancelling consumption');
-          ch.cancel(consumerTag);
-        });
       };
 
       if (options['queue']) {
