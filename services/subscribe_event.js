@@ -117,7 +117,7 @@ SubscribeEventKlass.prototype = {
         ch.assertQueue(options['queue'],
           {
             autoDelete: false,
-            durable: false,
+            durable: true,
             arguments:
               {
                 "x-expires": rabbitmqHelper.dedicatedQueueTtl,

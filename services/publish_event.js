@@ -91,7 +91,7 @@ PublishEventKlass.prototype = {
           //TODO: assertExchange and publish, promise is not handled
           ch.assertExchange(ex, 'topic', {durable: true});
           topics.forEach(function (key) {
-            ch.publish(ex, key, new Buffer(msgString));
+            ch.publish(ex, key, new Buffer(msgString),{persistent:true});
           });
 
           ch.close();
