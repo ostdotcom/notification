@@ -127,7 +127,7 @@ SubscribeEventKlass.prototype = {
           options['queue'],
           {
             autoDelete: false,
-            durable: false,
+            durable: true,
             arguments: {
               'x-expires': rabbitmqHelper.dedicatedQueueTtl,
               'x-message-ttl': rabbitmqConnection.dedicatedQueueMsgTtl
