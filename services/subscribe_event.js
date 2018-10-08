@@ -35,13 +35,10 @@ SubscribeEventKlass.prototype = {
    *    These queues and events, published in them, have TTL of 6 days.
    *    If queue name is not passed, a queue with unique name is created and is deleted when subscriber gets disconnected.
    * @param {function} readCallback - function to run on message arrived on the channel.
+   * @param {function} subscribeCallback
    *
    */
   rabbit: async function(topics, options, readCallback, subscribeCallback) {
-    if (coreConstants.OST_RMQ_SUPPORT !== '1') {
-      throw 'No RMQ support';
-    }
-
     const oThis = this;
 
     if (topics.length === 0) {
@@ -88,7 +85,7 @@ SubscribeEventKlass.prototype = {
 
         ch.prefetch(options.prefetch);
 
-        const startConsumption = function () {
+        const startConsumption = function() {
           ch.consume(
             q.queue,
             function(msg) {
@@ -112,17 +109,16 @@ SubscribeEventKlass.prototype = {
         };
         // If queue should start consuming as well.
         if (!options.onlyAssert) {
-
           startConsumption();
 
           process.on('CANCEL_CONSUME', function(ct) {
-            if(ct == consumerTag) {
+            if (ct === consumerTag) {
               logger.info('Received CANCEL_CONSUME, cancelling consumption of', ct);
               ch.cancel(consumerTag);
             }
           });
           process.on('RESUME_CONSUME', function(ct) {
-            if(ct == consumerTag) {
+            if (ct === consumerTag) {
               logger.info('Received RESUME_CONSUME, Resuming consumption of', ct);
               startConsumption();
             }
