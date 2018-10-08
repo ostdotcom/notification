@@ -36,7 +36,7 @@ SubscribeEventKlass.prototype = {
    * @param {function} readCallback - function to run on message arrived on the channel.
    *
    */
-  rabbit: async function(topics, options, readCallback) {
+  rabbit: async function(topics, options, readCallback, subscribeCallback) {
     if (coreConstants.OST_RMQ_SUPPORT !== '1') {
       throw 'No RMQ support';
     }
@@ -65,6 +65,9 @@ SubscribeEventKlass.prototype = {
 
       const ex = 'topic_events';
 
+      //call only if subscribeCallback is passed.
+      subscribeCallback && subscribeCallback(consumerTag);
+
       //TODO - assertExchange, bindQueue and consume, promise is not handled
       ch.assertExchange(ex, 'topic', { durable: true });
 
@@ -81,8 +84,7 @@ SubscribeEventKlass.prototype = {
 
         ch.prefetch(options.prefetch);
 
-        // If queue should start consuming as well.
-        if (!options.onlyAssert) {
+        const startConsumption = function () {
           ch.consume(
             q.queue,
             function(msg) {
@@ -103,11 +105,24 @@ SubscribeEventKlass.prototype = {
             },
             { noAck: options.noAck, consumerTag: consumerTag }
           );
-          process.once('CANCEL_CONSUME', function() {
-            logger.info('Received CANCEL_CONSUME, cancelling consumption');
-            ch.cancel(consumerTag);
-          });
+        };
+        // If queue should start consuming as well.
+        if (!options.onlyAssert) {
 
+          startConsumption();
+
+          process.on('CANCEL_CONSUME', function(ct) {
+            if(ct == consumerTag) {
+              logger.info('Received CANCEL_CONSUME, cancelling consumption of', ct);
+              ch.cancel(consumerTag);
+            }
+          });
+          process.on('RESUME_CONSUME', function(ct) {
+            if(ct == consumerTag) {
+              logger.info('Received RESUME_CONSUME, Resuming consumption of', ct);
+              startConsumption();
+            }
+          });
           process.on('SIGINT', function() {
             logger.info('Received SIGINT, cancelling consumption');
             ch.cancel(consumerTag);
