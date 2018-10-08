@@ -1,20 +1,21 @@
 'use strict';
 
 /**
- * Listening to Rabbitmq channels to receive published message.
+ * Listening to RabbitMq channels to receive published message.
  *
  * @module services/subscribe_event
  *
  */
 
 const rootPrefix = '..',
-  rabbitmqConnection = require(rootPrefix + '/lib/rabbitmq/connect'),
+  rabbitMqHelper = require(rootPrefix + '/lib/rabbitmq/helper'),
   localEmitter = require(rootPrefix + '/services/local_emitter'),
-  coreConstants = require(rootPrefix + '/config/core_constants'),
-  rabbitmqHelper = require(rootPrefix + '/lib/rabbitmq/helper'),
+  InstanceComposer = require(rootPrefix + '/instance_composer'),
   logger = require(rootPrefix + '/lib/logger/custom_console_logger'),
-  rmqId = 'rmq1', // To support horizontal scaling in future
-  uuid = require('uuid');
+  uuidV4 = require('uuid/v4');
+
+require(rootPrefix + '/lib/rabbitmq/helper');
+require(rootPrefix + '/lib/rabbitmq/connect');
 
 /**
  * Constructor to subscribe RMQ event
@@ -25,7 +26,7 @@ const SubscribeEventKlass = function() {};
 
 SubscribeEventKlass.prototype = {
   /**
-   * Subscribe rabbitmq topics to receive messages.
+   * Subscribe rabbitMq topics to receive messages.
    *
    * @param {array} topics - list of topics to receive messages.
    * @param {object} options -
@@ -41,23 +42,26 @@ SubscribeEventKlass.prototype = {
       throw 'No RMQ support';
     }
 
+    const oThis = this;
+
     if (topics.length === 0) {
-      throw 'invalid parameters';
+      throw 'Invalid topic parameters.';
     }
+
+    let rmqId = rabbitMqHelper.getInstanceKey(oThis.ic().configStrategy),
+      rabbitMqConnection = new oThis.ic().getRabbitMqConnection();
 
     options.prefetch = options.prefetch || 1;
     options.noAck = options.ackRequired !== 1;
 
-    const conn = await rabbitmqConnection.get(rmqId);
-
-    const oThis = this;
+    const conn = await rabbitMqConnection.get(rmqId);
 
     if (!conn) {
-      throw 'Not able to establish rabbitmq connection for now. Please try after sometime';
+      throw 'Not able to establish rabbitMQ connection for now. Please try after sometime.';
     }
 
     conn.createChannel(function(err, ch) {
-      const consumerTag = uuid.v4();
+      const consumerTag = uuidV4();
 
       if (err) {
         throw 'channel could  be not created: ' + err;
@@ -144,8 +148,8 @@ SubscribeEventKlass.prototype = {
             autoDelete: false,
             durable: true,
             arguments: {
-              'x-expires': rabbitmqHelper.dedicatedQueueTtl,
-              'x-message-ttl': rabbitmqConnection.dedicatedQueueMsgTtl
+              'x-expires': rabbitMqHelper.dedicatedQueueTtl,
+              'x-message-ttl': rabbitMqHelper.dedicatedQueueMsgTtl
             }
           },
           assertQueueCallback
@@ -165,7 +169,12 @@ SubscribeEventKlass.prototype = {
   },
 
   cancelChannel: async function(options) {
-    const conn = await rabbitmqConnection.get(rmqId);
+    const oThis = this;
+
+    let rmqId = rabbitMqHelper.getInstanceKey(oThis.ic().configStrategy),
+      rabbitMqConnection = new oThis.ic().getRabbitMqConnection();
+
+    const conn = await rabbitMqConnection.get(rmqId);
 
     if (!conn) {
       throw 'Not able to establish rabbitmq connection for now. Please try after sometime';
@@ -201,4 +210,8 @@ SubscribeEventKlass.prototype = {
   }
 };
 
-module.exports = new SubscribeEventKlass();
+SubscribeEventKlass.prototype.constructor = SubscribeEventKlass;
+
+InstanceComposer.register(SubscribeEventKlass, 'getSubscribeEventKlass', true);
+
+module.exports = SubscribeEventKlass;
