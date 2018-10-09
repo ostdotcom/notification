@@ -14,7 +14,6 @@ const rootPrefix = '..',
   logger = require(rootPrefix + '/lib/logger/custom_console_logger'),
   uuidV4 = require('uuid/v4');
 
-require(rootPrefix + '/lib/rabbitmq/helper');
 require(rootPrefix + '/lib/rabbitmq/connect');
 
 /**
@@ -26,7 +25,7 @@ const SubscribeEventKlass = function() {};
 
 SubscribeEventKlass.prototype = {
   /**
-   * Subscribe rabbitMq topics to receive messages.
+   * Subscribe to rabbitMq topics to receive messages.
    *
    * @param {array} topics - list of topics to receive messages.
    * @param {object} options -
@@ -35,7 +34,7 @@ SubscribeEventKlass.prototype = {
    *    These queues and events, published in them, have TTL of 6 days.
    *    If queue name is not passed, a queue with unique name is created and is deleted when subscriber gets disconnected.
    * @param {function} readCallback - function to run on message arrived on the channel.
-   * @param {function} subscribeCallback
+   * @param {function} subscribeCallback - function to return consumerTag.
    *
    */
   rabbit: async function(topics, options, readCallback, subscribeCallback) {
@@ -66,7 +65,7 @@ SubscribeEventKlass.prototype = {
 
       const ex = 'topic_events';
 
-      //call only if subscribeCallback is passed.
+      // Call only if subscribeCallback is passed.
       subscribeCallback && subscribeCallback(consumerTag);
 
       //TODO - assertExchange, bindQueue and consume, promise is not handled
