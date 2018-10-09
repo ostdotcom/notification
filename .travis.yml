@@ -27,6 +27,5 @@ install:
   - npm install -g mocha
 before_script:
 script:
-  - source test/env_vars.sh
   - mocha test --exit
 after_script:

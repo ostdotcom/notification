@@ -2,10 +2,13 @@
 const chai = require('chai'),
   assert = chai.assert;
 
-// Load cache service
+// Load notification service
 const rootPrefix = '..',
-  publishEvent = require(rootPrefix + '/services/publish_event'),
-  rabbitmqConnection = require(rootPrefix + '/lib/rabbitmq/connect');
+  openSTNotificationKlass = require(rootPrefix + '/index'),
+  configStrategy = require(rootPrefix + '/test/config_strategy.json');
+
+require(rootPrefix + '/lib/rabbitmq/connect');
+require(rootPrefix + '/services/publish_event');
 
 const getParams = function() {
   return {
@@ -21,25 +24,32 @@ const getParams = function() {
   };
 };
 
-describe('publish to rabbitmq', async function() {
+const getConnection = async function() {
+  return await openSTNotificationKlass.getInstance(configStrategy);
+};
+
+describe('Publishing to rabbitMq', async function() {
   it('should return promise', async function() {
-    await rabbitmqConnection.get('rmq1');
+    // Create connection.
+    let connection = await getConnection();
 
     let params = getParams(),
-      response = publishEvent.perform(params);
+      response = connection.publishEvent.perform(params);
 
     assert.typeOf(response, 'Promise');
   });
 
   it('should fail when empty params are passed', async function() {
     let params = {},
-      response = await publishEvent.perform(params);
+      connection = await getConnection(),
+      response = await connection.publishEvent.perform(params);
 
     assert.equal(response.isSuccess(), false);
   });
 
   it('should fail when no params are passed', async function() {
-    let response = await publishEvent.perform();
+    let connection = await getConnection(),
+      response = await connection.publishEvent.perform();
 
     assert.equal(response.isSuccess(), false);
   });
@@ -48,7 +58,8 @@ describe('publish to rabbitmq', async function() {
     let params = getParams();
     delete params['topics'];
 
-    let response = await publishEvent.perform(params);
+    let connection = await getConnection(),
+      response = await connection.publishEvent.perform(params);
 
     assert.equal(response.isSuccess(), false);
   });
@@ -57,7 +68,8 @@ describe('publish to rabbitmq', async function() {
     let params = getParams();
     delete params['message'];
 
-    let response = await publishEvent.perform(params);
+    let connection = await getConnection(),
+      response = await connection.publishEvent.perform(params);
     assert.equal(response.isSuccess(), false);
   });
 
@@ -65,7 +77,8 @@ describe('publish to rabbitmq', async function() {
     let params = getParams();
     delete params['message']['kind'];
 
-    let response = await publishEvent.perform(params);
+    let connection = await getConnection(),
+      response = await connection.publishEvent.perform(params);
     assert.equal(response.isSuccess(), false);
   });
 
@@ -73,7 +86,8 @@ describe('publish to rabbitmq', async function() {
     let params = getParams();
     delete params['message']['payload'];
 
-    let response = await publishEvent.perform(params);
+    let connection = await getConnection(),
+      response = await connection.publishEvent.perform(params);
     assert.equal(response.isSuccess(), false);
   });
 
@@ -81,7 +95,8 @@ describe('publish to rabbitmq', async function() {
     let params = getParams();
     delete params['message']['payload']['event_name'];
 
-    let response = await publishEvent.perform(params);
+    let connection = await getConnection(),
+      response = await connection.publishEvent.perform(params);
     assert.equal(response.isSuccess(), false);
   });
 
@@ -89,7 +104,8 @@ describe('publish to rabbitmq', async function() {
     let params = getParams();
     delete params['message']['payload']['params'];
 
-    let response = await publishEvent.perform(params);
+    let connection = await getConnection(),
+      response = await connection.publishEvent.perform(params);
     assert.equal(response.isSuccess(), false);
   });
 
@@ -97,7 +113,8 @@ describe('publish to rabbitmq', async function() {
     let params = getParams();
     delete params['message']['payload']['contract_address'];
 
-    let response = await publishEvent.perform(params);
+    let connection = await getConnection(),
+      response = await connection.publishEvent.perform(params);
     assert.equal(response.isSuccess(), false);
   });
 
@@ -105,7 +122,8 @@ describe('publish to rabbitmq', async function() {
     let params = getParams();
     params['message']['kind'] = 'abcd';
 
-    let response = await publishEvent.perform(params);
+    let connection = await getConnection(),
+      response = await connection.publishEvent.perform(params);
     assert.equal(response.isSuccess(), false);
   });
 });

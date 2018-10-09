@@ -1,0 +1,8 @@
+{
+  "OST_RMQ_USERNAME": "guest",
+  "OST_RMQ_PASSWORD": "guest",
+  "OST_RMQ_HOST": "127.0.0.1",
+  "OST_RMQ_PORT": "5672",
+  "OST_RMQ_HEARTBEATS": "30",
+  "OST_UTILITY_CHAIN_ID": "1000"
+}
