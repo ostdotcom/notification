@@ -68,7 +68,9 @@ Factory.prototype = {
     if (!_instance) {
       _instance = new OpenSTNotification(configStrategy);
       let connection = _instance.ic.getRabbitMqConnection();
-      await connection.get(instanceKey);
+      console.log('---------11----------', instanceKey);
+      await connection.get();
+      console.log('---------2----------');
       instanceMap[instanceKey] = _instance;
     }
 
