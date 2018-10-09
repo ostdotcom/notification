@@ -26,9 +26,9 @@
     "pre-commit": "lint-staged"
   },
   "dependencies": {
+    "@openstfoundation/openst-base": "0.9.3-beta.5",
     "amqplib": "0.5.2",
-    "uuid": "3.2.1",
-    "@openstfoundation/openst-base": "0.9.3-beta.5"
+    "uuid": "3.2.1"
   },
   "devDependencies": {
     "chai": "4.1.2",

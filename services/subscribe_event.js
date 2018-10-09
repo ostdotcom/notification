@@ -172,7 +172,7 @@ SubscribeEventKlass.prototype = {
     const conn = await rabbitMqConnection.get(rmqId);
 
     if (!conn) {
-      throw 'Not able to establish rabbitmq connection for now. Please try after sometime';
+      throw 'Not able to establish rabbitMq connection for now. Please try after sometime';
     }
 
     conn.createChannel(function(err, ch) {

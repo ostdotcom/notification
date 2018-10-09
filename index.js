@@ -22,14 +22,11 @@ const OpenSTNotification = function(configStrategy) {
   }
 
   const instanceComposer = (oThis.ic = new InstanceComposer(configStrategy));
-  //let instanceKey = rabbitMqHelper.getInstanceKey(configStrategy);
 
   oThis.version = version;
   oThis.connection = instanceComposer.getRabbitMqConnection();
   oThis.publishEvent = instanceComposer.getPublishEventKlass();
   oThis.subscribeEvent = instanceComposer.getSubscribeEventKlass();
-
-  //oThis.connection.get(instanceKey);
 };
 
 const instanceMap = {};
@@ -68,9 +65,7 @@ Factory.prototype = {
     if (!_instance) {
       _instance = new OpenSTNotification(configStrategy);
       let connection = _instance.ic.getRabbitMqConnection();
-      console.log('---------11----------', instanceKey);
       await connection.get();
-      console.log('---------2----------');
       instanceMap[instanceKey] = _instance;
     }
 

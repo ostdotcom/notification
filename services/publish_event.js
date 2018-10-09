@@ -17,7 +17,6 @@ const rootPrefix = '..',
   logger = require(rootPrefix + '/lib/logger/custom_console_logger'),
   paramErrorConfig = require(rootPrefix + '/config/param_error_config');
 
-require(rootPrefix + '/lib/rabbitmq/helper');
 require(rootPrefix + '/lib/rabbitmq/connect');
 
 const errorConfig = {
