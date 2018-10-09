@@ -4,7 +4,6 @@
  * Listening to RabbitMq channels to receive published message.
  *
  * @module services/subscribe_event
- *
  */
 
 const rootPrefix = '..',
@@ -44,13 +43,12 @@ SubscribeEventKlass.prototype = {
       throw 'Invalid topic parameters.';
     }
 
-    let rmqId = rabbitMqHelper.getInstanceKey(oThis.ic().configStrategy),
-      rabbitMqConnection = new oThis.ic().getRabbitMqConnection();
+    let rabbitMqConnection = oThis.ic().getRabbitMqConnection();
 
     options.prefetch = options.prefetch || 1;
     options.noAck = options.ackRequired !== 1;
 
-    const conn = await rabbitMqConnection.get(rmqId);
+    const conn = await rabbitMqConnection.get();
 
     if (!conn) {
       throw 'Not able to establish rabbitMQ connection for now. Please try after sometime.';
@@ -68,7 +66,6 @@ SubscribeEventKlass.prototype = {
       // Call only if subscribeCallback is passed.
       subscribeCallback && subscribeCallback(consumerTag);
 
-      //TODO - assertExchange, bindQueue and consume, promise is not handled
       ch.assertExchange(ex, 'topic', { durable: true });
 
       const assertQueueCallback = function(err, q) {
@@ -163,13 +160,18 @@ SubscribeEventKlass.prototype = {
     });
   },
 
+  /**
+   * Cancel channel
+   *
+   * @param {object} options
+   * @param {string} options.consumerTag - consumer tag of the channel
+   */
   cancelChannel: async function(options) {
     const oThis = this;
 
-    let rmqId = rabbitMqHelper.getInstanceKey(oThis.ic().configStrategy),
-      rabbitMqConnection = new oThis.ic().getRabbitMqConnection();
+    let rabbitMqConnection = oThis.ic().getRabbitMqConnection();
 
-    const conn = await rabbitMqConnection.get(rmqId);
+    const conn = await rabbitMqConnection.get();
 
     if (!conn) {
       throw 'Not able to establish rabbitMq connection for now. Please try after sometime';

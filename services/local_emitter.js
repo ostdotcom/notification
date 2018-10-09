@@ -8,6 +8,7 @@
 
 const EventEmitter = require('events'),
   emitObj = new EventEmitter();
+
 /**
  * Constructor for local emitter
  *

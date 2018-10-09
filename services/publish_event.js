@@ -3,11 +3,9 @@
  * Publish event to RabbitMQ.
  *
  * @module services/publish_event
- *
  */
 
 const rootPrefix = '..',
-  util = require(rootPrefix + '/lib/util'),
   validator = require(rootPrefix + '/lib/validator/init'),
   InstanceComposer = require(rootPrefix + '/instance_composer'),
   rabbitMqHelper = require(rootPrefix + '/lib/rabbitmq/helper'),
@@ -65,10 +63,10 @@ PublishEventKlass.prototype = {
     });
 
     let rmqId = rabbitMqHelper.getInstanceKey(oThis.ic().configStrategy),
-      rabbitMqConnection = new oThis.ic().getRabbitMqConnection();
+      rabbitMqConnection = oThis.ic().getRabbitMqConnection();
 
     // Publish RMQ events.
-    const conn = await rabbitMqConnection.get(rmqId, true);
+    const conn = await rabbitMqConnection.get();
 
     if (conn) {
       publishedInRmq = 1;
@@ -84,17 +82,16 @@ PublishEventKlass.prototype = {
           return Promise.resolve(responseHelper.error(errorParams));
         }
 
-        //TODO: assertExchange and publish, Promise is not handled
         ch.assertExchange(ex, 'topic', { durable: true });
-        topics.forEach(function(key) {
-          ch.publish(ex, key, new Buffer(msgString), { persistent: true });
-        });
+
+        for (let index = 0; index < topics.length; index++) {
+          let currTopic = topics[index];
+          ch.publish(ex, currTopic, new Buffer(msgString), { persistent: true });
+        }
 
         ch.close();
       });
     } else {
-      logger.error('Connection not found writing to tmp.');
-      util.saveUnpublishedMessages(msgString);
       let errorParams = {
         internal_error_identifier: 's_pe_1',
         api_error_identifier: 'no_rmq_connection',

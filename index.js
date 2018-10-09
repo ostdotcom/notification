@@ -14,6 +14,11 @@ require(rootPrefix + '/lib/rabbitmq/connect');
 require(rootPrefix + '/services/publish_event');
 require(rootPrefix + '/services/subscribe_event');
 
+/**
+ * OpenST Notification
+ *
+ * @constructor
+ */
 const OpenSTNotification = function(configStrategy) {
   const oThis = this;
 
@@ -29,13 +34,13 @@ const OpenSTNotification = function(configStrategy) {
   oThis.subscribeEvent = instanceComposer.getSubscribeEventKlass();
 };
 
+// instance map to ensure that only one object is created per config strategy
 const instanceMap = {};
 
-const Factory = function() {};
+const OpenSTNotificationFactory = function() {};
 
-Factory.prototype = {
+OpenSTNotificationFactory.prototype = {
   /**
-   *
    * Get an instance of OpenSTNotification
    *
    * @param configStrategy
@@ -64,8 +69,7 @@ Factory.prototype = {
 
     if (!_instance) {
       _instance = new OpenSTNotification(configStrategy);
-      let connection = _instance.ic.getRabbitMqConnection();
-      await connection.get();
+      await _instance.connection.get();
       instanceMap[instanceKey] = _instance;
     }
 
@@ -73,7 +77,7 @@ Factory.prototype = {
   }
 };
 
-const factory = new Factory();
+const factory = new OpenSTNotificationFactory();
 OpenSTNotification.getInstance = function() {
   return factory.getInstance.apply(factory, arguments);
 };
