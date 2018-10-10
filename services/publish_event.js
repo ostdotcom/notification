@@ -8,7 +8,6 @@
 const rootPrefix = '..',
   validator = require(rootPrefix + '/lib/validator/init'),
   InstanceComposer = require(rootPrefix + '/instance_composer'),
-  rabbitMqHelper = require(rootPrefix + '/lib/rabbitmq/helper'),
   localEmitter = require(rootPrefix + '/services/local_emitter'),
   responseHelper = require(rootPrefix + '/lib/formatter/response'),
   apiErrorConfig = require(rootPrefix + '/config/api_error_config'),

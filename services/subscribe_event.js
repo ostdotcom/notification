@@ -7,11 +7,11 @@
  */
 
 const rootPrefix = '..',
+  uuidV4 = require('uuid/v4'),
+  InstanceComposer = require(rootPrefix + '/instance_composer'),
   rabbitMqHelper = require(rootPrefix + '/lib/rabbitmq/helper'),
   localEmitter = require(rootPrefix + '/services/local_emitter'),
-  InstanceComposer = require(rootPrefix + '/instance_composer'),
-  logger = require(rootPrefix + '/lib/logger/custom_console_logger'),
-  uuidV4 = require('uuid/v4');
+  logger = require(rootPrefix + '/lib/logger/custom_console_logger');
 
 require(rootPrefix + '/lib/rabbitmq/connect');
 
