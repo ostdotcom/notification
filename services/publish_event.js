@@ -62,8 +62,7 @@ PublishEventKlass.prototype = {
       localEmitter.emitObj.emit(key, msgString);
     });
 
-    let rmqId = rabbitMqHelper.getInstanceKey(oThis.ic().configStrategy),
-      rabbitMqConnection = oThis.ic().getRabbitMqConnection();
+    let rabbitMqConnection = oThis.ic().getRabbitMqConnection();
 
     // Publish RMQ events.
     const conn = await rabbitMqConnection.get();
