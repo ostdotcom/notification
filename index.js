@@ -44,9 +44,9 @@ OpenSTNotificationFactory.prototype = {
    * Get an instance of OpenSTNotification
    *
    * @param configStrategy
-   * @returns {Promise<OpenSTNotification>}
+   * @returns {OpenSTNotification}
    */
-  getInstance: async function(configStrategy) {
+  getInstance: function(configStrategy) {
     const oThis = this,
       rabbitMqMandatoryParams = [
         'OST_RMQ_USERNAME',
@@ -69,9 +69,9 @@ OpenSTNotificationFactory.prototype = {
 
     if (!_instance) {
       _instance = new OpenSTNotification(configStrategy);
-      await _instance.connection.get();
       instanceMap[instanceKey] = _instance;
     }
+    _instance.connection.get();
 
     return _instance;
   }
