@@ -24,32 +24,26 @@ const getParams = function() {
   };
 };
 
-const getConnection = async function() {
-  return await openSTNotificationKlass.getInstance(configStrategy);
-};
+// Create connection.
+const openStNotification = openSTNotificationKlass.getInstance(configStrategy);
 
 describe('Publishing to rabbitMq', async function() {
   it('should return promise', async function() {
-    // Create connection.
-    let connection = await getConnection();
-
     let params = getParams(),
-      response = connection.publishEvent.perform(params);
+      response = openStNotification.publishEvent.perform(params);
 
     assert.typeOf(response, 'Promise');
   });
 
   it('should fail when empty params are passed', async function() {
     let params = {},
-      connection = await getConnection(),
-      response = await connection.publishEvent.perform(params);
+      response = await openStNotification.publishEvent.perform(params);
 
     assert.equal(response.isSuccess(), false);
   });
 
   it('should fail when no params are passed', async function() {
-    let connection = await getConnection(),
-      response = await connection.publishEvent.perform();
+    let response = await openStNotification.publishEvent.perform();
 
     assert.equal(response.isSuccess(), false);
   });
@@ -58,8 +52,7 @@ describe('Publishing to rabbitMq', async function() {
     let params = getParams();
     delete params['topics'];
 
-    let connection = await getConnection(),
-      response = await connection.publishEvent.perform(params);
+    let response = await openStNotification.publishEvent.perform(params);
 
     assert.equal(response.isSuccess(), false);
   });
@@ -68,8 +61,7 @@ describe('Publishing to rabbitMq', async function() {
     let params = getParams();
     delete params['message'];
 
-    let connection = await getConnection(),
-      response = await connection.publishEvent.perform(params);
+    let response = await openStNotification.publishEvent.perform(params);
     assert.equal(response.isSuccess(), false);
   });
 
@@ -77,8 +69,7 @@ describe('Publishing to rabbitMq', async function() {
     let params = getParams();
     delete params['message']['kind'];
 
-    let connection = await getConnection(),
-      response = await connection.publishEvent.perform(params);
+    let response = await openStNotification.publishEvent.perform(params);
     assert.equal(response.isSuccess(), false);
   });
 
@@ -86,8 +77,7 @@ describe('Publishing to rabbitMq', async function() {
     let params = getParams();
     delete params['message']['payload'];
 
-    let connection = await getConnection(),
-      response = await connection.publishEvent.perform(params);
+    let response = await openStNotification.publishEvent.perform(params);
     assert.equal(response.isSuccess(), false);
   });
 
@@ -95,8 +85,7 @@ describe('Publishing to rabbitMq', async function() {
     let params = getParams();
     delete params['message']['payload']['event_name'];
 
-    let connection = await getConnection(),
-      response = await connection.publishEvent.perform(params);
+    let response = await openStNotification.publishEvent.perform(params);
     assert.equal(response.isSuccess(), false);
   });
 
@@ -104,8 +93,7 @@ describe('Publishing to rabbitMq', async function() {
     let params = getParams();
     delete params['message']['payload']['params'];
 
-    let connection = await getConnection(),
-      response = await connection.publishEvent.perform(params);
+    let response = await openStNotification.publishEvent.perform(params);
     assert.equal(response.isSuccess(), false);
   });
 
@@ -113,8 +101,7 @@ describe('Publishing to rabbitMq', async function() {
     let params = getParams();
     delete params['message']['payload']['contract_address'];
 
-    let connection = await getConnection(),
-      response = await connection.publishEvent.perform(params);
+    let response = await openStNotification.publishEvent.perform(params);
     assert.equal(response.isSuccess(), false);
   });
 
@@ -122,8 +109,7 @@ describe('Publishing to rabbitMq', async function() {
     let params = getParams();
     params['message']['kind'] = 'abcd';
 
-    let connection = await getConnection(),
-      response = await connection.publishEvent.perform(params);
+    let response = await openStNotification.publishEvent.perform(params);
     assert.equal(response.isSuccess(), false);
   });
 });

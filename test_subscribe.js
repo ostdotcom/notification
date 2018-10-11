@@ -7,10 +7,12 @@ const rootPrefix = '.',
 
 let unAckCount = 0;
 
-openSTNotification.getInstance(configStrategy).then(function(connection) {
-  connection.subscribeEvent.rabbit(['ackqueue.test'], { queue: 'myQueue', ackRequired: 1, prefetch: 10 }, function(
-    msgContent
-  ) {
+let openStNotification = openSTNotification.getInstance(configStrategy);
+
+openStNotification.subscribeEvent.rabbit(
+  ['ackqueue.test'],
+  { queue: 'myQueue', ackRequired: 1, prefetch: 10 },
+  function(msgContent) {
     unAckCount++;
     return new Promise(function(onResolve, onReject) {
       logger.debug('Consumed message -> ', msgContent);
@@ -19,8 +21,8 @@ openSTNotification.getInstance(configStrategy).then(function(connection) {
         onResolve();
       }, 3000);
     });
-  });
-});
+  }
+);
 
 process.on('SIGINT', function() {
   logger.debug('Received SIGINT, checking unAckCount.');
