@@ -12,7 +12,8 @@ const rootPrefix = '..',
   responseHelper = require(rootPrefix + '/lib/formatter/response'),
   apiErrorConfig = require(rootPrefix + '/config/api_error_config'),
   logger = require(rootPrefix + '/lib/logger/custom_console_logger'),
-  paramErrorConfig = require(rootPrefix + '/config/param_error_config');
+  paramErrorConfig = require(rootPrefix + '/config/param_error_config'),
+  coreConstants = require(rootPrefix + '/config/core_constants');
 
 require(rootPrefix + '/lib/rabbitmq/connect');
 
