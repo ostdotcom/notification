@@ -61,42 +61,44 @@ PublishEventKlass.prototype = {
       localEmitter.emitObj.emit(key, msgString);
     });
 
-    let rabbitMqConnection = oThis.ic().getRabbitMqConnection();
+    if (coreConstants.OST_RMQ_SUPPORT == '1') {
+      let rabbitMqConnection = oThis.ic().getRabbitMqConnection();
 
-    // Publish RMQ events.
-    const conn = await rabbitMqConnection.get();
+      // Publish RMQ events.
+      const conn = await rabbitMqConnection.get();
 
-    if (conn) {
-      publishedInRmq = 1;
-      conn.createChannel(function(err, ch) {
-        if (err) {
-          let errorParams = {
-            internal_error_identifier: 's_pe_2',
-            api_error_identifier: 'cannot_create_channel',
-            error_config: errorConfig,
-            debug_options: { err: err }
-          };
-          logger.error(err.message);
-          return Promise.resolve(responseHelper.error(errorParams));
-        }
+      if (conn) {
+        publishedInRmq = 1;
+        conn.createChannel(function(err, ch) {
+          if (err) {
+            let errorParams = {
+              internal_error_identifier: 's_pe_2',
+              api_error_identifier: 'cannot_create_channel',
+              error_config: errorConfig,
+              debug_options: { err: err }
+            };
+            logger.error(err.message);
+            return Promise.resolve(responseHelper.error(errorParams));
+          }
 
-        ch.assertExchange(ex, 'topic', { durable: true });
+          ch.assertExchange(ex, 'topic', { durable: true });
 
-        for (let index = 0; index < topics.length; index++) {
-          let currTopic = topics[index];
-          ch.publish(ex, currTopic, new Buffer(msgString), { persistent: true });
-        }
+          for (let index = 0; index < topics.length; index++) {
+            let currTopic = topics[index];
+            ch.publish(ex, currTopic, new Buffer(msgString), { persistent: true });
+          }
 
-        ch.close();
-      });
-    } else {
-      let errorParams = {
-        internal_error_identifier: 's_pe_1',
-        api_error_identifier: 'no_rmq_connection',
-        error_config: errorConfig,
-        debug_options: {}
-      };
-      return Promise.resolve(responseHelper.error(errorParams));
+          ch.close();
+        });
+      } else {
+        let errorParams = {
+          internal_error_identifier: 's_pe_1',
+          api_error_identifier: 'no_rmq_connection',
+          error_config: errorConfig,
+          debug_options: {}
+        };
+        return Promise.resolve(responseHelper.error(errorParams));
+      }
     }
 
     return Promise.resolve(responseHelper.successWithData({ publishedToRmq: publishedInRmq }));
