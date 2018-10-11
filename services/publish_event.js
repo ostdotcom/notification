@@ -12,8 +12,7 @@ const rootPrefix = '..',
   responseHelper = require(rootPrefix + '/lib/formatter/response'),
   apiErrorConfig = require(rootPrefix + '/config/api_error_config'),
   logger = require(rootPrefix + '/lib/logger/custom_console_logger'),
-  paramErrorConfig = require(rootPrefix + '/config/param_error_config'),
-  coreConstants = require(rootPrefix + '/config/core_constants');
+  paramErrorConfig = require(rootPrefix + '/config/param_error_config');
 
 require(rootPrefix + '/lib/rabbitmq/connect');
 
@@ -62,7 +61,7 @@ PublishEventKlass.prototype = {
       localEmitter.emitObj.emit(key, msgString);
     });
 
-    if (coreConstants.OST_RMQ_SUPPORT == '1') {
+    if (oThis.ic().configStrategy.OST_RMQ_SUPPORT === '1') {
       let rabbitMqConnection = oThis.ic().getRabbitMqConnection();
 
       // Publish RMQ events.

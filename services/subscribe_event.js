@@ -11,8 +11,7 @@ const rootPrefix = '..',
   InstanceComposer = require(rootPrefix + '/instance_composer'),
   rabbitMqHelper = require(rootPrefix + '/lib/rabbitmq/helper'),
   localEmitter = require(rootPrefix + '/services/local_emitter'),
-  logger = require(rootPrefix + '/lib/logger/custom_console_logger'),
-  coreConstants = require(rootPrefix + '/config/core_constants');
+  logger = require(rootPrefix + '/lib/logger/custom_console_logger');
 
 require(rootPrefix + '/lib/rabbitmq/connect');
 
@@ -40,7 +39,7 @@ SubscribeEventKlass.prototype = {
   rabbit: async function(topics, options, readCallback, subscribeCallback) {
     const oThis = this;
 
-    if (coreConstants.OST_RMQ_SUPPORT != '1') {
+    if (oThis.ic().configStrategy.OST_RMQ_SUPPORT !== '1') {
       throw 'No RMQ support';
     }
 
