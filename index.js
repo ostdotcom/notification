@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Load OpenST Notification module
+ * Load OpenST Notification module.
  */
 
 const rootPrefix = '.',
@@ -15,8 +15,9 @@ require(rootPrefix + '/services/publish_event');
 require(rootPrefix + '/services/subscribe_event');
 
 /**
- * OpenST Notification
+ * OpenST-Notification
  *
+ * @param configStrategy
  * @constructor
  */
 const OpenSTNotification = function(configStrategy) {
@@ -34,7 +35,7 @@ const OpenSTNotification = function(configStrategy) {
   oThis.subscribeEvent = instanceComposer.getSubscribeEventKlass();
 };
 
-// instance map to ensure that only one object is created per config strategy
+// Instance Map to ensure that only one object is created per config strategy.
 const instanceMap = {};
 
 const OpenSTNotificationFactory = function() {};

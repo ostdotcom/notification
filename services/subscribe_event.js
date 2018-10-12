@@ -74,7 +74,7 @@ SubscribeEventKlass.prototype = {
 
       const assertQueueCallback = function(err, q) {
         if (err) {
-          throw 'subscriber could assert queue: ' + err;
+          throw 'subscriber could not assert queue: ' + err;
         }
 
         logger.info(' [*] Waiting for logs. To exit press CTRL+C', q.queue);
@@ -156,7 +156,7 @@ SubscribeEventKlass.prototype = {
     });
 
     localEmitter.emitObj.once('rmq_fail', function(err) {
-      logger.error('RMQ Failed event received.');
+      logger.error('RMQ Failed event received. Error: ', err);
       setTimeout(function() {
         logger.info('trying consume again......');
         oThis.rabbit(topics, options, readCallback);
