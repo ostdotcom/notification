@@ -80,16 +80,11 @@ SubscribeEventKlass.prototype = {
       ch.assertExchange(ex, 'topic', { durable: true });
 
       const assertQueueCallback = function(err, q) {
-        try {
-          if (err) {
-            //console.log('subscriber could not assert queue: ' + err);
-            //return;
-            throw 'subscriber could not assert queue: ' + err;
-          }
-        } catch (err) {
-          logger.error('Queue not asserted. Error:', err);
+        if (err) {
+          logger.error('subscriber could not assert queue: ' + err);
           return;
         }
+
         logger.info(' [*] Waiting for logs. To exit press CTRL+C', q.queue);
 
         topics.forEach(function(key) {
