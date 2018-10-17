@@ -65,6 +65,13 @@ SubscribeEventKlass.prototype = {
         throw 'channel could  be not created: ' + err;
       }
 
+      ch.once('error', function(err) {
+        logger.error('[AMQP] Channel error', err);
+      });
+      ch.once('close', function() {
+        logger.error('[AMQP] Channel Closed');
+      });
+
       const ex = 'topic_events';
 
       // Call only if subscribeCallback is passed.
@@ -73,10 +80,16 @@ SubscribeEventKlass.prototype = {
       ch.assertExchange(ex, 'topic', { durable: true });
 
       const assertQueueCallback = function(err, q) {
-        if (err) {
-          throw 'subscriber could not assert queue: ' + err;
+        try {
+          if (err) {
+            //console.log('subscriber could not assert queue: ' + err);
+            //return;
+            throw 'subscriber could not assert queue: ' + err;
+          }
+        } catch (err) {
+          logger.error('Queue not asserted. Error:', err);
+          return;
         }
-
         logger.info(' [*] Waiting for logs. To exit press CTRL+C', q.queue);
 
         topics.forEach(function(key) {
