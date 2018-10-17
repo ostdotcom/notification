@@ -39,7 +39,7 @@ SubscribeEventKlass.prototype = {
   rabbit: async function(topics, options, readCallback, subscribeCallback) {
     const oThis = this;
 
-    if (oThis.ic().configStrategy.OST_RMQ_SUPPORT !== '1') {
+    if (oThis.ic().configStrategy.OST_RMQ_SUPPORT != '1') {
       throw 'No RMQ support';
     }
 
