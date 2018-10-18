@@ -40,11 +40,15 @@ SubscribeEventKlass.prototype = {
     const oThis = this;
 
     if (oThis.ic().configStrategy.OST_RMQ_SUPPORT != '1') {
-      throw 'No RMQ support';
+      logger.error('There is no rmq support. Error: ');
+      process.emit('ost_rmq_error', 'There is no rmq support.');
+      return;
     }
 
     if (topics.length === 0) {
-      throw 'Invalid topic parameters.';
+      logger.error('Invalid topic parameters.');
+      process.emit('ost_rmq_error', 'Invalid topic parameters.');
+      return;
     }
 
     let rabbitMqConnection = oThis.ic().getRabbitMqConnection();
@@ -55,18 +59,23 @@ SubscribeEventKlass.prototype = {
     const conn = await rabbitMqConnection.get();
 
     if (!conn) {
-      throw 'Not able to establish rabbitMQ connection for now. Please try after sometime.';
+      logger.error('Not able to establish rabbitMQ connection for now. Please try after sometime.');
+      process.emit('ost_rmq_error', 'Not able to establish rabbitMQ connection for now. Please try after sometime.');
+      return;
     }
 
     conn.createChannel(function(err, ch) {
       const consumerTag = uuidV4();
 
       if (err) {
-        throw 'channel could  be not created: ' + err;
+        logger.error('channel could  be not created: Error: ', err);
+        process.emit('ost_rmq_error', 'channel could  be not created: Error:' + err);
+        return;
       }
 
       ch.once('error', function(err) {
         logger.error('[AMQP] Channel error', err);
+        process.emit('ost_rmq_error', '[AMQP] Channel error: Error:' + err);
       });
       ch.once('close', function() {
         logger.error('[AMQP] Channel Closed');
@@ -82,6 +91,7 @@ SubscribeEventKlass.prototype = {
       const assertQueueCallback = function(err, q) {
         if (err) {
           logger.error('subscriber could not assert queue: ' + err);
+          process.emit('ost_rmq_error', 'subscriber could not assert queue:' + err);
           return;
         }
 
@@ -173,34 +183,6 @@ SubscribeEventKlass.prototype = {
   },
 
   /**
-   * Cancel channel
-   *
-   * @param {object} options
-   * @param {string} options.consumerTag - consumer tag of the channel
-   */
-  cancelChannel: async function(options) {
-    const oThis = this;
-
-    let rabbitMqConnection = oThis.ic().getRabbitMqConnection();
-
-    const conn = await rabbitMqConnection.get();
-
-    if (!conn) {
-      throw 'Not able to establish rabbitMq connection for now. Please try after sometime';
-    }
-
-    conn.createChannel(function(err, ch) {
-      let consumerTag = options.consumerTag;
-
-      if (err) {
-        throw 'channel could  be not created: ' + err;
-      }
-
-      ch.cancel(consumerTag);
-    });
-  },
-
-  /**
    * Subscribe local emitters by topics to receive messages.
    * Note: messages could be received only on the same object(thus, same process) where the message was emitted.
    *
@@ -210,7 +192,8 @@ SubscribeEventKlass.prototype = {
    */
   local: function(topics, readCallback) {
     if (topics.length === 0) {
-      throw 'invalid parameters';
+      logger.error('Invalid parameters Error: topics are mandatory');
+      return;
     }
 
     topics.forEach(function(key) {
