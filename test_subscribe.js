@@ -1,13 +1,15 @@
 'use strict';
 
-const openSTNotification = require('./index');
-
-const rootPrefix = '',
-  logger = require(rootPrefix + '/lib/logger/custom_console_logger');
+const rootPrefix = '.',
+  openSTNotification = require(rootPrefix + '/index'),
+  logger = require(rootPrefix + '/lib/logger/custom_console_logger'),
+  configStrategy = require(rootPrefix + '/test/config_strategy.json');
 
 let unAckCount = 0;
 
-openSTNotification.subscribeEvent.rabbit(
+let openStNotification = openSTNotification.getInstance(configStrategy);
+
+openStNotification.subscribeEvent.rabbit(
   ['ackqueue.test'],
   { queue: 'myQueue', ackRequired: 1, prefetch: 10 },
   function(msgContent) {
