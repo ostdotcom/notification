@@ -32,8 +32,7 @@ configStrategy = {
 	OST_RMQ_PASSWORD: 'guest',
 	OST_RMQ_HOST: '127.0.0.1',
 	OST_RMQ_PORT: '5672',
-	OST_RMQ_HEARTBEATS: '30',
-	OST_UTILITY_CHAIN_ID: '1000'
+	OST_RMQ_HEARTBEATS: '30'
 };
 // Import the notification module.
 const openSTNotification = require('@openstfoundation/openst-notification');
@@ -89,6 +88,13 @@ process.on('SIGINT', function () {
   };
   setTimeout(f, 1000);
 });
+
+function ostRmqError(err) {
+  logger.info('ostRmqError occured.', err);
+  process.emit('SIGINT');
+}
+// Event published from package in case of internal error.
+process.on('ost_rmq_error', ostRmqError);
 subscribe();
 ```
 
@@ -101,8 +107,7 @@ configStrategy = {
 	OST_RMQ_PASSWORD: 'guest',
 	OST_RMQ_HOST: '127.0.0.1',
 	OST_RMQ_PORT: '5672',
-	OST_RMQ_HEARTBEATS: '30',
-	OST_UTILITY_CHAIN_ID: '1000'
+	OST_RMQ_HEARTBEATS: '30'
 };
 // Import the notification module.
 const openSTNotification = require('@openstfoundation/openst-notification');
@@ -131,8 +136,7 @@ configStrategy = {
 	OST_RMQ_PASSWORD: 'guest',
 	OST_RMQ_HOST: '127.0.0.1',
 	OST_RMQ_PORT: '5672',
-	OST_RMQ_HEARTBEATS: '30',
-	OST_UTILITY_CHAIN_ID: '1000'
+	OST_RMQ_HEARTBEATS: '30'
 };
 // Import the notification module.
 const openSTNotification = require('@openstfoundation/openst-notification');
@@ -157,8 +161,7 @@ configStrategy = {
 	OST_RMQ_PASSWORD: 'guest',
 	OST_RMQ_HOST: '127.0.0.1',
 	OST_RMQ_PORT: '5672',
-	OST_RMQ_HEARTBEATS: '30',
-	OST_UTILITY_CHAIN_ID: '1000'
+	OST_RMQ_HEARTBEATS: '30'
 };
 // Import the notification module.
 const openSTNotification = require('@openstfoundation/openst-notification');
@@ -183,6 +186,47 @@ const publish = async function() {
     });
 };
 publish();
+```
+
+#### Pause and Restart queue consumption:
+
+- We also support pause and start queue consumption. According to your logical condition, you can fire below events from your process to cancel or restart consumption respectively.
+
+```js
+
+// Config Strategy for openst-notification.
+let configStrategy = {
+	OST_RMQ_USERNAME: 'guest',
+	OST_RMQ_PASSWORD: 'guest',
+	OST_RMQ_HOST: '127.0.0.1',
+	OST_RMQ_PORT: '5672',
+	OST_RMQ_HEARTBEATS: '30'
+};
+let queueConsumerTag = null;
+// Import the notification module.
+const openSTNotification = require('@openstfoundation/openst-notification');
+const subscribePauseRestartConsume = async function() {
+  let openSTNotificationInstance = await openSTNotification.getInstance(configStrategy);
+  openSTNotificationInstance.subscribeEvent.rabbit(
+    ["event.ProposedBrandedToken", "obBoarding.registerBrandedToken"],
+    {}, 
+    function(msgContent){
+      console.log('Consumed message -> ', msgContent);
+      
+      if(some_failure_condition){
+        process.emit('CANCEL_CONSUME', queueConsumerTag);
+      }
+      
+      if(failure_resolve_detected){
+        process.emit('RESUME_CONSUME', queueConsumerTag);
+      }
+    },
+    function(consumerTag) {
+      queueConsumerTag = consumerTag;
+    }
+    );
+  };
+subscribePauseRestartConsume();
 ```
 
 For further implementation details, please refer to the [API documentation][api-docs].

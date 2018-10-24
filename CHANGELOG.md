@@ -1,9 +1,9 @@
-## Openst-notfication v1.0.4-beta.7
+## Openst-notfication v1.0.5
 Scaling out of OpenST-Notification using Instance Composer.
 
 Pause and resume queue consumption to save resources.
 
-Connection management to assure one-to-one process and rabbitMQ connection mapping.
+Upgrade connection management to assure one-to-one process and rabbitMQ connection mapping.
 
 ## Openst-notfication v1.0.4
 Common style guide followed across all OpenST repos using prettier ([openst-notification#18](https://github.com/OpenSTFoundation/openst-notification/issues/18))
