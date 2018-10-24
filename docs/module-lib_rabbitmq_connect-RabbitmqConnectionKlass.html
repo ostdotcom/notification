@@ -33,14 +33,14 @@
 			<li class="dropdown">
 				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="module-config_core_constants.html">config/core_constants</a></li><li><a href="module-helpers_custom_console_logger.html">helpers/custom_console_logger</a></li><li><a href="module-lib_formatter_response.html">lib/formatter/response</a></li><li><a href="module-lib_rabbitmq_connect.html">lib/rabbitmq/connect</a></li><li><a href="module-lib_rabbitmq_helper.html">lib/rabbitmq/helper</a></li><li><a href="module-lib_util.html">lib/util</a></li><li><a href="module-lib_validator_event_params.html">lib/validator/event_params</a></li><li><a href="module-lib_validator_init.html">lib/validator/init</a></li><li><a href="module-services_local_emitter.html">services/local_emitter</a></li><li><a href="module-services_publish_event.html">services/publish_event</a></li><li><a href="module-services_subscribe_event.html">services/subscribe_event</a></li>
+					<li><a href="module-helpers_custom_console_logger.html">helpers/custom_console_logger</a></li><li><a href="module-lib_formatter_response.html">lib/formatter/response</a></li><li><a href="module-lib_rabbitmq_connect.html">lib/rabbitmq/connect</a></li><li><a href="module-lib_rabbitmq_helper.html">lib/rabbitmq/helper</a></li><li><a href="module-lib_util.html">lib/util</a></li><li><a href="module-lib_validator_event_params.html">lib/validator/event_params</a></li><li><a href="module-lib_validator_init.html">lib/validator/init</a></li><li><a href="module-services_local_emitter.html">services/local_emitter</a></li><li><a href="module-services_publish_event.html">services/publish_event</a></li><li><a href="module-services_subscribe_event.html">services/subscribe_event</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="module-config_core_constants-CoreConstant.html">config/core_constants~CoreConstant</a></li><li><a href="module-helpers_custom_console_logger-CustomConsoleLoggerKlass.html">helpers/custom_console_logger~CustomConsoleLoggerKlass</a></li><li><a href="module-lib_rabbitmq_connect-RabbitmqConnectionKlass.html">lib/rabbitmq/connect~RabbitmqConnectionKlass</a></li><li><a href="module-lib_rabbitmq_helper-RabbmitHelperKlass.html">lib/rabbitmq/helper~RabbmitHelperKlass</a></li><li><a href="module-lib_util-UtilKlass.html">lib/util~UtilKlass</a></li><li><a href="module-lib_validator_event_params-EventParamsKlass.html">lib/validator/event_params~EventParamsKlass</a></li><li><a href="module-lib_validator_init-InitKlass.html">lib/validator/init~InitKlass</a></li><li><a href="module-services_local_emitter-LocalEmitterKlass.html">services/local_emitter~LocalEmitterKlass</a></li><li><a href="module-services_publish_event-PublishEventKlass.html">services/publish_event~PublishEventKlass</a></li><li><a href="module-services_subscribe_event-SubscribeEventKlass.html">services/subscribe_event~SubscribeEventKlass</a></li>
+					<li><a href="module-helpers_custom_console_logger-CustomConsoleLoggerKlass.html">helpers/custom_console_logger~CustomConsoleLoggerKlass</a></li><li><a href="module-lib_rabbitmq_connect-RabbitmqConnectionKlass.html">lib/rabbitmq/connect~RabbitmqConnectionKlass</a></li><li><a href="module-lib_rabbitmq_helper-RabbitMqHelperKlass.html">lib/rabbitmq/helper~RabbitMqHelperKlass</a></li><li><a href="module-lib_util-UtilKlass.html">lib/util~UtilKlass</a></li><li><a href="module-lib_validator_event_params-EventParamsKlass.html">lib/validator/event_params~EventParamsKlass</a></li><li><a href="module-lib_validator_init-InitKlass.html">lib/validator/init~InitKlass</a></li><li><a href="module-services_local_emitter-LocalEmitterKlass.html">services/local_emitter~LocalEmitterKlass</a></li><li><a href="module-services_publish_event-PublishEventKlass.html">services/publish_event~PublishEventKlass</a></li><li><a href="module-services_subscribe_event-SubscribeEventKlass.html">services/subscribe_event~SubscribeEventKlass</a></li>
 				</ul>
 			</li>
 			
@@ -93,23 +93,129 @@
         
 <hr>
 <dt>
-    <h4 class="name" id="RabbitmqConnectionKlass"><span class="type-signature"></span>new RabbitmqConnectionKlass()</h4>
+    <h4 class="name" id="RabbitmqConnectionKlass"><span class="type-signature"></span>new RabbitmqConnectionKlass(configStrategy, instanceComposer, configStrategy, instanceComposer)</h4>
     
     
 </dt>
 <dd>
 
     
-    <div class="description">
-        constructor of the RabbitmqConnectionKlass
-    </div>
-    
 
     
 
     
 
     
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>configStrategy</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">config strategy</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>instanceComposer</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Instance Composer object</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>configStrategy</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>instanceComposer</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
     
 
     
@@ -189,7 +295,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="get"><span class="type-signature"></span>get(rmqid, asyncCall)</h4>
+    <h4 class="name" id="get"><span class="type-signature"></span>get()</h4>
     
     
 </dt>
@@ -198,7 +304,6 @@
     
     <div class="description">
         Get the established connection and return. If connection is not present set new connection in required mode.
-Note: For publish set connection async and return, otherwise wait for the connection.
     </div>
     
 
@@ -207,80 +312,6 @@ Note: For publish set connection async and return, otherwise wait for the connec
     
 
     
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>rmqid</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">id of rabbitmq to get connection</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>asyncCall</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">set connection mode in case connection is not available</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
     
 
     
@@ -345,7 +376,7 @@ Note: For publish set connection async and return, otherwise wait for the connec
     </dt>
     <dd>
         
-<span class="param-type">promise.&lt;connectionObject></span>
+<span class="param-type">Promise</span>
 
 
 
@@ -362,7 +393,7 @@ Note: For publish set connection async and return, otherwise wait for the connec
             
 <hr>
 <dt>
-    <h4 class="name" id="set"><span class="type-signature"></span>set(rmqId)</h4>
+    <h4 class="name" id="rejectAll"><span class="type-signature"></span>rejectAll(reason)</h4>
     
     
 </dt>
@@ -370,8 +401,7 @@ Note: For publish set connection async and return, otherwise wait for the connec
 
     
     <div class="description">
-        Establishing new connection to rabbitmq.
-Making sure that multiple instances are not trying to make multiple connections at a time
+        Reject all the in process requests
     </div>
     
 
@@ -406,7 +436,7 @@ Making sure that multiple instances are not trying to make multiple connections 
 
         <tr>
             
-                <td class="name"><code>rmqId</code></td>
+                <td class="name"><code>reason</code></td>
             
 
             <td class="type">
@@ -423,13 +453,219 @@ Making sure that multiple instances are not trying to make multiple connections 
 
             
 
-            <td class="description last">name of the rabbitmq for which connection is to be established.</td>
+            <td class="description last">error string to reject with</td>
         </tr>
 
     
     </tbody>
 </table>
 
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="resolveAll"><span class="type-signature"></span>resolveAll(conn)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Resolve all the in process requests
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>conn</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">connection object</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="set"><span class="type-signature"></span>set()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Establishing new connection to RabbitMq.
+    </div>
+    
+
+    
+
+    
+
+    
     
 
     
@@ -494,7 +730,7 @@ Making sure that multiple instances are not trying to make multiple connections 
     </dt>
     <dd>
         
-<span class="param-type">promise.&lt;connectionObject></span>
+<span class="param-type">Promise</span>
 
 
 

@@ -53,5 +53,30 @@
     "http_code": "422",
     "code": "no_rmq_connection",
     "message": "No rabbitmq connection found"
+  },
+  "invalid_payload_for_holdWorker": {
+    "http_code": "422",
+    "code": "invalid_payload_for_holdWorker",
+    "message": "Invalid payload for kind hold worker"
+  },
+  "invalid_payload_for_redirectToDhq": {
+    "http_code": "422",
+    "code": "invalid_payload_for_redirectToDhq",
+    "message": "Invalid payload for kind redirect to Dhq"
+  },
+  "invalid_payload_for_transactionsDone": {
+    "http_code": "422",
+    "code": "invalid_payload_for_transactionsDone",
+    "message": "Invalid payload for kind transactions done"
+  },
+  "invalid_payload_for_command_message": {
+    "http_code": "422",
+    "code": "invalid_payload_for_command_message",
+    "message": "Invalid payload for the command message"
+  },
+  "unsupported_command_message_kind": {
+    "http_code": "422",
+    "code": "unsupported_command_message_kind",
+    "message": "Unsupported command message kind"
   }
 }

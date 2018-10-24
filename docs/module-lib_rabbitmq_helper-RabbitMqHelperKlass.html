@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>OpenST Notification Class: RabbmitHelperKlass</title>
+	<title>OpenST Notification Class: RabbitMqHelperKlass</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -33,14 +33,14 @@
 			<li class="dropdown">
 				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="module-config_core_constants.html">config/core_constants</a></li><li><a href="module-helpers_custom_console_logger.html">helpers/custom_console_logger</a></li><li><a href="module-lib_formatter_response.html">lib/formatter/response</a></li><li><a href="module-lib_rabbitmq_connect.html">lib/rabbitmq/connect</a></li><li><a href="module-lib_rabbitmq_helper.html">lib/rabbitmq/helper</a></li><li><a href="module-lib_util.html">lib/util</a></li><li><a href="module-lib_validator_event_params.html">lib/validator/event_params</a></li><li><a href="module-lib_validator_init.html">lib/validator/init</a></li><li><a href="module-services_local_emitter.html">services/local_emitter</a></li><li><a href="module-services_publish_event.html">services/publish_event</a></li><li><a href="module-services_subscribe_event.html">services/subscribe_event</a></li>
+					<li><a href="module-helpers_custom_console_logger.html">helpers/custom_console_logger</a></li><li><a href="module-lib_formatter_response.html">lib/formatter/response</a></li><li><a href="module-lib_rabbitmq_connect.html">lib/rabbitmq/connect</a></li><li><a href="module-lib_rabbitmq_helper.html">lib/rabbitmq/helper</a></li><li><a href="module-lib_util.html">lib/util</a></li><li><a href="module-lib_validator_event_params.html">lib/validator/event_params</a></li><li><a href="module-lib_validator_init.html">lib/validator/init</a></li><li><a href="module-services_local_emitter.html">services/local_emitter</a></li><li><a href="module-services_publish_event.html">services/publish_event</a></li><li><a href="module-services_subscribe_event.html">services/subscribe_event</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="module-config_core_constants-CoreConstant.html">config/core_constants~CoreConstant</a></li><li><a href="module-helpers_custom_console_logger-CustomConsoleLoggerKlass.html">helpers/custom_console_logger~CustomConsoleLoggerKlass</a></li><li><a href="module-lib_rabbitmq_connect-RabbitmqConnectionKlass.html">lib/rabbitmq/connect~RabbitmqConnectionKlass</a></li><li><a href="module-lib_rabbitmq_helper-RabbmitHelperKlass.html">lib/rabbitmq/helper~RabbmitHelperKlass</a></li><li><a href="module-lib_util-UtilKlass.html">lib/util~UtilKlass</a></li><li><a href="module-lib_validator_event_params-EventParamsKlass.html">lib/validator/event_params~EventParamsKlass</a></li><li><a href="module-lib_validator_init-InitKlass.html">lib/validator/init~InitKlass</a></li><li><a href="module-services_local_emitter-LocalEmitterKlass.html">services/local_emitter~LocalEmitterKlass</a></li><li><a href="module-services_publish_event-PublishEventKlass.html">services/publish_event~PublishEventKlass</a></li><li><a href="module-services_subscribe_event-SubscribeEventKlass.html">services/subscribe_event~SubscribeEventKlass</a></li>
+					<li><a href="module-helpers_custom_console_logger-CustomConsoleLoggerKlass.html">helpers/custom_console_logger~CustomConsoleLoggerKlass</a></li><li><a href="module-lib_rabbitmq_connect-RabbitmqConnectionKlass.html">lib/rabbitmq/connect~RabbitmqConnectionKlass</a></li><li><a href="module-lib_rabbitmq_helper-RabbitMqHelperKlass.html">lib/rabbitmq/helper~RabbitMqHelperKlass</a></li><li><a href="module-lib_util-UtilKlass.html">lib/util~UtilKlass</a></li><li><a href="module-lib_validator_event_params-EventParamsKlass.html">lib/validator/event_params~EventParamsKlass</a></li><li><a href="module-lib_validator_init-InitKlass.html">lib/validator/init~InitKlass</a></li><li><a href="module-services_local_emitter-LocalEmitterKlass.html">services/local_emitter~LocalEmitterKlass</a></li><li><a href="module-services_publish_event-PublishEventKlass.html">services/publish_event~PublishEventKlass</a></li><li><a href="module-services_subscribe_event-SubscribeEventKlass.html">services/subscribe_event~SubscribeEventKlass</a></li>
 				</ul>
 			</li>
 			
@@ -72,7 +72,7 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: RabbmitHelperKlass</h1>
+	<h1 class="page-title">Class: RabbitMqHelperKlass</h1>
 <section>
 
 <header>
@@ -80,7 +80,7 @@
         <h2>
             <span class="ancestors"><a href="module-lib_rabbitmq_helper.html">lib/rabbitmq/helper</a>~</span>
         
-        RabbmitHelperKlass
+        RabbitMqHelperKlass
         </h2>
         
     
@@ -93,7 +93,7 @@
         
 <hr>
 <dt>
-    <h4 class="name" id="RabbmitHelperKlass"><span class="type-signature"></span>new RabbmitHelperKlass()</h4>
+    <h4 class="name" id="RabbitMqHelperKlass"><span class="type-signature"></span>new RabbitMqHelperKlass()</h4>
     
     
 </dt>
@@ -101,7 +101,7 @@
 
     
     <div class="description">
-        RabbmitMQ helper constructor
+        RabbitMQ helper constructor
     </div>
     
 
@@ -266,7 +266,7 @@
     
     <div class="description">
         Time in milliseconds that the unused queue should be deleted after
-Note: Unused means the queue has no consumers, the queue has not been redeclared, or no get message tried
+Note: Unused means the queue has no consumers, the queue has not been re-declared, or no get message tried.
     </div>
     
 
@@ -415,7 +415,105 @@ Note: Unused means the queue has no consumers, the queue has not been redeclared
 
     
     <div class="description">
-        Make connection string using environment parameters.
+        Make connection string using configStrategy parameters.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="getInstanceKey"><span class="type-signature"></span>getInstanceKey()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Get instance key from the configStrategy.
     </div>
     
 

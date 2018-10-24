@@ -1,28 +1,32 @@
-"use strict";
+'use strict';
 
-const openSTNotification = require('./index');
+const rootPrefix = '.',
+  openSTNotification = require(rootPrefix + '/index'),
+  logger = require(rootPrefix + '/lib/logger/custom_console_logger'),
+  configStrategy = require(rootPrefix + '/test/config_strategy.json');
 
-const rootPrefix = ''
-  , logger = require(rootPrefix + '/lib/logger/custom_console_logger')
-;
+let unAckCount = 0;
 
-var unAckCount = 0;
+let openStNotification = openSTNotification.getInstance(configStrategy);
 
-openSTNotification.subscribeEvent.rabbit(["ackqueue.test"], {queue: 'myQueue', ackRequired: 1, prefetch:10}, function(msgContent){
-  unAckCount++;
-  return new Promise(function(onResolve, onReject){
-    logger.debug('Consumed message -> ', msgContent);
-    setTimeout(function(){
-      unAckCount--;
-      onResolve();
-    }, 3000)
-  });
+openStNotification.subscribeEvent.rabbit(
+  ['ackqueue.test'],
+  { queue: 'myQueue', ackRequired: 1, prefetch: 10 },
+  function(msgContent) {
+    unAckCount++;
+    return new Promise(function(onResolve, onReject) {
+      logger.debug('Consumed message -> ', msgContent);
+      setTimeout(function() {
+        unAckCount--;
+        onResolve();
+      }, 3000);
+    });
+  }
+);
 
-});
-
-process.on('SIGINT', function () {
+process.on('SIGINT', function() {
   logger.debug('Received SIGINT, checking unAckCount.');
-  var f = function(){
+  let f = function() {
     if (unAckCount === 0) {
       process.exit(1);
     } else {
