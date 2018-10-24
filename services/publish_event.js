@@ -1,23 +1,20 @@
-"use strict";
+'use strict';
 /**
  * Publish event to RabbitMQ.
  *
  * @module services/publish_event
- *
  */
 
-const rootPrefix = '..'
-  , rabbitmqConnection = require(rootPrefix + '/lib/rabbitmq/connect')
-  , responseHelper = require(rootPrefix + '/lib/formatter/response')
-  , util = require(rootPrefix + '/lib/util')
-  , localEmitter = require(rootPrefix + '/services/local_emitter')
-  , validator = require(rootPrefix + '/lib/validator/init')
-  , coreConstants = require(rootPrefix + '/config/core_constants')
-  , logger = require(rootPrefix + '/lib/logger/custom_console_logger')
-  , rmqId = 'rmq1' // To support horizontal scaling in future
-  , paramErrorConfig = require(rootPrefix + '/config/param_error_config')
-  , apiErrorConfig = require(rootPrefix + '/config/api_error_config')
-;
+const rootPrefix = '..',
+  validator = require(rootPrefix + '/lib/validator/init'),
+  InstanceComposer = require(rootPrefix + '/instance_composer'),
+  localEmitter = require(rootPrefix + '/services/local_emitter'),
+  responseHelper = require(rootPrefix + '/lib/formatter/response'),
+  apiErrorConfig = require(rootPrefix + '/config/api_error_config'),
+  logger = require(rootPrefix + '/lib/logger/custom_console_logger'),
+  paramErrorConfig = require(rootPrefix + '/config/param_error_config');
+
+require(rootPrefix + '/lib/rabbitmq/connect');
 
 const errorConfig = {
   param_error_config: paramErrorConfig,
@@ -29,13 +26,11 @@ const errorConfig = {
  *
  * @constructor
  */
-const PublishEventKlass = function () {
-};
+const PublishEventKlass = function() {};
 
 PublishEventKlass.prototype = {
-
   /**
-   * Publish to rabbitmq and local emitter also.
+   * Publish to rabbitMQ and local emitter also.
    *
    * @param {object} params - event parameters
    * @param {array} params.topics - on which topic messages
@@ -43,63 +38,59 @@ PublishEventKlass.prototype = {
    * @param {string} params.message.kind - kind of the message
    * @param {object} params.message.payload - Payload to identify message and extra info.
    *
-   * @return {promise<result>}
+   * @return {Promise<result>}
    */
-  perform: async function (params) {
+  perform: async function(params) {
+    const oThis = this;
 
-    // Validations
+    // Validations.
     const r = await validator.light(params);
     if (r.isFailure()) {
       logger.error(r);
       return Promise.resolve(r);
     }
 
-    const validatedParams = r.data
-      , ex = 'topic_events'
-      , topics = validatedParams['topics']
-      , msgString = JSON.stringify(validatedParams)
-    ;
-    var publishedInRmq = 0;
+    const validatedParams = r.data,
+      ex = 'topic_events',
+      topics = validatedParams['topics'],
+      msgString = JSON.stringify(validatedParams);
+    let publishedInRmq = 0;
 
-    // Publish local events
-    topics.forEach(function (key) {
+    // Publish local events.
+    topics.forEach(function(key) {
       localEmitter.emitObj.emit(key, msgString);
     });
 
+    if (oThis.ic().configStrategy.OST_RMQ_SUPPORT == '1') {
+      let rabbitMqConnection = oThis.ic().getRabbitMqConnection();
 
-    // publish RMQ events if required
-    if (coreConstants.OST_RMQ_SUPPORT == '1') {
-
-      const conn = await rabbitmqConnection.get(rmqId, true);
+      // Publish RMQ events.
+      const conn = await rabbitMqConnection.get();
 
       if (conn) {
-
         publishedInRmq = 1;
-        conn.createChannel(function (err, ch) {
-
+        conn.createChannel(function(err, ch) {
           if (err) {
             let errorParams = {
               internal_error_identifier: 's_pe_2',
               api_error_identifier: 'cannot_create_channel',
               error_config: errorConfig,
-              debug_options: {err: err}
+              debug_options: { err: err }
             };
             logger.error(err.message);
             return Promise.resolve(responseHelper.error(errorParams));
           }
 
-          //TODO: assertExchange and publish, promise is not handled
-          ch.assertExchange(ex, 'topic', {durable: true});
-          topics.forEach(function (key) {
-            ch.publish(ex, key, new Buffer(msgString));
-          });
+          ch.assertExchange(ex, 'topic', { durable: true });
+
+          for (let index = 0; index < topics.length; index++) {
+            let currTopic = topics[index];
+            ch.publish(ex, currTopic, new Buffer(msgString), { persistent: true });
+          }
 
           ch.close();
-
         });
       } else {
-        logger.error("Connection not found writing to tmp.");
-        util.saveUnpublishedMessages(msgString);
         let errorParams = {
           internal_error_identifier: 's_pe_1',
           api_error_identifier: 'no_rmq_connection',
@@ -108,12 +99,14 @@ PublishEventKlass.prototype = {
         };
         return Promise.resolve(responseHelper.error(errorParams));
       }
-
     }
 
-    return Promise.resolve(responseHelper.successWithData({publishedToRmq: publishedInRmq}));
+    return Promise.resolve(responseHelper.successWithData({ publishedToRmq: publishedInRmq }));
   }
-
 };
 
-module.exports = new PublishEventKlass();
+PublishEventKlass.prototype.constructor = PublishEventKlass;
+
+InstanceComposer.register(PublishEventKlass, 'getPublishEventKlass', true);
+
+module.exports = PublishEventKlass;

@@ -33,14 +33,14 @@
 			<li class="dropdown">
 				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="module-config_core_constants.html">config/core_constants</a></li><li><a href="module-helpers_custom_console_logger.html">helpers/custom_console_logger</a></li><li><a href="module-lib_formatter_response.html">lib/formatter/response</a></li><li><a href="module-lib_rabbitmq_connect.html">lib/rabbitmq/connect</a></li><li><a href="module-lib_rabbitmq_helper.html">lib/rabbitmq/helper</a></li><li><a href="module-lib_util.html">lib/util</a></li><li><a href="module-lib_validator_event_params.html">lib/validator/event_params</a></li><li><a href="module-lib_validator_init.html">lib/validator/init</a></li><li><a href="module-services_local_emitter.html">services/local_emitter</a></li><li><a href="module-services_publish_event.html">services/publish_event</a></li><li><a href="module-services_subscribe_event.html">services/subscribe_event</a></li>
+					<li><a href="module-helpers_custom_console_logger.html">helpers/custom_console_logger</a></li><li><a href="module-lib_formatter_response.html">lib/formatter/response</a></li><li><a href="module-lib_rabbitmq_connect.html">lib/rabbitmq/connect</a></li><li><a href="module-lib_rabbitmq_helper.html">lib/rabbitmq/helper</a></li><li><a href="module-lib_util.html">lib/util</a></li><li><a href="module-lib_validator_event_params.html">lib/validator/event_params</a></li><li><a href="module-lib_validator_init.html">lib/validator/init</a></li><li><a href="module-services_local_emitter.html">services/local_emitter</a></li><li><a href="module-services_publish_event.html">services/publish_event</a></li><li><a href="module-services_subscribe_event.html">services/subscribe_event</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="module-config_core_constants-CoreConstant.html">config/core_constants~CoreConstant</a></li><li><a href="module-helpers_custom_console_logger-CustomConsoleLoggerKlass.html">helpers/custom_console_logger~CustomConsoleLoggerKlass</a></li><li><a href="module-lib_rabbitmq_connect-RabbitmqConnectionKlass.html">lib/rabbitmq/connect~RabbitmqConnectionKlass</a></li><li><a href="module-lib_rabbitmq_helper-RabbmitHelperKlass.html">lib/rabbitmq/helper~RabbmitHelperKlass</a></li><li><a href="module-lib_util-UtilKlass.html">lib/util~UtilKlass</a></li><li><a href="module-lib_validator_event_params-EventParamsKlass.html">lib/validator/event_params~EventParamsKlass</a></li><li><a href="module-lib_validator_init-InitKlass.html">lib/validator/init~InitKlass</a></li><li><a href="module-services_local_emitter-LocalEmitterKlass.html">services/local_emitter~LocalEmitterKlass</a></li><li><a href="module-services_publish_event-PublishEventKlass.html">services/publish_event~PublishEventKlass</a></li><li><a href="module-services_subscribe_event-SubscribeEventKlass.html">services/subscribe_event~SubscribeEventKlass</a></li>
+					<li><a href="module-helpers_custom_console_logger-CustomConsoleLoggerKlass.html">helpers/custom_console_logger~CustomConsoleLoggerKlass</a></li><li><a href="module-lib_rabbitmq_connect-RabbitmqConnectionKlass.html">lib/rabbitmq/connect~RabbitmqConnectionKlass</a></li><li><a href="module-lib_rabbitmq_helper-RabbitMqHelperKlass.html">lib/rabbitmq/helper~RabbitMqHelperKlass</a></li><li><a href="module-lib_util-UtilKlass.html">lib/util~UtilKlass</a></li><li><a href="module-lib_validator_event_params-EventParamsKlass.html">lib/validator/event_params~EventParamsKlass</a></li><li><a href="module-lib_validator_init-InitKlass.html">lib/validator/init~InitKlass</a></li><li><a href="module-services_local_emitter-LocalEmitterKlass.html">services/local_emitter~LocalEmitterKlass</a></li><li><a href="module-services_publish_event-PublishEventKlass.html">services/publish_event~PublishEventKlass</a></li><li><a href="module-services_subscribe_event-SubscribeEventKlass.html">services/subscribe_event~SubscribeEventKlass</a></li>
 				</ul>
 			</li>
 			
@@ -189,7 +189,185 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="local"><span class="type-signature"></span>local(topics, callback)</h4>
+    <h4 class="name" id="cancelChannel"><span class="type-signature"></span>cancelChannel(options)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Cancel channel
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <h6 class="method-params-label method-subparams-label">Properties</h6>
+                
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>consumerTag</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">consumer tag of the channel</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="local"><span class="type-signature"></span>local(topics, readCallback)</h4>
     
     
 </dt>
@@ -257,7 +435,7 @@ Note: messages could be received only on the same object(thus, same process) whe
 
         <tr>
             
-                <td class="name"><code>callback</code></td>
+                <td class="name"><code>readCallback</code></td>
             
 
             <td class="type">
@@ -342,7 +520,7 @@ Note: messages could be received only on the same object(thus, same process) whe
             
 <hr>
 <dt>
-    <h4 class="name" id="rabbit"><span class="type-signature"></span>rabbit(topics, options, callback)</h4>
+    <h4 class="name" id="rabbit"><span class="type-signature"></span>rabbit(topics, options, readCallback, subscribeCallback)</h4>
     
     
 </dt>
@@ -350,7 +528,7 @@ Note: messages could be received only on the same object(thus, same process) whe
 
     
     <div class="description">
-        Subscribe rabbitmq topics to receive messages.
+        Subscribe to rabbitMq topics to receive messages.
     </div>
     
 
@@ -498,7 +676,7 @@ Note: messages could be received only on the same object(thus, same process) whe
 
         <tr>
             
-                <td class="name"><code>callback</code></td>
+                <td class="name"><code>readCallback</code></td>
             
 
             <td class="type">
@@ -516,6 +694,30 @@ Note: messages could be received only on the same object(thus, same process) whe
             
 
             <td class="description last">function to run on message arrived on the channel.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>subscribeCallback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">function to return consumerTag.</td>
         </tr>
 
     
