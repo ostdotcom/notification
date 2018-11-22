@@ -176,8 +176,11 @@ SubscribeEventKlass.prototype = {
     localEmitter.emitObj.once('rmq_fail', function(err) {
       logger.error('RMQ Failed event received. Error: ', err);
       setTimeout(function() {
-        logger.info('trying consume again......');
-        oThis.rabbit(topics, options, readCallback);
+        logger.info('trying consume again......'); //Following catch will specifically catch connection timeout error. Thus will emit proper event
+        oThis.rabbit(topics, options, readCallback).catch(function(err) {
+          logger.error('Error in subscription. ', err);
+          process.emit('ost_rmq_error', 'Error in subscription:' + err);
+        });
       }, 2000);
     });
   },
