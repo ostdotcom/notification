@@ -141,14 +141,6 @@ SubscribeEventKlass.prototype = {
               startConsumption();
             }
           });
-          process.on('SIGINT', function() {
-            logger.info('Received SIGINT, cancelling consumption');
-            ch.cancel(consumerTag);
-          });
-          process.on('SIGTERM', function() {
-            logger.info('Received SIGTERM, cancelling consumption');
-            ch.cancel(consumerTag);
-          });
         } else {
           logger.info('Closing the channel as only assert queue was required.');
           ch.close();
