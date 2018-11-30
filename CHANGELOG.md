@@ -1,3 +1,6 @@
+## Openst-notfication v1.0.6 beta
+Revoked SigInt handling from subscribe event.
+
 ## Openst-notfication v1.0.5
 Scaling out of OpenST-Notification using Instance Composer.
 

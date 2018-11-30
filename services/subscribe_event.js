@@ -141,14 +141,6 @@ SubscribeEventKlass.prototype = {
               startConsumption();
             }
           });
-          process.on('SIGINT', function() {
-            logger.info('Received SIGINT, cancelling consumption');
-            ch.cancel(consumerTag);
-          });
-          process.on('SIGTERM', function() {
-            logger.info('Received SIGTERM, cancelling consumption');
-            ch.cancel(consumerTag);
-          });
         } else {
           logger.info('Closing the channel as only assert queue was required.');
           ch.close();
@@ -176,8 +168,11 @@ SubscribeEventKlass.prototype = {
     localEmitter.emitObj.once('rmq_fail', function(err) {
       logger.error('RMQ Failed event received. Error: ', err);
       setTimeout(function() {
-        logger.info('trying consume again......');
-        oThis.rabbit(topics, options, readCallback);
+        logger.info('trying consume again......'); //Following catch will specifically catch connection timeout error. Thus will emit proper event
+        oThis.rabbit(topics, options, readCallback, subscribeCallback).catch(function(err) {
+          logger.error('Error in subscription. ', err);
+          process.emit('ost_rmq_error', 'Error in subscription:' + err);
+        });
       }, 2000);
     });
   },
