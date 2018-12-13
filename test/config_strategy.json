@@ -11,5 +11,3 @@
     "connectionTimeout": "60"
   }
 }
-rabbitmq.switchHostAfterSec
-rabbitmq.connectionTimeoutSec
