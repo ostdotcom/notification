@@ -7,7 +7,10 @@
 const rootPrefix = '.',
   version = require(rootPrefix + '/package.json').version,
   rabbitMqHelper = require(rootPrefix + '/lib/rabbitmq/helper'),
-  InstanceComposer = require(rootPrefix + '/instance_composer');
+  OSTBase = require('@openstfoundation/openst-base'),
+  coreConstants = require(rootPrefix + '/config/coreConstants');
+
+const InstanceComposer = OSTBase.InstanceComposer;
 
 require(rootPrefix + '/lib/rabbitmq/helper');
 require(rootPrefix + '/lib/rabbitmq/connect');
@@ -30,9 +33,9 @@ const OpenSTNotification = function(configStrategy) {
   const instanceComposer = (oThis.ic = new InstanceComposer(configStrategy));
 
   oThis.version = version;
-  oThis.connection = instanceComposer.getRabbitMqConnection();
-  oThis.publishEvent = instanceComposer.getPublishEventKlass();
-  oThis.subscribeEvent = instanceComposer.getSubscribeEventKlass();
+  oThis.connection = instanceComposer.getInstanceFor(coreConstants.icNameSpace, 'getRabbitMqConnection');
+  oThis.publishEvent = instanceComposer.getInstanceFor(coreConstants.icNameSpace, 'getPublishEventKlass');
+  oThis.subscribeEvent = instanceComposer.getInstanceFor(coreConstants.icNameSpace, 'getSubscribeEventKlass');
 };
 
 // Instance Map to ensure that only one object is created per config strategy.

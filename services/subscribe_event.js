@@ -8,10 +8,13 @@
 
 const rootPrefix = '..',
   uuidV4 = require('uuid/v4'),
-  InstanceComposer = require(rootPrefix + '/instance_composer'),
   rabbitMqHelper = require(rootPrefix + '/lib/rabbitmq/helper'),
   localEmitter = require(rootPrefix + '/services/local_emitter'),
-  logger = require(rootPrefix + '/lib/logger/custom_console_logger');
+  logger = require(rootPrefix + '/lib/logger/custom_console_logger'),
+  OSTBase = require('@openstfoundation/openst-base'),
+  coreConstants = require(rootPrefix + '/config/coreConstants');
+
+const InstanceComposer = OSTBase.InstanceComposer;
 
 require(rootPrefix + '/lib/rabbitmq/connect');
 
@@ -51,7 +54,7 @@ class SubscribeEventKlass {
       return;
     }
 
-    let rabbitMqConnection = oThis.ic().getRabbitMqConnection();
+    let rabbitMqConnection = oThis.ic().getInstanceFor(coreConstants.icNameSpace, 'getRabbitMqConnection');
 
     options.prefetch = options.prefetch || 1;
     options.noAck = options.ackRequired !== 1;
@@ -197,6 +200,6 @@ class SubscribeEventKlass {
   }
 }
 
-InstanceComposer.register(SubscribeEventKlass, 'getSubscribeEventKlass', true);
+InstanceComposer.registerAsObject(SubscribeEventKlass, coreConstants.icNameSpace, 'getSubscribeEventKlass', true);
 
 module.exports = SubscribeEventKlass;
