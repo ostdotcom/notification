@@ -26,9 +26,9 @@ const errorConfig = {
  *
  * @constructor
  */
-const PublishEventKlass = function() {};
+class PublishEventKlass {
+  constructor() {}
 
-PublishEventKlass.prototype = {
   /**
    * Publish to rabbitMQ and local emitter also.
    *
@@ -40,7 +40,7 @@ PublishEventKlass.prototype = {
    *
    * @return {Promise<result>}
    */
-  perform: async function(params) {
+  async perform(params) {
     const oThis = this;
 
     // Validations.
@@ -103,9 +103,7 @@ PublishEventKlass.prototype = {
 
     return Promise.resolve(responseHelper.successWithData({ publishedToRmq: publishedInRmq }));
   }
-};
-
-PublishEventKlass.prototype.constructor = PublishEventKlass;
+}
 
 InstanceComposer.register(PublishEventKlass, 'getPublishEventKlass', true);
 

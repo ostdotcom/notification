@@ -20,9 +20,9 @@ require(rootPrefix + '/lib/rabbitmq/connect');
  *
  * @constructor
  */
-const SubscribeEventKlass = function() {};
+class SubscribeEventKlass {
+  constructor() {}
 
-SubscribeEventKlass.prototype = {
   /**
    * Subscribe to rabbitMq topics to receive messages.
    *
@@ -36,7 +36,7 @@ SubscribeEventKlass.prototype = {
    * @param {function} subscribeCallback - function to return consumerTag.
    *
    */
-  rabbit: async function(topics, options, readCallback, subscribeCallback) {
+  async rabbit(topics, options, readCallback, subscribeCallback) {
     const oThis = this;
 
     if (oThis.ic().configStrategy.enableRabbitmq != '1') {
@@ -175,7 +175,7 @@ SubscribeEventKlass.prototype = {
         });
       }, 2000);
     });
-  },
+  }
 
   /**
    * Subscribe local emitters by topics to receive messages.
@@ -185,7 +185,7 @@ SubscribeEventKlass.prototype = {
    * @param {function} readCallback - function to run on message arrived on the channel.
    *
    */
-  local: function(topics, readCallback) {
+  local(topics, readCallback) {
     if (topics.length === 0) {
       logger.error('Invalid parameters Error: topics are mandatory');
       return;
@@ -195,9 +195,7 @@ SubscribeEventKlass.prototype = {
       localEmitter.emitObj.on(key, readCallback);
     });
   }
-};
-
-SubscribeEventKlass.prototype.constructor = SubscribeEventKlass;
+}
 
 InstanceComposer.register(SubscribeEventKlass, 'getSubscribeEventKlass', true);
 

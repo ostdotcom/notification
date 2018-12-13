@@ -14,10 +14,10 @@ const EventEmitter = require('events'),
  *
  * @constructor
  */
-const LocalEmitterKlass = function() {
-  this.emitObj = emitObj;
-};
-
-LocalEmitterKlass.prototype = {};
+class LocalEmitterKlass {
+  constructor() {
+    this.emitObj = emitObj;
+  }
+}
 
 module.exports = new LocalEmitterKlass();
