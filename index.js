@@ -49,17 +49,15 @@ OpenSTNotificationFactory.prototype = {
    */
   getInstance: function(configStrategy) {
     const oThis = this,
-      rabbitMqMandatoryParams = [
-        'OST_RMQ_USERNAME',
-        'OST_RMQ_PASSWORD',
-        'OST_RMQ_HOST',
-        'OST_RMQ_PORT',
-        'OST_RMQ_HEARTBEATS'
-      ];
+      rabbitMqMandatoryParams = ['username', 'password', 'host', 'port', 'heartbeats'];
+
+    if (!configStrategy.hasOwnProperty('rabbitmq')) {
+      throw 'RabbitMQ one or more mandatory connection parameters missing.';
+    }
 
     // Check if all the mandatory connection parameters for RabbitMQ are available or not.
     for (let key = 0; key < rabbitMqMandatoryParams.length; key++) {
-      if (!configStrategy.hasOwnProperty(rabbitMqMandatoryParams[key])) {
+      if (!configStrategy.rabbitmq.hasOwnProperty(rabbitMqMandatoryParams[key])) {
         throw 'RabbitMQ one or more mandatory connection parameters missing.';
       }
     }

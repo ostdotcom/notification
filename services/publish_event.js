@@ -61,7 +61,7 @@ PublishEventKlass.prototype = {
       localEmitter.emitObj.emit(key, msgString);
     });
 
-    if (oThis.ic().configStrategy.OST_RMQ_SUPPORT == '1') {
+    if (oThis.ic().configStrategy.enableRabbitmq == '1') {
       let rabbitMqConnection = oThis.ic().getRabbitMqConnection();
 
       // Publish RMQ events.

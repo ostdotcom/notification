@@ -28,11 +28,13 @@ npm install @openstfoundation/openst-notification --save
 ```js
 // Config Strategy for openst-notification.
 configStrategy = {
-	OST_RMQ_USERNAME: 'guest',
-	OST_RMQ_PASSWORD: 'guest',
-	OST_RMQ_HOST: '127.0.0.1',
-	OST_RMQ_PORT: '5672',
-	OST_RMQ_HEARTBEATS: '30'
+	"rabbitmq": {
+        "username": "guest",
+        "password": "guest",
+        "host": "127.0.0.1",
+        "port": "5672",
+        "heartbeats": "30"
+    }
 };
 // Import the notification module.
 const openSTNotification = require('@openstfoundation/openst-notification');
@@ -103,11 +105,13 @@ subscribe();
 ```js
 // Config Strategy for openst-notification.
 configStrategy = {
-	OST_RMQ_USERNAME: 'guest',
-	OST_RMQ_PASSWORD: 'guest',
-	OST_RMQ_HOST: '127.0.0.1',
-	OST_RMQ_PORT: '5672',
-	OST_RMQ_HEARTBEATS: '30'
+	"rabbitmq": {
+        "username": "guest",
+        "password": "guest",
+        "host": "127.0.0.1",
+        "port": "5672",
+        "heartbeats": "30"
+    }
 };
 // Import the notification module.
 const openSTNotification = require('@openstfoundation/openst-notification');
@@ -132,11 +136,13 @@ subscribeMultiple();
 ```js
 // Config Strategy for openst-notification.
 configStrategy = {
-	OST_RMQ_USERNAME: 'guest',
-	OST_RMQ_PASSWORD: 'guest',
-	OST_RMQ_HOST: '127.0.0.1',
-	OST_RMQ_PORT: '5672',
-	OST_RMQ_HEARTBEATS: '30'
+	"rabbitmq": {
+        "username": "guest",
+        "password": "guest",
+        "host": "127.0.0.1",
+        "port": "5672",
+        "heartbeats": "30"
+    }
 };
 // Import the notification module.
 const openSTNotification = require('@openstfoundation/openst-notification');
@@ -157,11 +163,13 @@ subscribeLocal();
 ```js
 // Config Strategy for openst-notification.
 configStrategy = {
-	OST_RMQ_USERNAME: 'guest',
-	OST_RMQ_PASSWORD: 'guest',
-	OST_RMQ_HOST: '127.0.0.1',
-	OST_RMQ_PORT: '5672',
-	OST_RMQ_HEARTBEATS: '30'
+	"rabbitmq": {
+        "username": "guest",
+        "password": "guest",
+        "host": "127.0.0.1",
+        "port": "5672",
+        "heartbeats": "30"
+    }
 };
 // Import the notification module.
 const openSTNotification = require('@openstfoundation/openst-notification');
@@ -196,11 +204,13 @@ publish();
 
 // Config Strategy for openst-notification.
 let configStrategy = {
-	OST_RMQ_USERNAME: 'guest',
-	OST_RMQ_PASSWORD: 'guest',
-	OST_RMQ_HOST: '127.0.0.1',
-	OST_RMQ_PORT: '5672',
-	OST_RMQ_HEARTBEATS: '30'
+	"rabbitmq": {
+        "username": "guest",
+        "password": "guest",
+        "host": "127.0.0.1",
+        "port": "5672",
+        "heartbeats": "30"
+    }
 };
 let queueConsumerTag = null;
 // Import the notification module.
