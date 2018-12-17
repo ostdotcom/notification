@@ -8,10 +8,13 @@
 
 const rootPrefix = '..',
   uuidV4 = require('uuid/v4'),
-  InstanceComposer = require(rootPrefix + '/instance_composer'),
   rabbitMqHelper = require(rootPrefix + '/lib/rabbitmq/helper'),
   localEmitter = require(rootPrefix + '/services/local_emitter'),
-  logger = require(rootPrefix + '/lib/logger/custom_console_logger');
+  logger = require(rootPrefix + '/lib/logger/custom_console_logger'),
+  OSTBase = require('@openstfoundation/openst-base'),
+  coreConstants = require(rootPrefix + '/config/coreConstants');
+
+const InstanceComposer = OSTBase.InstanceComposer;
 
 require(rootPrefix + '/lib/rabbitmq/connect');
 
@@ -20,9 +23,9 @@ require(rootPrefix + '/lib/rabbitmq/connect');
  *
  * @constructor
  */
-const SubscribeEventKlass = function() {};
+class SubscribeEventKlass {
+  constructor() {}
 
-SubscribeEventKlass.prototype = {
   /**
    * Subscribe to rabbitMq topics to receive messages.
    *
@@ -36,7 +39,7 @@ SubscribeEventKlass.prototype = {
    * @param {function} subscribeCallback - function to return consumerTag.
    *
    */
-  rabbit: async function(topics, options, readCallback, subscribeCallback) {
+  async rabbit(topics, options, readCallback, subscribeCallback) {
     const oThis = this;
 
     if (oThis.ic().configStrategy.enableRabbitmq != '1') {
@@ -51,7 +54,7 @@ SubscribeEventKlass.prototype = {
       return;
     }
 
-    let rabbitMqConnection = oThis.ic().getRabbitMqConnection();
+    let rabbitMqConnection = oThis.ic().getInstanceFor(coreConstants.icNameSpace, 'getRabbitMqConnection');
 
     options.prefetch = options.prefetch || 1;
     options.noAck = options.ackRequired !== 1;
@@ -175,7 +178,7 @@ SubscribeEventKlass.prototype = {
         });
       }, 2000);
     });
-  },
+  }
 
   /**
    * Subscribe local emitters by topics to receive messages.
@@ -185,7 +188,7 @@ SubscribeEventKlass.prototype = {
    * @param {function} readCallback - function to run on message arrived on the channel.
    *
    */
-  local: function(topics, readCallback) {
+  local(topics, readCallback) {
     if (topics.length === 0) {
       logger.error('Invalid parameters Error: topics are mandatory');
       return;
@@ -195,10 +198,8 @@ SubscribeEventKlass.prototype = {
       localEmitter.emitObj.on(key, readCallback);
     });
   }
-};
+}
 
-SubscribeEventKlass.prototype.constructor = SubscribeEventKlass;
-
-InstanceComposer.register(SubscribeEventKlass, 'getSubscribeEventKlass', true);
+InstanceComposer.registerAsObject(SubscribeEventKlass, coreConstants.icNameSpace, 'getSubscribeEventKlass', true);
 
 module.exports = SubscribeEventKlass;

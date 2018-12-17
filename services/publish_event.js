@@ -7,12 +7,15 @@
 
 const rootPrefix = '..',
   validator = require(rootPrefix + '/lib/validator/init'),
-  InstanceComposer = require(rootPrefix + '/instance_composer'),
   localEmitter = require(rootPrefix + '/services/local_emitter'),
   responseHelper = require(rootPrefix + '/lib/formatter/response'),
   apiErrorConfig = require(rootPrefix + '/config/api_error_config'),
   logger = require(rootPrefix + '/lib/logger/custom_console_logger'),
-  paramErrorConfig = require(rootPrefix + '/config/param_error_config');
+  paramErrorConfig = require(rootPrefix + '/config/param_error_config'),
+  OSTBase = require('@openstfoundation/openst-base'),
+  coreConstants = require(rootPrefix + '/config/coreConstants');
+
+const InstanceComposer = OSTBase.InstanceComposer;
 
 require(rootPrefix + '/lib/rabbitmq/connect');
 
@@ -26,9 +29,9 @@ const errorConfig = {
  *
  * @constructor
  */
-const PublishEventKlass = function() {};
+class PublishEventKlass {
+  constructor() {}
 
-PublishEventKlass.prototype = {
   /**
    * Publish to rabbitMQ and local emitter also.
    *
@@ -40,7 +43,7 @@ PublishEventKlass.prototype = {
    *
    * @return {Promise<result>}
    */
-  perform: async function(params) {
+  async perform(params) {
     const oThis = this;
 
     // Validations.
@@ -62,7 +65,7 @@ PublishEventKlass.prototype = {
     });
 
     if (oThis.ic().configStrategy.enableRabbitmq == '1') {
-      let rabbitMqConnection = oThis.ic().getRabbitMqConnection();
+      let rabbitMqConnection = oThis.ic().getInstanceFor(coreConstants.icNameSpace, 'getRabbitMqConnection');
 
       // Publish RMQ events.
       const conn = await rabbitMqConnection.get();
@@ -103,10 +106,8 @@ PublishEventKlass.prototype = {
 
     return Promise.resolve(responseHelper.successWithData({ publishedToRmq: publishedInRmq }));
   }
-};
+}
 
-PublishEventKlass.prototype.constructor = PublishEventKlass;
-
-InstanceComposer.register(PublishEventKlass, 'getPublishEventKlass', true);
+InstanceComposer.registerAsObject(PublishEventKlass, coreConstants.icNameSpace, 'getPublishEventKlass', true);
 
 module.exports = PublishEventKlass;
