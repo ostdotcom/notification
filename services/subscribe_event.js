@@ -42,8 +42,8 @@ class SubscribeEventKlass {
   async rabbit(topics, options, readCallback, subscribeCallback) {
     const oThis = this;
 
-    if (oThis.ic().configStrategy.enableRabbitmq != '1') {
-      logger.error('There is no rmq support. Error: ');
+    if (oThis.ic().configStrategy.rabbitmq.enableRabbitmq != '1') {
+      logger.error('There is no rmq support. Error. ');
       process.emit('ost_rmq_error', 'There is no rmq support.');
       return;
     }

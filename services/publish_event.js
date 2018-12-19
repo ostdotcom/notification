@@ -64,7 +64,7 @@ class PublishEventKlass {
       localEmitter.emitObj.emit(key, msgString);
     });
 
-    if (oThis.ic().configStrategy.enableRabbitmq == '1') {
+    if (oThis.ic().configStrategy.rabbitmq.enableRabbitmq == '1') {
       let rabbitMqConnection = oThis.ic().getInstanceFor(coreConstants.icNameSpace, 'getRabbitMqConnection');
 
       // Publish RMQ events.
