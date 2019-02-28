@@ -1,29 +1,29 @@
 'use strict';
 
 /**
- * Load OpenST Notification module.
+ * Load OST Notification module.
  */
 
 const rootPrefix = '.',
   version = require(rootPrefix + '/package.json').version,
-  rabbitMqHelper = require(rootPrefix + '/lib/rabbitmq/helper'),
-  OSTBase = require('@openstfoundation/openst-base'),
-  coreConstants = require(rootPrefix + '/config/coreConstants');
+  rabbitmqHelper = require(rootPrefix + '/lib/rabbitmq/helper'),
+  OSTBase = require('@ostdotcom/base'),
+  coreConstant = require(rootPrefix + '/config/coreConstant');
 
 const InstanceComposer = OSTBase.InstanceComposer;
 
 require(rootPrefix + '/lib/rabbitmq/helper');
-require(rootPrefix + '/lib/rabbitmq/connect');
-require(rootPrefix + '/services/publish_event');
-require(rootPrefix + '/services/subscribe_event');
+require(rootPrefix + '/lib/rabbitmq/connection');
+require(rootPrefix + '/services/publishEvent');
+require(rootPrefix + '/services/subscribeEvent');
 
 /**
- * OpenST-Notification
+ * OST Notification
  *
  * @param configStrategy
  * @constructor
  */
-const OpenSTNotification = function(configStrategy) {
+const OSTNotification = function(configStrategy) {
   const oThis = this;
 
   if (!configStrategy) {
@@ -33,22 +33,22 @@ const OpenSTNotification = function(configStrategy) {
   const instanceComposer = (oThis.ic = new InstanceComposer(configStrategy));
 
   oThis.version = version;
-  oThis.connection = instanceComposer.getInstanceFor(coreConstants.icNameSpace, 'getRabbitMqConnection');
-  oThis.publishEvent = instanceComposer.getInstanceFor(coreConstants.icNameSpace, 'getPublishEventKlass');
-  oThis.subscribeEvent = instanceComposer.getInstanceFor(coreConstants.icNameSpace, 'getSubscribeEventKlass');
+  oThis.connection = instanceComposer.getInstanceFor(coreConstant.icNameSpace, 'rabbitmqConnection');
+  oThis.publishEvent = instanceComposer.getInstanceFor(coreConstant.icNameSpace, 'publishEvent');
+  oThis.subscribeEvent = instanceComposer.getInstanceFor(coreConstant.icNameSpace, 'subscribeEvent');
 };
 
 // Instance Map to ensure that only one object is created per config strategy.
 const instanceMap = {};
 
-const OpenSTNotificationFactory = function() {};
+const OSTNotificationFactory = function() {};
 
-OpenSTNotificationFactory.prototype = {
+OSTNotificationFactory.prototype = {
   /**
-   * Get an instance of OpenSTNotification
+   * Get an instance of OSTNotification
    *
    * @param configStrategy
-   * @returns {OpenSTNotification}
+   * @returns {OSTNotification}
    */
   getInstance: function(configStrategy) {
     const oThis = this,
@@ -66,11 +66,11 @@ OpenSTNotificationFactory.prototype = {
     }
 
     // Check if instance already present.
-    let instanceKey = rabbitMqHelper.getInstanceKey(configStrategy),
+    let instanceKey = rabbitmqHelper.getInstanceKey(configStrategy),
       _instance = instanceMap[instanceKey];
 
     if (!_instance) {
-      _instance = new OpenSTNotification(configStrategy);
+      _instance = new OSTNotification(configStrategy);
       instanceMap[instanceKey] = _instance;
     }
     _instance.connection.get();
@@ -79,9 +79,9 @@ OpenSTNotificationFactory.prototype = {
   }
 };
 
-const factory = new OpenSTNotificationFactory();
-OpenSTNotification.getInstance = function() {
+const factory = new OSTNotificationFactory();
+OSTNotification.getInstance = function() {
   return factory.getInstance.apply(factory, arguments);
 };
 
-module.exports = OpenSTNotification;
+module.exports = OSTNotification;

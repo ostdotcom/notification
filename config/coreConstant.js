@@ -2,7 +2,7 @@
 /**
  * Load all the core constants.
  *
- * @module config/coreConstants
+ * @module config/coreConstant
  */
 
 class CoreConstants {
@@ -19,7 +19,7 @@ class CoreConstants {
    * @returns {*}
    */
   get icNameSpace() {
-    return 'openSTNotification';
+    return 'ostNotification';
   }
 }
 
