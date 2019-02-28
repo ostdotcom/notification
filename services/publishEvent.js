@@ -2,22 +2,22 @@
 /**
  * Publish event to RabbitMQ.
  *
- * @module services/publish_event
+ * @module services/publishEvent
  */
 
 const rootPrefix = '..',
   validator = require(rootPrefix + '/lib/validator/init'),
-  localEmitter = require(rootPrefix + '/services/local_emitter'),
+  localEmitter = require(rootPrefix + '/services/localEmitter'),
   responseHelper = require(rootPrefix + '/lib/formatter/response'),
-  apiErrorConfig = require(rootPrefix + '/config/api_error_config'),
-  logger = require(rootPrefix + '/lib/logger/custom_console_logger'),
-  paramErrorConfig = require(rootPrefix + '/config/param_error_config'),
-  OSTBase = require('@openstfoundation/openst-base'),
-  coreConstants = require(rootPrefix + '/config/coreConstants');
+  apiErrorConfig = require(rootPrefix + '/config/apiErrorConfig'),
+  logger = require(rootPrefix + '/lib/logger/customConsoleLogger'),
+  paramErrorConfig = require(rootPrefix + '/config/paramErrorConfig'),
+  OSTBase = require('@ostdotcom/base'),
+  coreConstant = require(rootPrefix + '/config/coreConstant');
 
 const InstanceComposer = OSTBase.InstanceComposer;
 
-require(rootPrefix + '/lib/rabbitmq/connect');
+require(rootPrefix + '/lib/rabbitmq/connection');
 
 const errorConfig = {
   param_error_config: paramErrorConfig,
@@ -29,7 +29,7 @@ const errorConfig = {
  *
  * @constructor
  */
-class PublishEventKlass {
+class PublishEvent {
   constructor() {}
 
   /**
@@ -65,7 +65,7 @@ class PublishEventKlass {
     });
 
     if (oThis.ic().configStrategy.rabbitmq.enableRabbitmq == '1') {
-      let rabbitMqConnection = oThis.ic().getInstanceFor(coreConstants.icNameSpace, 'getRabbitMqConnection');
+      let rabbitMqConnection = oThis.ic().getInstanceFor(coreConstant.icNameSpace, 'rabbitmqConnection');
 
       // Publish RMQ events.
       const conn = await rabbitMqConnection.get();
@@ -108,6 +108,6 @@ class PublishEventKlass {
   }
 }
 
-InstanceComposer.registerAsObject(PublishEventKlass, coreConstants.icNameSpace, 'getPublishEventKlass', true);
+InstanceComposer.registerAsObject(PublishEvent, coreConstant.icNameSpace, 'publishEvent', true);
 
-module.exports = PublishEventKlass;
+module.exports = {};

@@ -3,27 +3,27 @@
 /**
  * Listening to RabbitMq channels to receive published message.
  *
- * @module services/subscribe_event
+ * @module services/subscribeEvent
  */
 
 const rootPrefix = '..',
   uuidV4 = require('uuid/v4'),
-  rabbitMqHelper = require(rootPrefix + '/lib/rabbitmq/helper'),
-  localEmitter = require(rootPrefix + '/services/local_emitter'),
-  logger = require(rootPrefix + '/lib/logger/custom_console_logger'),
-  OSTBase = require('@openstfoundation/openst-base'),
-  coreConstants = require(rootPrefix + '/config/coreConstants');
+  rabbitmqHelper = require(rootPrefix + '/lib/rabbitmq/helper'),
+  localEmitter = require(rootPrefix + '/services/localEmitter'),
+  logger = require(rootPrefix + '/lib/logger/customConsoleLogger'),
+  OSTBase = require('@ostdotcom/base'),
+  coreConstant = require(rootPrefix + '/config/coreConstant');
 
 const InstanceComposer = OSTBase.InstanceComposer;
 
-require(rootPrefix + '/lib/rabbitmq/connect');
+require(rootPrefix + '/lib/rabbitmq/connection');
 
 /**
  * Constructor to subscribe RMQ event
  *
  * @constructor
  */
-class SubscribeEventKlass {
+class SubscribeEvent {
   constructor() {}
 
   /**
@@ -54,7 +54,7 @@ class SubscribeEventKlass {
       return;
     }
 
-    let rabbitMqConnection = oThis.ic().getInstanceFor(coreConstants.icNameSpace, 'getRabbitMqConnection');
+    let rabbitMqConnection = oThis.ic().getInstanceFor(coreConstant.icNameSpace, 'rabbitmqConnection');
 
     options.prefetch = options.prefetch || 1;
     options.noAck = options.ackRequired !== 1;
@@ -157,8 +157,8 @@ class SubscribeEventKlass {
             autoDelete: false,
             durable: true,
             arguments: {
-              'x-expires': rabbitMqHelper.dedicatedQueueTtl,
-              'x-message-ttl': rabbitMqHelper.dedicatedQueueMsgTtl
+              'x-expires': rabbitmqHelper.dedicatedQueueTtl,
+              'x-message-ttl': rabbitmqHelper.dedicatedQueueMsgTtl
             }
           },
           assertQueueCallback
@@ -200,6 +200,6 @@ class SubscribeEventKlass {
   }
 }
 
-InstanceComposer.registerAsObject(SubscribeEventKlass, coreConstants.icNameSpace, 'getSubscribeEventKlass', true);
+InstanceComposer.registerAsObject(SubscribeEvent, coreConstant.icNameSpace, 'subscribeEvent', true);
 
-module.exports = SubscribeEventKlass;
+module.exports = {};

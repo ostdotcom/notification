@@ -1,21 +1,20 @@
-# OpenST Notification
+# Notification
 
-[![Latest version](https://img.shields.io/npm/v/@openstfoundation/openst-notification.svg?maxAge=3600)][npm]
-[![Travis](https://img.shields.io/travis/OpenSTFoundation/openst-notification.svg?maxAge=600)][travis]
-[![Downloads per month](https://img.shields.io/npm/dm/@openstfoundation/openst-notification.svg?maxAge=3600)][npm]
-[![Gitter](https://img.shields.io/gitter/room/OpenSTFoundation/github.js.svg?maxAge=3600)][gitter]
+[![Latest version](https://img.shields.io/npm/v/@ostdotcom/notification.svg?maxAge=3600)][npm]
+[![Travis](https://img.shields.io/travis/ostdotcom/notification.svg?maxAge=600)][travis]
+[![Downloads per month](https://img.shields.io/npm/dm/@ostdotcom/notification.svg?maxAge=3600)][npm]
 
-OpenST Notification helps publish critical events from OpenST Platform and other related packages. All events get published using node EventEmitter and, if configured, events are also published through RabbitMQ, using topic-based exchange.
+OST Notification helps publish critical events using EventEmitter and RabbmitMQ. All events get published using node EventEmitter and, if configured, events are also published through RabbitMQ, using topic-based exchange.
 
-# Install OpenST Notification
+# Install
 
 ```bash
-npm install @openstfoundation/openst-notification --save
+npm install @ostdotcom/notification --save
 ```
 
 # Examples:
 
-#### Subscribe to OpenST events published through RabbitMQ:
+#### Subscribe to events published through RabbitMQ:
 
 - Basic example on how to listen a specific event. Arguments passed are:
   - <b>Events</b> [Array] (mandatory) - List of events to subscribe to
@@ -26,7 +25,7 @@ npm install @openstfoundation/openst-notification --save
   - <b>Callback</b> [function] (mandatory) - Callback method will be invoked whenever there is a new notification
   
 ```js
-// Config Strategy for openst-notification.
+// Config Strategy for OST Notification.
 configStrategy = {
 	"rabbitmq": {
         "username": "guest",
@@ -37,12 +36,12 @@ configStrategy = {
     }
 };
 // Import the notification module.
-const openSTNotification = require('@openstfoundation/openst-notification');
+const OSTNotification = require('@ostdotcom/notification');
 let unAckCount = 0; //Number of unacknowledged messages.
 
 const subscribe = async function() {
-  let openSTNotificationInstance = await openSTNotification.getInstance(configStrategy);
-  openSTNotificationInstance.subscribeEvent.rabbit(
+  let ostNotificationInstance = await OSTNotification.getInstance(configStrategy);
+  ostNotificationInstance.subscribeEvent.rabbit(
     ["event.ProposedBrandedToken"],
     {
       queue: 'myQueue',
@@ -103,7 +102,7 @@ subscribe();
 - Example on how to listen to multiple events with one subscriber.
 
 ```js
-// Config Strategy for openst-notification.
+// Config Strategy for OST Notification.
 configStrategy = {
 	"rabbitmq": {
         "username": "guest",
@@ -114,10 +113,10 @@ configStrategy = {
     }
 };
 // Import the notification module.
-const openSTNotification = require('@openstfoundation/openst-notification');
+const OSTNotification = require('@ostdotcom/notification');
 const subscribeMultiple = async function() {
-  let openSTNotificationInstance = await openSTNotification.getInstance(configStrategy);
-  openSTNotificationInstance.subscribeEvent.rabbit(
+  let ostNotificationInstance = await OSTNotification.getInstance(configStrategy);
+  ostNotificationInstance.subscribeEvent.rabbit(
     ["event.ProposedBrandedToken", "obBoarding.registerBrandedToken"],
     {}, 
     function(msgContent){
@@ -127,14 +126,14 @@ const subscribeMultiple = async function() {
 subscribeMultiple();
 ```
 
-#### Subscribe to OpenST local events published through EventEmitter:
+#### Subscribe to local events published through EventEmitter:
 
 - Basic example on how to listen a specific event. Arguments passed are:
   - <b>Events</b> (mandatory) - List of events to subscribe to
   - <b>Callback</b> (mandatory) - Callback method will be invoked whenever there is a new notification
   
 ```js
-// Config Strategy for openst-notification.
+// Config Strategy for OST Notification.
 configStrategy = {
 	"rabbitmq": {
         "username": "guest",
@@ -145,10 +144,10 @@ configStrategy = {
     }
 };
 // Import the notification module.
-const openSTNotification = require('@openstfoundation/openst-notification');
+const OSTNotification = require('@ostdotcom/notification');
 const subscribeLocal = async function() {
-  let openSTNotificationInstance = await openSTNotification.getInstance(configStrategy);
-  openSTNotificationInstance.subscribeEvent.local(["event.ProposedBrandedToken"], 
+  let ostNotificationInstance = await OSTNotification.getInstance(configStrategy);
+  ostNotificationInstance.subscribeEvent.local(["event.ProposedBrandedToken"], 
   function(msgContent){
     console.log('Consumed message -> ', msgContent)
   });
@@ -156,12 +155,12 @@ const subscribeLocal = async function() {
 subscribeLocal();
 ```
 
-#### Publish to OpenST Notifications:
+#### Publish Notifications:
 
 - All events are by default published using EventEmitter and if configured, through RabbmitMQ as well.
 
 ```js
-// Config Strategy for openst-notification.
+// Config Strategy for OST Notification.
 configStrategy = {
 	"rabbitmq": {
         "username": "guest",
@@ -172,10 +171,10 @@ configStrategy = {
     }
 };
 // Import the notification module.
-const openSTNotification = require('@openstfoundation/openst-notification');
+const OSTNotification = require('@ostdotcom/notification');
 const publish = async function() {
-  let openSTNotificationInstance = await openSTNotification.getInstance(configStrategy);
-  openSTNotificationInstance.publishEvent.perform(
+  let ostNotificationInstance = await OSTNotification.getInstance(configStrategy);
+  ostNotificationInstance.publishEvent.perform(
     {
       topics:["event.ProposedBrandedToken"], 
       publisher: 'MyPublisher',
@@ -202,7 +201,7 @@ publish();
 
 ```js
 
-// Config Strategy for openst-notification.
+// Config Strategy for OST Notification.
 let configStrategy = {
 	"rabbitmq": {
         "username": "guest",
@@ -214,10 +213,10 @@ let configStrategy = {
 };
 let queueConsumerTag = null;
 // Import the notification module.
-const openSTNotification = require('@openstfoundation/openst-notification');
+const OSTNotification = require('@ostdotcom/notification');
 const subscribePauseRestartConsume = async function() {
-  let openSTNotificationInstance = await openSTNotification.getInstance(configStrategy);
-  openSTNotificationInstance.subscribeEvent.rabbit(
+  let ostNotificationInstance = await OSTNotification.getInstance(configStrategy);
+  ostNotificationInstance.subscribeEvent.rabbit(
     ["event.ProposedBrandedToken", "obBoarding.registerBrandedToken"],
     {}, 
     function(msgContent){
@@ -239,10 +238,6 @@ const subscribePauseRestartConsume = async function() {
 subscribePauseRestartConsume();
 ```
 
-For further implementation details, please refer to the [API documentation][api-docs].
-
-[gitter]: https://gitter.im/OpenSTFoundation/SimpleToken
-[npm]: https://www.npmjs.com/package/@openstfoundation/openst-notification
-[travis]: https://travis-ci.org/OpenSTFoundation/openst-notification
-[api-docs]: https://openstfoundation.github.io/openst-notification/
+[npm]: https://www.npmjs.com/package/@ostdotcom/notification
+[travis]: https://travis-ci.org/ostdotcom/notification
    
