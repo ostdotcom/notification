@@ -1,6 +1,6 @@
 {
   "name": "@ostdotcom/notification",
-  "version": "1.0.6-beta.11",
+  "version": "1.0.6-beta.12",
   "description": "OST Notification helps publish critical events using EventEmitter and RabbmitMQ.",
   "main": "index.js",
   "scripts": {
@@ -19,14 +19,14 @@
     "RabbmitMQ",
     "PubSub"
   ],
-  "author": "OST.COM LTD",
+  "author": "OST.COM LTD.",
   "license": "LGPL-3.0",
   "bugs": {
     "url": "https://github.com/ostdotcom/notification/issues"
   },
   "homepage": "https://github.com/ostdotcom/notification#readme",
   "dependencies": {
-    "@ostdotcom/base": "1.0.0-beta.1",
+    "@ostdotcom/base": "1.0.0-beta.2",
     "amqplib": "0.5.2",
     "uuid": "3.3.2"
   },
