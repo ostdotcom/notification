@@ -1,8 +1,12 @@
 # Notification
 
 [![Latest version](https://img.shields.io/npm/v/@ostdotcom/notification.svg?maxAge=3600)][npm]
-[![Travis](https://img.shields.io/travis/ostdotcom/notification.svg?maxAge=600)][travis]
+[![Build Status](https://travis-ci.org/ostdotcom/notification.svg?branch=develop)][travis]
 [![Downloads per month](https://img.shields.io/npm/dm/@ostdotcom/notification.svg?maxAge=3600)][npm]
+
+
+[npm]: https://www.npmjs.com/package/@ostdotcom/notification
+[travis]: https://travis-ci.org/ostdotcom/notification
 
 OST Notification helps publish critical events using EventEmitter and RabbmitMQ. All events get published using node EventEmitter and, if configured, events are also published through RabbitMQ, using topic-based exchange.
 
@@ -237,7 +241,3 @@ const subscribePauseRestartConsume = async function() {
   };
 subscribePauseRestartConsume();
 ```
-
-[npm]: https://www.npmjs.com/package/@ostdotcom/notification
-[travis]: https://travis-ci.org/ostdotcom/notification
-   
