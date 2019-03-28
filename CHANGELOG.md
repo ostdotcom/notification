@@ -1,5 +1,9 @@
 ## Notfication v1.0.6
-Revoked SigInt handling from subscribe event.
+- RabbitMQ cluster support has been added.
+- Integrated with new Instance Composer.
+- Migrated to ES6.
+- Migrated repository from OpenST Foundation to OST organization and renamed it.
+- Revoked SigInt handling from subscribe event.
 
 ## Notfication v1.0.5
 Scaling out of Notification using Instance Composer.
