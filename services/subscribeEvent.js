@@ -3,26 +3,29 @@
 /**
  * Listening to RabbitMq channels to receive published message.
  *
- * @module services/subscribe_event
+ * @module services/subscribeEvent
  */
 
 const rootPrefix = '..',
   uuidV4 = require('uuid/v4'),
-  InstanceComposer = require(rootPrefix + '/instance_composer'),
-  rabbitMqHelper = require(rootPrefix + '/lib/rabbitmq/helper'),
-  localEmitter = require(rootPrefix + '/services/local_emitter'),
-  logger = require(rootPrefix + '/lib/logger/custom_console_logger');
+  rabbitmqHelper = require(rootPrefix + '/lib/rabbitmq/helper'),
+  localEmitter = require(rootPrefix + '/services/localEmitter'),
+  logger = require(rootPrefix + '/lib/logger/customConsoleLogger'),
+  OSTBase = require('@ostdotcom/base'),
+  coreConstant = require(rootPrefix + '/config/coreConstant');
 
-require(rootPrefix + '/lib/rabbitmq/connect');
+const InstanceComposer = OSTBase.InstanceComposer;
+
+require(rootPrefix + '/lib/rabbitmq/connection');
 
 /**
  * Constructor to subscribe RMQ event
  *
  * @constructor
  */
-const SubscribeEventKlass = function() {};
+class SubscribeEvent {
+  constructor() {}
 
-SubscribeEventKlass.prototype = {
   /**
    * Subscribe to rabbitMq topics to receive messages.
    *
@@ -36,11 +39,11 @@ SubscribeEventKlass.prototype = {
    * @param {function} subscribeCallback - function to return consumerTag.
    *
    */
-  rabbit: async function(topics, options, readCallback, subscribeCallback) {
+  async rabbit(topics, options, readCallback, subscribeCallback) {
     const oThis = this;
 
-    if (oThis.ic().configStrategy.OST_RMQ_SUPPORT != '1') {
-      logger.error('There is no rmq support. Error: ');
+    if (oThis.ic().configStrategy.rabbitmq.enableRabbitmq != '1') {
+      logger.error('There is no rmq support. Error. ');
       process.emit('ost_rmq_error', 'There is no rmq support.');
       return;
     }
@@ -51,7 +54,7 @@ SubscribeEventKlass.prototype = {
       return;
     }
 
-    let rabbitMqConnection = oThis.ic().getRabbitMqConnection();
+    let rabbitMqConnection = oThis.ic().getInstanceFor(coreConstant.icNameSpace, 'rabbitmqConnection');
 
     options.prefetch = options.prefetch || 1;
     options.noAck = options.ackRequired !== 1;
@@ -141,14 +144,6 @@ SubscribeEventKlass.prototype = {
               startConsumption();
             }
           });
-          process.on('SIGINT', function() {
-            logger.info('Received SIGINT, cancelling consumption');
-            ch.cancel(consumerTag);
-          });
-          process.on('SIGTERM', function() {
-            logger.info('Received SIGTERM, cancelling consumption');
-            ch.cancel(consumerTag);
-          });
         } else {
           logger.info('Closing the channel as only assert queue was required.');
           ch.close();
@@ -162,8 +157,8 @@ SubscribeEventKlass.prototype = {
             autoDelete: false,
             durable: true,
             arguments: {
-              'x-expires': rabbitMqHelper.dedicatedQueueTtl,
-              'x-message-ttl': rabbitMqHelper.dedicatedQueueMsgTtl
+              'x-expires': rabbitmqHelper.dedicatedQueueTtl,
+              'x-message-ttl': rabbitmqHelper.dedicatedQueueMsgTtl
             }
           },
           assertQueueCallback
@@ -176,11 +171,14 @@ SubscribeEventKlass.prototype = {
     localEmitter.emitObj.once('rmq_fail', function(err) {
       logger.error('RMQ Failed event received. Error: ', err);
       setTimeout(function() {
-        logger.info('trying consume again......');
-        oThis.rabbit(topics, options, readCallback);
+        logger.info('trying consume again......'); //Following catch will specifically catch connection timeout error. Thus will emit proper event
+        oThis.rabbit(topics, options, readCallback, subscribeCallback).catch(function(err) {
+          logger.error('Error in subscription. ', err);
+          process.emit('ost_rmq_error', 'Error in subscription:' + err);
+        });
       }, 2000);
     });
-  },
+  }
 
   /**
    * Subscribe local emitters by topics to receive messages.
@@ -190,7 +188,7 @@ SubscribeEventKlass.prototype = {
    * @param {function} readCallback - function to run on message arrived on the channel.
    *
    */
-  local: function(topics, readCallback) {
+  local(topics, readCallback) {
     if (topics.length === 0) {
       logger.error('Invalid parameters Error: topics are mandatory');
       return;
@@ -200,10 +198,8 @@ SubscribeEventKlass.prototype = {
       localEmitter.emitObj.on(key, readCallback);
     });
   }
-};
+}
 
-SubscribeEventKlass.prototype.constructor = SubscribeEventKlass;
+InstanceComposer.registerAsObject(SubscribeEvent, coreConstant.icNameSpace, 'subscribeEvent', true);
 
-InstanceComposer.register(SubscribeEventKlass, 'getSubscribeEventKlass', true);
-
-module.exports = SubscribeEventKlass;
+module.exports = {};
