@@ -2,19 +2,22 @@
 /**
  * Publish event to RabbitMQ.
  *
- * @module services/publish_event
+ * @module services/publishEvent
  */
 
 const rootPrefix = '..',
   validator = require(rootPrefix + '/lib/validator/init'),
-  InstanceComposer = require(rootPrefix + '/instance_composer'),
-  localEmitter = require(rootPrefix + '/services/local_emitter'),
+  localEmitter = require(rootPrefix + '/services/localEmitter'),
   responseHelper = require(rootPrefix + '/lib/formatter/response'),
-  apiErrorConfig = require(rootPrefix + '/config/api_error_config'),
-  logger = require(rootPrefix + '/lib/logger/custom_console_logger'),
-  paramErrorConfig = require(rootPrefix + '/config/param_error_config');
+  apiErrorConfig = require(rootPrefix + '/config/apiErrorConfig'),
+  logger = require(rootPrefix + '/lib/logger/customConsoleLogger'),
+  paramErrorConfig = require(rootPrefix + '/config/paramErrorConfig'),
+  OSTBase = require('@ostdotcom/base'),
+  coreConstant = require(rootPrefix + '/config/coreConstant');
 
-require(rootPrefix + '/lib/rabbitmq/connect');
+const InstanceComposer = OSTBase.InstanceComposer;
+
+require(rootPrefix + '/lib/rabbitmq/connection');
 
 const errorConfig = {
   param_error_config: paramErrorConfig,
@@ -26,9 +29,9 @@ const errorConfig = {
  *
  * @constructor
  */
-const PublishEventKlass = function() {};
+class PublishEvent {
+  constructor() {}
 
-PublishEventKlass.prototype = {
   /**
    * Publish to rabbitMQ and local emitter also.
    *
@@ -40,7 +43,7 @@ PublishEventKlass.prototype = {
    *
    * @return {Promise<result>}
    */
-  perform: async function(params) {
+  async perform(params) {
     const oThis = this;
 
     // Validations.
@@ -61,8 +64,8 @@ PublishEventKlass.prototype = {
       localEmitter.emitObj.emit(key, msgString);
     });
 
-    if (oThis.ic().configStrategy.OST_RMQ_SUPPORT == '1') {
-      let rabbitMqConnection = oThis.ic().getRabbitMqConnection();
+    if (oThis.ic().configStrategy.rabbitmq.enableRabbitmq == '1') {
+      let rabbitMqConnection = oThis.ic().getInstanceFor(coreConstant.icNameSpace, 'rabbitmqConnection');
 
       // Publish RMQ events.
       const conn = await rabbitMqConnection.get();
@@ -103,10 +106,8 @@ PublishEventKlass.prototype = {
 
     return Promise.resolve(responseHelper.successWithData({ publishedToRmq: publishedInRmq }));
   }
-};
+}
 
-PublishEventKlass.prototype.constructor = PublishEventKlass;
+InstanceComposer.registerAsObject(PublishEvent, coreConstant.icNameSpace, 'publishEvent', true);
 
-InstanceComposer.register(PublishEventKlass, 'getPublishEventKlass', true);
-
-module.exports = PublishEventKlass;
+module.exports = {};

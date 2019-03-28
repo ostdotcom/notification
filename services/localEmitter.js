@@ -3,7 +3,7 @@
 /**
  * Singleton class to manage the local emitter.
  *
- * @module services/local_emitter
+ * @module services/localEmitter
  */
 
 const EventEmitter = require('events'),
@@ -14,10 +14,10 @@ const EventEmitter = require('events'),
  *
  * @constructor
  */
-const LocalEmitterKlass = function() {
-  this.emitObj = emitObj;
-};
+class LocalEmitter {
+  constructor() {
+    this.emitObj = emitObj;
+  }
+}
 
-LocalEmitterKlass.prototype = {};
-
-module.exports = new LocalEmitterKlass();
+module.exports = new LocalEmitter();
