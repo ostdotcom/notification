@@ -39,7 +39,7 @@ const OSTNotification = function(configStrategy) {
   oThis.publishEvent = instanceComposer.getInstanceFor(coreConstant.icNameSpace, 'publishEvent');
   oThis.subscribeEvent = instanceComposer.getInstanceFor(coreConstant.icNameSpace, 'subscribeEvent');
 
-  oThis.fanoutPublishEvent = instanceComposer.getInstanceFor(coreConstant.icNameSpace, 'FanoutPublishEvent');
+  // oThis.fanoutPublishEvent = instanceComposer.getInstanceFor(coreConstant.icNameSpace, 'FanoutPublishEvent');
 };
 
 // Instance Map to ensure that only one object is created per config strategy.
