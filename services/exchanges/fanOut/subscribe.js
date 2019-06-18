@@ -8,7 +8,7 @@
 const OSTBase = require('@ostdotcom/base'),
   InstanceComposer = OSTBase.InstanceComposer;
 
-const rootPrefix = '../..',
+const rootPrefix = '../../..',
   apiErrorConfig = require(rootPrefix + '/config/apiErrorConfig'),
   logger = require(rootPrefix + '/lib/logger/customConsoleLogger'),
   paramErrorConfig = require(rootPrefix + '/config/paramErrorConfig'),
@@ -27,52 +27,59 @@ const errorConfig = {
  * @constructor
  */
 class FanoutSubscription {
-  constructor() {
-  }
+  constructor() {}
 
   /**
    * Perform
    *
    * @returns {Promise<void>}
    */
-  async perform() {
+  async perform(params) {
     const oThis = this;
 
-    let rabbitMqConnection = oThis.ic().getInstanceFor(coreConstant.icNameSpace, 'rabbitmqConnection');
+    let rabbitMqConnection = oThis.ic().getInstanceFor(coreConstant.icNameSpace, 'rabbitmqConnection'),
+      rKey1 = 'routing_key_1';
 
     // Publish RMQ events.
     const conn = await rabbitMqConnection.get();
 
-    conn.createChannel(function (error1, channel) {
+    conn.createChannel(function(error1, channel) {
       if (error1) {
         throw error1;
       }
 
       channel.assertExchange(exchange, 'fanout', {
-        durable: false
+        durable: true
       });
 
-      channel.assertQueue('', {
-        exclusive: true
-      }, function (error2, q) {
-        if (error2) {
-          throw error2;
-        }
-        logger.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q.queue);
-        channel.bindQueue(q.queue, exchange, '');
-
-        channel.consume(q.queue, function (msg) {
-          if (msg.content) {
-            logger.log(" [x] %s", msg.content.toString());
+      channel.assertQueue(
+        params['queueName'],
+        {
+          exclusive: false,
+          durable: true
+        },
+        function(error2, q) {
+          if (error2) {
+            throw error2;
           }
-        }, {
-          noAck: true
-        });
-      });
+          console.log(' [*] Waiting for messages in %s. To exit press CTRL+C', q.queue);
+          channel.bindQueue(q.queue, exchange, '');
 
+          channel.consume(
+            q.queue,
+            function(msg) {
+              console.log(' [x] ------------------- ', JSON.stringify(msg));
+              if (msg.content) {
+              }
+            },
+            {
+              noAck: true
+            }
+          );
+        }
+      );
     });
   }
-
 }
 
 InstanceComposer.registerAsObject(FanoutSubscription, coreConstant.icNameSpace, 'FanoutSubscription', true);

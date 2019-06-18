@@ -5,13 +5,12 @@
  * @module services/fanOut/publish
  */
 
-const InstanceComposer = OSTBase.InstanceComposer;
+const OSTBase = require('@ostdotcom/base');
 
-const rootPrefix = '..',
+const rootPrefix = '../../..',
   apiErrorConfig = require(rootPrefix + '/config/apiErrorConfig'),
-  logger = require(rootPrefix + '/lib/logger/customConsoleLogger'),
   paramErrorConfig = require(rootPrefix + '/config/paramErrorConfig'),
-  responseHelper = require(rootPrefix + '/lib/formatter/response');
+  coreConstant = require(rootPrefix + '/config/coreConstant');
 
 require(rootPrefix + '/lib/rabbitmq/connection');
 
@@ -19,7 +18,8 @@ const errorConfig = {
     param_error_config: paramErrorConfig,
     api_error_config: apiErrorConfig
   },
-  exchange = 'fanout_events';
+  exchange = 'fanout_events',
+  InstanceComposer = OSTBase.InstanceComposer;
 /**
  * Constructor to publish RMQ event
  *
@@ -41,18 +41,19 @@ class FanoutPublishEvent {
       if (error1) {
         throw error1;
       }
-      var msg = process.argv.slice(2).join(' ') || 'Hello World!';
+      var msg = params['message'] || 'Hello World!';
 
       channel.assertExchange(exchange, 'fanout', {
-        durable: false
+        durable: true
       });
       channel.publish(exchange, rKey1, Buffer.from(msg));
-      console.log(" [x] Sent %s", msg);
+      console.log(' [x] Sent %s', msg);
 
       channel.close();
     });
-
   }
 }
 
-module.exports = FanoutPublishEvent;
+InstanceComposer.registerAsObject(FanoutPublishEvent, coreConstant.icNameSpace, 'FanoutPublishEvent', true);
+
+module.exports = {};
