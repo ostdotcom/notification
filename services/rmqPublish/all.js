@@ -7,7 +7,7 @@
 
 const OSTBase = require('@ostdotcom/base');
 
-const rootPrefix = '../../..',
+const rootPrefix = '../..',
   apiErrorConfig = require(rootPrefix + '/config/apiErrorConfig'),
   paramErrorConfig = require(rootPrefix + '/config/paramErrorConfig'),
   coreConstant = require(rootPrefix + '/config/coreConstant');
@@ -25,7 +25,7 @@ const errorConfig = {
  *
  * @constructor
  */
-class FanoutPublishEvent {
+class PublishEventToAll {
   constructor() {}
 
   async perform(params) {
@@ -54,6 +54,6 @@ class FanoutPublishEvent {
   }
 }
 
-InstanceComposer.registerAsObject(FanoutPublishEvent, coreConstant.icNameSpace, 'FanoutPublishEvent', true);
+InstanceComposer.registerAsObject(PublishEventToAll, coreConstant.icNameSpace, 'PublishEventToAll', true);
 
 module.exports = {};

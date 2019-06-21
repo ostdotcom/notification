@@ -20,13 +20,13 @@ const errorConfig = {
     param_error_config: paramErrorConfig,
     api_error_config: apiErrorConfig
   },
-  exchange = 'direct_events';
+  exchange = 'fanout_events';
 /**
  * Constructor to Subscribe Fanout exchange
  *
  * @constructor
  */
-class DirectSubscription {
+class FanoutSubscription {
   constructor() {}
 
   /**
@@ -37,8 +37,7 @@ class DirectSubscription {
   async perform(params) {
     const oThis = this;
 
-    let rabbitMqConnection = oThis.ic().getInstanceFor(coreConstant.icNameSpace, 'rabbitmqConnection'),
-      routingKey = params['routingKey'] || params['queueName'];
+    let rabbitMqConnection = oThis.ic().getInstanceFor(coreConstant.icNameSpace, 'rabbitmqConnection');
 
     // Publish RMQ events.
     const conn = await rabbitMqConnection.get();
@@ -48,7 +47,7 @@ class DirectSubscription {
         throw error1;
       }
 
-      channel.assertExchange(exchange, 'direct', {
+      channel.assertExchange(exchange, 'fanout', {
         durable: true
       });
 
@@ -63,7 +62,7 @@ class DirectSubscription {
             throw error2;
           }
           console.log(' [*] Waiting for messages in %s. To exit press CTRL+C', q.queue);
-          channel.bindQueue(q.queue, exchange, routingKey);
+          channel.bindQueue(q.queue, exchange, '');
 
           channel.consume(
             q.queue,
@@ -82,6 +81,6 @@ class DirectSubscription {
   }
 }
 
-InstanceComposer.registerAsObject(DirectSubscription, coreConstant.icNameSpace, 'DirectSubscription', true);
+InstanceComposer.registerAsObject(FanoutSubscription, coreConstant.icNameSpace, 'FanoutSubscription', true);
 
 module.exports = {};
