@@ -56,7 +56,7 @@ class RmqPublishByTopic {
     let validatedParams = r.data,
       topics = validatedParams['topics'],
       msgString = JSON.stringify(validatedParams),
-      publishAfterMs = params['publishAfterMs'];
+      publishAfter = params['publishAfter'];
 
     let publishedInRmq = 0;
 
@@ -73,13 +73,13 @@ class RmqPublishByTopic {
 
       if (conn) {
         publishedInRmq = 1;
-        let r = await oThis.publishNow(conn, topics, msgString, publishAfterMs);
+        let r = await oThis.publishNow(conn, topics, msgString, publishAfter);
         if (r.isFailure()) {
           return Promise.resolve(r);
         }
 
-        if (publishAfterMs) {
-          r = await oThis.publishDelayed(conn, topics, msgString, publishAfterMs);
+        if (publishAfter) {
+          r = await oThis.publishDelayed(conn, topics, msgString, publishAfter);
           if (r.isFailure()) {
             return Promise.resolve(r);
           }
@@ -98,7 +98,7 @@ class RmqPublishByTopic {
     return Promise.resolve(responseHelper.successWithData({ publishedToRmq: publishedInRmq }));
   }
 
-  async publishNow(conn, topics, msgString, publishAfterMs) {
+  async publishNow(conn, topics, msgString, publishAfter) {
     const oThis = this;
 
     return new Promise(function(onResolve, onReject) {
@@ -116,7 +116,7 @@ class RmqPublishByTopic {
 
         ch.assertExchange(oThis.exchangeName, 'topic', { durable: true });
 
-        if (!publishAfterMs) {
+        if (!publishAfter) {
           for (let index = 0; index < topics.length; index++) {
             let currTopic = topics[index];
             ch.publish(oThis.exchangeName, currTopic, new Buffer(msgString), { persistent: true });
@@ -133,7 +133,7 @@ class RmqPublishByTopic {
     return 'topic_events';
   }
 
-  async publishDelayed(conn, topics, msgString, publishAfterMs) {
+  async publishDelayed(conn, topics, msgString, publishAfter) {
     const oThis = this;
 
     return new Promise(function(onResolve, onReject) {
@@ -153,7 +153,7 @@ class RmqPublishByTopic {
 
         for (let index = 0; index < topics.length; index++) {
           let currTopic = topics[index],
-            delayedQueueName = `${oThis.delayedExchangeName}_${currTopic}_queue_${publishAfterMs}`;
+            delayedQueueName = `${oThis.delayedExchangeName}_${currTopic}_queue_${publishAfter}`;
 
           ch.assertQueue(
             delayedQueueName,
@@ -163,8 +163,8 @@ class RmqPublishByTopic {
               arguments: {
                 'x-dead-letter-exchange': oThis.exchangeName,
                 'x-dead-letter-routing-key': currTopic,
-                'x-message-ttl': publishAfterMs,
-                'x-expires': publishAfterMs * 10
+                'x-message-ttl': publishAfter,
+                'x-expires': publishAfter * 10
               }
             },
             function(error2, q) {
