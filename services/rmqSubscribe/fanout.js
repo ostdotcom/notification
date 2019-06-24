@@ -1,83 +1,67 @@
 'use strict';
+
 /**
- * Subscribe to FanOut exchange.
+ * Listening to RabbitMq channels to receive published message.
  *
- * @module services/fanOut/subscribe
+ * @module services/subscribeEvent
  */
 
-const OSTBase = require('@ostdotcom/base'),
-  InstanceComposer = OSTBase.InstanceComposer;
-
-const rootPrefix = '../../..',
-  apiErrorConfig = require(rootPrefix + '/config/apiErrorConfig'),
+const rootPrefix = '../..',
+  uuidV4 = require('uuid/v4'),
+  rabbitmqHelper = require(rootPrefix + '/lib/rabbitmq/helper'),
+  localEmitter = require(rootPrefix + '/services/localEmitter'),
   logger = require(rootPrefix + '/lib/logger/customConsoleLogger'),
-  paramErrorConfig = require(rootPrefix + '/config/paramErrorConfig'),
-  responseHelper = require(rootPrefix + '/lib/formatter/response');
+  OSTBase = require('@ostdotcom/base'),
+  coreConstant = require(rootPrefix + '/config/coreConstant'),
+  SubscriptionBase = require(rootPrefix + '/services/rmqSubscribe/Base');
+
+const InstanceComposer = OSTBase.InstanceComposer;
 
 require(rootPrefix + '/lib/rabbitmq/connection');
 
-const errorConfig = {
-    param_error_config: paramErrorConfig,
-    api_error_config: apiErrorConfig
-  },
-  exchange = 'fanout_events';
 /**
- * Constructor to Subscribe Fanout exchange
+ * Constructor to subscribe RMQ event
  *
  * @constructor
  */
-class FanoutSubscription {
-  constructor() {}
+class FanoutSubscription extends SubscriptionBase {
+  constructor() {
+    super();
+  }
 
   /**
-   * Perform
+   * Subscribe to rabbitMq topics to receive messages.
    *
-   * @returns {Promise<void>}
+   * @param {array} topics - list of topics to receive messages.
+   * @param {object} options -
+   * @param {string} [options.queue] - RMQ queue name.
+   *    - Name of the queue on which you want to receive all your subscribed events.
+   *    These queues and events, published in them, have TTL of 6 days.
+   *    If queue name is not passed, a queue with unique name is created and is deleted when subscriber gets disconnected.
+   * @param {function} readCallback - function to run on message arrived on the channel.
+   * @param {function} subscribeCallback - function to return consumerTag.
+   *
    */
-  async perform(params) {
+  async rabbit(topics, options, readCallback, subscribeCallback) {
     const oThis = this;
 
-    let rabbitMqConnection = oThis.ic().getInstanceFor(coreConstant.icNameSpace, 'rabbitmqConnection');
+    if (oThis.ic().configStrategy.rabbitmq.enableRabbitmq != '1') {
+      logger.error('There is no rmq support. Error. ');
+      process.emit('ost_rmq_error', 'There is no rmq support.');
+      return;
+    }
 
-    // Publish RMQ events.
-    const conn = await rabbitMqConnection.get();
+    options.exchangeName = "fanout_events";
+    options.exchangeType = "fanout";
+    await super.rabbit(topics, options, readCallback, subscribeCallback);
+  }
 
-    conn.createChannel(function(error1, channel) {
-      if (error1) {
-        throw error1;
-      }
-
-      channel.assertExchange(exchange, 'fanout', {
-        durable: true
-      });
-
-      channel.assertQueue(
-        params['queueName'],
-        {
-          exclusive: false,
-          durable: true
-        },
-        function(error2, q) {
-          if (error2) {
-            throw error2;
-          }
-          console.log(' [*] Waiting for messages in %s. To exit press CTRL+C', q.queue);
-          channel.bindQueue(q.queue, exchange, '');
-
-          channel.consume(
-            q.queue,
-            function(msg) {
-              console.log(' [x] ------------------- ', JSON.stringify(msg));
-              if (msg.content) {
-              }
-            },
-            {
-              noAck: true
-            }
-          );
-        }
-      );
-    });
+  /**
+   * Get keys to Bind to Queue
+   *
+   */
+  getQueueBindingKeys(){
+    return [''];
   }
 }
 
