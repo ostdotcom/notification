@@ -43,12 +43,12 @@ class SubscribeEvent {
     // If Queue needs to be subscribed for broadcast events
     if (options.broadcastSubscription == 1) {
       let subscribeToAll = oThis.ic().getInstanceFor(coreConstant.icNameSpace, 'FanoutSubscription');
-      return subscribeToAll.rabbit([], options, readCallback, subscribeCallback);
+      subscribeToAll.rabbit([], options, readCallback, subscribeCallback);
     }
     // If topics are present then subscribe queue to particluar topics
     if (topics.length > 0) {
       let subscribeToTopics = oThis.ic().getInstanceFor(coreConstant.icNameSpace, 'RmqSubscribeByTopic');
-      return subscribeToTopics.rabbit(topics, options, readCallback, subscribeCallback);
+      subscribeToTopics.rabbit(topics, options, readCallback, subscribeCallback);
     }
   }
 }

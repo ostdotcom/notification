@@ -48,12 +48,6 @@ class SubscribeEventBase {
       return;
     }
 
-    // if (topics.length === 0) {
-    //   logger.error('Invalid topic parameters.');
-    //   process.emit('ost_rmq_error', 'Invalid topic parameters.');
-    //   return;
-    // }
-
     let rabbitMqConnection = oThis.ic().getInstanceFor(coreConstant.icNameSpace, 'rabbitmqConnection');
 
     options.prefetch = options.prefetch || 1;

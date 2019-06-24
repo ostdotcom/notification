@@ -52,7 +52,7 @@ class RmqSubscribeByTopic extends SubscriptionBase {
 
     options.exchangeName = 'topic_events';
     options.exchangeType = 'topic';
-    await super.rabbit(topics, options, readCallback, subscribeCallback);
+    return super.rabbit(topics, options, readCallback, subscribeCallback);
   }
 
   /**

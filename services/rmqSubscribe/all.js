@@ -43,7 +43,7 @@ class FanoutSubscription extends SubscriptionBase {
 
     options.exchangeName = 'fanout_events';
     options.exchangeType = 'fanout';
-    await super.rabbit(topics, options, readCallback, subscribeCallback);
+    return super.rabbit(topics, options, readCallback, subscribeCallback);
   }
 
   /**
