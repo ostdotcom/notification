@@ -40,15 +40,18 @@ class SubscribeEvent {
   async rabbit(topics, options, readCallback, subscribeCallback) {
     const oThis = this;
 
+    let subOptions = JSON.parse(JSON.stringify(options));
     // If Queue needs to be subscribed for broadcast events
-    if (options.broadcastSubscription == 1) {
+    if (subOptions.broadcastSubscription == 1) {
       let subscribeToAll = oThis.ic().getInstanceFor(coreConstant.icNameSpace, 'FanoutSubscription');
-      subscribeToAll.rabbit([], options, readCallback, subscribeCallback);
+      subscribeToAll.rabbit([], subOptions, readCallback, subscribeCallback);
     }
+
+    subOptions = JSON.parse(JSON.stringify(options));
     // If topics are present then subscribe queue to particluar topics
     if (topics.length > 0) {
       let subscribeToTopics = oThis.ic().getInstanceFor(coreConstant.icNameSpace, 'RmqSubscribeByTopic');
-      subscribeToTopics.rabbit(topics, options, readCallback, subscribeCallback);
+      subscribeToTopics.rabbit(topics, subOptions, readCallback, subscribeCallback);
     }
   }
 }
