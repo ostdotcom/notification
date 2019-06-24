@@ -7,9 +7,6 @@
  */
 
 const rootPrefix = '../..',
-  uuidV4 = require('uuid/v4'),
-  rabbitmqHelper = require(rootPrefix + '/lib/rabbitmq/helper'),
-  localEmitter = require(rootPrefix + '/services/localEmitter'),
   logger = require(rootPrefix + '/lib/logger/customConsoleLogger'),
   OSTBase = require('@ostdotcom/base'),
   coreConstant = require(rootPrefix + '/config/coreConstant'),
@@ -59,8 +56,9 @@ class RmqSubscribeByTopic extends SubscriptionBase {
   }
 
   /**
-   * Get keys to Bind to Queue
+   * Get Keys to Bind Queue with
    *
+   * @param topics
    */
   getQueueBindingKeys(topics) {
     return topics;

@@ -7,10 +7,6 @@
  */
 
 const rootPrefix = '../..',
-  uuidV4 = require('uuid/v4'),
-  rabbitmqHelper = require(rootPrefix + '/lib/rabbitmq/helper'),
-  localEmitter = require(rootPrefix + '/services/localEmitter'),
-  logger = require(rootPrefix + '/lib/logger/customConsoleLogger'),
   OSTBase = require('@ostdotcom/base'),
   coreConstant = require(rootPrefix + '/config/coreConstant'),
   SubscriptionBase = require(rootPrefix + '/services/rmqSubscribe/Base');
@@ -51,10 +47,12 @@ class FanoutSubscription extends SubscriptionBase {
   }
 
   /**
-   * Get keys to Bind to Queue
+   * Get Keys to Bind Queue with
    *
+   * @param topics
    */
   getQueueBindingKeys(topics) {
+    // Queue doesn't needs to be bind to any key for Fanout.
     return [''];
   }
 }

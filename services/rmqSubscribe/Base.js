@@ -200,8 +200,9 @@ class SubscribeEventBase {
   }
 
   /**
-   * Get keys to Bind to Queue
+   * Get Keys to Bind Queue with
    *
+   * @param topics
    */
   getQueueBindingKeys(topics) {
     throw 'Sub-class to implement';
