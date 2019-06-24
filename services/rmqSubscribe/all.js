@@ -45,14 +45,8 @@ class FanoutSubscription extends SubscriptionBase {
   async rabbit(topics, options, readCallback, subscribeCallback) {
     const oThis = this;
 
-    if (oThis.ic().configStrategy.rabbitmq.enableRabbitmq != '1') {
-      logger.error('There is no rmq support. Error. ');
-      process.emit('ost_rmq_error', 'There is no rmq support.');
-      return;
-    }
-
-    options.exchangeName = "fanout_events";
-    options.exchangeType = "fanout";
+    options.exchangeName = 'fanout_events';
+    options.exchangeType = 'fanout';
     await super.rabbit(topics, options, readCallback, subscribeCallback);
   }
 
@@ -60,7 +54,7 @@ class FanoutSubscription extends SubscriptionBase {
    * Get keys to Bind to Queue
    *
    */
-  getQueueBindingKeys(){
+  getQueueBindingKeys(topics) {
     return [''];
   }
 }

@@ -45,12 +45,6 @@ class RmqSubscribeByTopic extends SubscriptionBase {
   async rabbit(topics, options, readCallback, subscribeCallback) {
     const oThis = this;
 
-    if (oThis.ic().configStrategy.rabbitmq.enableRabbitmq != '1') {
-      logger.error('There is no rmq support. Error. ');
-      process.emit('ost_rmq_error', 'There is no rmq support.');
-      return;
-    }
-
     if (topics.length === 0) {
       logger.error('Invalid topic parameters.');
       process.emit('ost_rmq_error', 'Invalid topic parameters.');
@@ -59,8 +53,8 @@ class RmqSubscribeByTopic extends SubscriptionBase {
 
     oThis.topics = topics;
 
-    options.exchangeName = "topic_events";
-    options.exchangeType = "topic";
+    options.exchangeName = 'topic_events';
+    options.exchangeType = 'topic';
     await super.rabbit(topics, options, readCallback, subscribeCallback);
   }
 
@@ -68,10 +62,8 @@ class RmqSubscribeByTopic extends SubscriptionBase {
    * Get keys to Bind to Queue
    *
    */
-  getQueueBindingKeys(){
-    const oThis = this;
-
-    return oThis.topics;
+  getQueueBindingKeys(topics) {
+    return topics;
   }
 }
 

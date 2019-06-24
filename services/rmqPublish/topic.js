@@ -2,7 +2,7 @@
 /**
  * Publish event to RabbitMQ.
  *
- * @module services/publishEvent
+ * @module services/rmqPublish/topic
  */
 
 const rootPrefix = '../..',
@@ -53,7 +53,7 @@ class RmqPublishByTopic {
       return Promise.resolve(r);
     }
 
-    const validatedParams = r.data,
+    let validatedParams = r.data,
       topics = validatedParams['topics'],
       msgString = JSON.stringify(validatedParams),
       publishAfterMs = params['publishAfterMs'];
@@ -122,8 +122,7 @@ class RmqPublishByTopic {
             ch.publish(oThis.exchangeName, currTopic, new Buffer(msgString), { persistent: true });
           }
         }
-
-        // ch.close();
+        ch.close();
 
         return onResolve(responseHelper.successWithData({}));
       });

@@ -6,7 +6,7 @@
  * @module services/subscribeEvent
  */
 
-const rootPrefix = '..',
+const rootPrefix = '../..',
   uuidV4 = require('uuid/v4'),
   rabbitmqHelper = require(rootPrefix + '/lib/rabbitmq/helper'),
   localEmitter = require(rootPrefix + '/services/localEmitter'),
@@ -42,12 +42,12 @@ class SubscribeEventBase {
   async rabbit(topics, options, readCallback, subscribeCallback) {
     const oThis = this;
 
-    // if (oThis.ic().configStrategy.rabbitmq.enableRabbitmq != '1') {
-    //   logger.error('There is no rmq support. Error. ');
-    //   process.emit('ost_rmq_error', 'There is no rmq support.');
-    //   return;
-    // }
-    //
+    if (oThis.ic().configStrategy.rabbitmq.enableRabbitmq != '1') {
+      logger.error('There is no rmq support. Error. ');
+      process.emit('ost_rmq_error', 'There is no rmq support.');
+      return;
+    }
+
     // if (topics.length === 0) {
     //   logger.error('Invalid topic parameters.');
     //   process.emit('ost_rmq_error', 'Invalid topic parameters.');
@@ -100,7 +100,7 @@ class SubscribeEventBase {
 
         logger.info(' [*] Waiting for logs. To exit press CTRL+C', q.queue);
 
-        getQueueBindingKeys().forEach(function(key) {
+        oThis.getQueueBindingKeys(topics).forEach(function(key) {
           ch.bindQueue(q.queue, ex, key);
         });
 
@@ -203,8 +203,8 @@ class SubscribeEventBase {
    * Get keys to Bind to Queue
    *
    */
-  getQueueBindingKeys(){
-    throw 'Sub-class to implement'
+  getQueueBindingKeys(topics) {
+    throw 'Sub-class to implement';
   }
 }
 

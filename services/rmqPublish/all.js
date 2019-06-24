@@ -2,7 +2,7 @@
 /**
  * Publish event to RabbitMQ using fanout exchange.
  *
- * @module services/fanOut/publish
+ * @module services/rmqPublish/all
  */
 
 const OSTBase = require('@ostdotcom/base');
@@ -10,6 +10,7 @@ const OSTBase = require('@ostdotcom/base');
 const rootPrefix = '../..',
   apiErrorConfig = require(rootPrefix + '/config/apiErrorConfig'),
   paramErrorConfig = require(rootPrefix + '/config/paramErrorConfig'),
+  responseHelper = require(rootPrefix + '/lib/formatter/response'),
   coreConstant = require(rootPrefix + '/config/coreConstant');
 
 require(rootPrefix + '/lib/rabbitmq/connection');
@@ -20,37 +21,71 @@ const errorConfig = {
   },
   exchange = 'fanout_events',
   InstanceComposer = OSTBase.InstanceComposer;
-/**
- * Constructor to publish RMQ event
- *
- * @constructor
- */
+
 class PublishEventToAll {
   constructor() {}
 
   async perform(params) {
     const oThis = this;
 
+    if (params['topics']) {
+      return Promise.resolve(
+        responseHelper.error({
+          internal_error_identifier: 's_rp_a_1',
+          api_error_identifier: 'invalid_topics',
+          error_config: errorConfig,
+          debug_options: {}
+        })
+      );
+    }
+    if (!params['message']) {
+      return Promise.resolve(
+        responseHelper.error({
+          internal_error_identifier: 's_rp_a_2',
+          api_error_identifier: 'invalid_message_params',
+          error_config: errorConfig,
+          debug_options: {}
+        })
+      );
+    }
+
     let rabbitMqConnection = oThis.ic().getInstanceFor(coreConstant.icNameSpace, 'rabbitmqConnection'),
-      rKey1 = 'routing_key_1';
+      msgString = JSON.stringify(params['message']);
 
-    // Publish RMQ events.
     const conn = await rabbitMqConnection.get();
+    if (conn) {
+      conn.createChannel(function(err, ch) {
+        if (err) {
+          let errorParams = {
+            internal_error_identifier: 's_rp_t_3',
+            api_error_identifier: 'cannot_create_channel',
+            error_config: errorConfig,
+            debug_options: { err: err }
+          };
+          logger.error(err.message);
+          return onResolve(responseHelper.error(errorParams));
+        }
 
-    conn.createChannel(function(error1, channel) {
-      if (error1) {
-        throw error1;
-      }
-      var msg = params['message'] || 'Hello World!';
+        ch.assertExchange(exchange, 'fanout', {
+          durable: true
+        });
+        ch.publish(exchange, '', new Buffer(msgString), { persistent: true });
+        console.log(' [x] Sent message');
 
-      channel.assertExchange(exchange, 'fanout', {
-        durable: true
+        ch.close();
       });
-      channel.publish(exchange, rKey1, Buffer.from(msg));
-      console.log(' [x] Sent %s', msg);
+    } else {
+      return Promise.resolve(
+        responseHelper.error({
+          internal_error_identifier: 's_rp_a_3',
+          api_error_identifier: 'no_rmq_connection',
+          error_config: errorConfig,
+          debug_options: {}
+        })
+      );
+    }
 
-      channel.close();
-    });
+    return Promise.resolve(responseHelper.successWithData({ publishedToRmq: 1 }));
   }
 }
 
