@@ -1,5 +1,5 @@
 ## Notfication v1.0.7-beta.3
-- Support of delayed messages
+- Support of delayed messages.
 - Support of fanout exchanges for broadcasting.
 - Multiple connections issue fix in case of abruptly connection close.
 
