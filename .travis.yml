@@ -5,6 +5,7 @@ branches:
   only:
   - master
   - develop
+  - node_upgrade
   - /^release-.*/
 notifications:
   email:
@@ -13,9 +14,7 @@ notifications:
     on_success: always
     on_failure: always
 node_js:
-  - "9"
-  - "8"
-  - "7"
+  - "10"
 services:
   - rabbitmq
 before_install:

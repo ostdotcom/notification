@@ -1,3 +1,6 @@
+## Notfication v1.0.7
+- Upgraded node version to 10.x
+
 ## Notfication v1.0.6
 - RabbitMQ cluster support has been added.
 - Integrated with new Instance Composer.
