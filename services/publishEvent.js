@@ -36,6 +36,8 @@ class RmqPublishEvent {
   async perform(params) {
     const oThis = this;
 
+    params = params || {};
+
     if (params['broadcast']) {
       let rmqBroadcastToAll = oThis.ic().getInstanceFor(coreConstant.icNameSpace, 'PublishEventToAll');
       return rmqBroadcastToAll.perform(params);
