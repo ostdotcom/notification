@@ -49,7 +49,8 @@ const subscribe = async function() {
     ["event.ProposedBrandedToken"],
     {
       queue: 'myQueue',
-      ackRequired: 1, // When set to 1, all delivered messages MUST get acknowledge. 
+      ackRequired: 1, // When set to 1, all delivered messages MUST get acknowledge.
+      broadcastSubscription: 1, // When set to 1, it will subscribe to broadcast channel and receive all broadcasted messages. 
       prefetch:10
     }, 
     function(msgContent){
@@ -180,7 +181,9 @@ const publish = async function() {
   let ostNotificationInstance = await OSTNotification.getInstance(configStrategy);
   ostNotificationInstance.publishEvent.perform(
     {
-      topics:["event.ProposedBrandedToken"], 
+      topics:["event.ProposedBrandedToken"],
+      broadcast: 1, // When set to 1 message will be broadcasted to all channels. 'topics' parameter should not be sent.
+      publishAfter: 1000, // message to be sent after milliseconds.
       publisher: 'MyPublisher',
       message: {
   	  kind: "event_received",

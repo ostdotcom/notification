@@ -1,4 +1,7 @@
 ## Notfication v1.0.7
+- Support of delayed messages.
+- Support of fanout exchanges for broadcasting.
+- Multiple connections issue fix in case of abruptly connection close.
 - Upgraded node version to 10.x
 
 ## Notfication v1.0.6
