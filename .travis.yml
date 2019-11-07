@@ -5,7 +5,6 @@ branches:
   only:
   - master
   - develop
-  - node_upgrade
   - /^release-.*/
 notifications:
   email:
