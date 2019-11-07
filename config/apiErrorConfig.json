@@ -78,5 +78,10 @@
     "http_code": "422",
     "code": "unsupported_command_message_kind",
     "message": "Unsupported command message kind"
+  },
+  "invalid_topics": {
+    "http_code": "422",
+    "code": "invalid_topics_passed",
+    "message": "invalid topics passed"
   }
 }

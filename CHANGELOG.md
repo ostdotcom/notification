@@ -1,3 +1,8 @@
+## Notfication v1.0.7-beta.3
+- Support of delayed messages.
+- Support of fanout exchanges for broadcasting.
+- Multiple connections issue fix in case of abruptly connection close.
+
 ## Notfication v1.0.6
 - RabbitMQ cluster support has been added.
 - Integrated with new Instance Composer.
