@@ -176,6 +176,8 @@ class RmqPublishByTopic {
 
               ch.publish(oThis.delayedExchangeName, q.queue, new Buffer(msgString), { persistent: true });
               console.log(' [x] Sent to DLX "', oThis.delayedExchangeName, '" with routing key', currTopic);
+
+              ch.close();
             }
           );
         }
