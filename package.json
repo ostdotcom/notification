@@ -1,6 +1,6 @@
 {
   "name": "@ostdotcom/notification",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "OST Notification helps publish critical events using EventEmitter and RabbmitMQ.",
   "main": "index.js",
   "scripts": {
