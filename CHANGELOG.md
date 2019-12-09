@@ -1,4 +1,4 @@
-## Notification v1.0.8-beta.1
+## Notification v1.0.8
 - Fixed the issue where channel was not being closed when a message was published in a delayed queue.
 
 ## Notfication v1.0.7
